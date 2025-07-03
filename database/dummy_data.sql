@@ -1,134 +1,251 @@
--- LUCRO INTERNSHIP PORTAL DUMMY DATA
--- Insert sample data for development and testing
-
--- Insert Roles
-INSERT INTO roles (role_name) VALUES 
-('admin'),
-('student'),
-('mentor');
+-- Lucro Internship Portal Dummy Data
+-- Insert sample data for testing and development
 
 -- Insert Technologies
-INSERT INTO technologies (tech_name, description, duration_months, price, is_active) VALUES 
-('Web Development', 'Full-stack web development with React, Node.js, and MongoDB', 6, 15000.00, TRUE),
-('Data Science', 'Machine learning, data analysis, and AI with Python and R', 8, 20000.00, TRUE),
-('Mobile Development', 'Native and cross-platform mobile app development', 6, 18000.00, TRUE),
-('Digital Marketing', 'SEO, social media marketing, and digital advertising', 4, 12000.00, TRUE),
-('Cloud Computing', 'AWS, Azure, and Google Cloud platform training', 5, 16000.00, TRUE),
-('Cybersecurity', 'Ethical hacking, network security, and penetration testing', 6, 22000.00, TRUE),
-('DevOps', 'CI/CD, containerization, and infrastructure automation', 5, 17000.00, TRUE),
-('UI/UX Design', 'User interface and user experience design principles', 4, 14000.00, TRUE);
+INSERT INTO technologies (id, name, category, description, icon_url) VALUES
+(uuid_generate_v4(), 'React', 'Frontend', 'A JavaScript library for building user interfaces', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg'),
+(uuid_generate_v4(), 'Node.js', 'Backend', 'JavaScript runtime built on Chrome V8 engine', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg'),
+(uuid_generate_v4(), 'Python', 'Programming Language', 'High-level programming language', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg'),
+(uuid_generate_v4(), 'JavaScript', 'Programming Language', 'Dynamic programming language', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg'),
+(uuid_generate_v4(), 'PostgreSQL', 'Database', 'Open source relational database', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg'),
+(uuid_generate_v4(), 'MongoDB', 'Database', 'NoSQL document database', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg'),
+(uuid_generate_v4(), 'Express.js', 'Backend', 'Web framework for Node.js', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg'),
+(uuid_generate_v4(), 'Tailwind CSS', 'Frontend', 'Utility-first CSS framework', 'https://www.vectorlogo.zone/logos/tailwindcss/tailwindcss-icon.svg'),
+(uuid_generate_v4(), 'Docker', 'DevOps', 'Containerization platform', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg'),
+(uuid_generate_v4(), 'AWS', 'Cloud', 'Amazon Web Services', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/amazonwebservices/amazonwebservices-original.svg');
 
 -- Insert Admin Users
-INSERT INTO users (full_name, email, password_hash, phone, education_level, field_of_study, address, role_id, last_login, is_active) VALUES 
-('Rajesh Kumar', 'admin@lucro.com', '$2b$10$rQZ8kHWKtGKVQZ8kHWKtGOyJ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtG', '+91 9876543210', 'postgraduate', 'Computer Science', 'Bangalore, Karnataka', 1, '2024-01-21 10:30:00', TRUE),
-('Priya Sharma', 'priya.admin@lucro.com', '$2b$10$rQZ8kHWKtGKVQZ8kHWKtGOyJ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtG', '+91 9876543211', 'graduate', 'Information Technology', 'Mumbai, Maharashtra', 1, '2024-01-20 14:15:00', TRUE);
+INSERT INTO users (id, email, password_hash, first_name, last_name, phone, role, is_active, email_verified) VALUES
+(uuid_generate_v4(), 'admin@lucro.com', '$2b$10$rOzJaHq.V8ZhAoQGZqGzKOKxGxGxGxGxGxGxGxGxGxGxGxGxGxGxGx', 'Admin', 'User', '+91-9876543210', 'admin', true, true),
+(uuid_generate_v4(), 'mentor@lucro.com', '$2b$10$rOzJaHq.V8ZhAoQGZqGzKOKxGxGxGxGxGxGxGxGxGxGxGxGxGxGxGx', 'John', 'Mentor', '+91-9876543211', 'mentor', true, true);
 
 -- Insert Student Users
-INSERT INTO users (full_name, email, password_hash, phone, education_level, field_of_study, address, role_id, last_login, is_active) VALUES 
-('Rahul Kumar', 'rahul@example.com', '$2b$10$rQZ8kHWKtGKVQZ8kHWKtGOyJ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtG', '+91 9876543220', 'undergraduate', 'Computer Science', 'Bangalore, Karnataka', 2, '2024-01-20 09:45:00', TRUE),
-('Priya Patel', 'priya@example.com', '$2b$10$rQZ8kHWKtGKVQZ8kHWKtGOyJ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtG', '+91 9876543221', 'graduate', 'Mathematics', 'Mumbai, Maharashtra', 2, '2024-01-19 16:20:00', TRUE),
-('Amit Singh', 'amit@example.com', '$2b$10$rQZ8kHWKtGKVQZ8kHWKtGOyJ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtG', '+91 9876543222', 'undergraduate', 'Information Technology', 'Pune, Maharashtra', 2, '2024-01-18 11:30:00', TRUE),
-('Sneha Reddy', 'sneha@example.com', '$2b$10$rQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtG', '+91 9876543223', 'graduate', 'Business Administration', 'Hyderabad, Telangana', 2, '2024-01-20 08:15:00', TRUE),
-('Arjun Gupta', 'arjun@example.com', '$2b$10$rQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtG', '+91 9876543224', 'postgraduate', 'Computer Science', 'Delhi, India', 2, '2024-01-21 07:45:00', TRUE),
-('Kavya Nair', 'kavya@example.com', '$2b$10$rQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtG', '+91 9876543225', 'undergraduate', 'Electronics', 'Kochi, Kerala', 2, '2024-01-19 13:20:00', TRUE),
-('Vikram Joshi', 'vikram@example.com', '$2b$10$rQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtG', '+91 9876543226', 'graduate', 'Mechanical Engineering', 'Chennai, Tamil Nadu', 2, '2024-01-18 15:10:00', TRUE),
-('Ananya Sharma', 'ananya@example.com', '$2b$10$rQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtG', '+91 9876543227', 'undergraduate', 'Computer Applications', 'Jaipur, Rajasthan', 2, '2024-01-20 12:30:00', TRUE),
-('Rohan Mehta', 'rohan@example.com', '$2b$10$rQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtG', '+91 9876543228', 'graduate', 'Data Science', 'Ahmedabad, Gujarat', 2, '2024-01-19 10:45:00', TRUE),
-('Divya Agarwal', 'divya@example.com', '$2b$10$rQZ8kHWKtGKVQZ8kHWKtGOyJ8kHWKtGKVQZ8kHWKtGKVQZ8kHWKtG', '+91 9876543229', 'undergraduate', 'Information Systems', 'Kolkata, West Bengal', 2, '2024-01-17 14:20:00', TRUE);
+INSERT INTO users (id, email, password_hash, first_name, last_name, phone, role, date_of_birth, gender, college_name, degree, branch, year_of_study, cgpa, linkedin_url, github_url, is_active, email_verified) VALUES
+(uuid_generate_v4(), 'rahul@example.com', '$2b$10$rOzJaHq.V8ZhAoQGZqGzKOKxGxGxGxGxGxGxGxGxGxGxGxGxGxGxGx', 'Rahul', 'Sharma', '+91-9876543212', 'student', '2001-05-15', 'Male', 'IIT Delhi', 'B.Tech', 'Computer Science', 3, 8.5, 'https://linkedin.com/in/rahul-sharma', 'https://github.com/rahulsharma', true, true),
+(uuid_generate_v4(), 'priya@example.com', '$2b$10$rOzJaHq.V8ZhAoQGZqGzKOKxGxGxGxGxGxGxGxGxGxGxGxGxGxGxGx', 'Priya', 'Patel', '+91-9876543213', 'student', '2002-08-22', 'Female', 'NIT Surat', 'B.Tech', 'Information Technology', 2, 9.1, 'https://linkedin.com/in/priya-patel', 'https://github.com/priyapatel', true, true),
+(uuid_generate_v4(), 'amit@example.com', '$2b$10$rOzJaHq.V8ZhAoQGZqGzKOKxGxGxGxGxGxGxGxGxGxGxGxGxGxGxGx', 'Amit', 'Kumar', '+91-9876543214', 'student', '2000-12-10', 'Male', 'BITS Pilani', 'B.Tech', 'Electronics', 4, 8.8, 'https://linkedin.com/in/amit-kumar', 'https://github.com/amitkumar', true, true),
+(uuid_generate_v4(), 'sneha@example.com', '$2b$10$rOzJaHq.V8ZhAoQGZqGzKOKxGxGxGxGxGxGxGxGxGxGxGxGxGxGxGx', 'Sneha', 'Singh', '+91-9876543215', 'student', '2001-03-18', 'Female', 'VIT Vellore', 'B.Tech', 'Computer Science', 3, 8.2, 'https://linkedin.com/in/sneha-singh', 'https://github.com/snehasingh', true, true),
+(uuid_generate_v4(), 'vikash@example.com', '$2b$10$rOzJaHq.V8ZhAoQGZqGzKOKxGxGxGxGxGxGxGxGxGxGxGxGxGxGxGx', 'Vikash', 'Gupta', '+91-9876543216', 'student', '2002-01-25', 'Male', 'DTU Delhi', 'B.Tech', 'Software Engineering', 2, 8.7, 'https://linkedin.com/in/vikash-gupta', 'https://github.com/vikashgupta', true, true);
 
--- Insert Student Internships
-INSERT INTO student_internship (student_id, tech_id, start_date, end_date, status, progress_percentage, mentor_assigned, enrollment_date) VALUES 
-(3, 1, '2024-01-15', '2024-07-15', 'active', 75, 'Sarah Johnson', '2024-01-15 10:00:00'),
-(4, 2, '2024-01-10', '2024-09-10', 'active', 60, 'Michael Chen', '2024-01-10 11:30:00'),
-(5, 3, '2023-12-01', '2024-06-01', 'completed', 100, 'Lisa Wang', '2023-12-01 09:15:00'),
-(6, 4, '2024-01-20', '2024-05-20', 'pending', 0, 'David Brown', '2024-01-20 14:45:00'),
-(7, 5, '2023-11-15', '2024-04-15', 'active', 85, 'Jennifer Davis', '2023-11-15 16:20:00'),
-(8, 6, '2024-01-05', '2024-07-05', 'active', 45, 'Robert Wilson', '2024-01-05 12:10:00'),
-(9, 7, '2024-01-12', '2024-06-12', 'active', 30, 'Emily Taylor', '2024-01-12 13:30:00'),
-(10, 8, '2024-01-08', '2024-05-08', 'active', 55, 'James Anderson', '2024-01-08 15:45:00'),
-(11, 1, '2023-12-20', '2024-06-20', 'active', 70, 'Sarah Johnson', '2023-12-20 10:30:00'),
-(12, 2, '2024-01-18', '2024-09-18', 'active', 25, 'Michael Chen', '2024-01-18 11:15:00');
+-- Insert Internship Programs
+INSERT INTO internship_programs (id, title, description, duration_weeks, difficulty_level, price, discount_percentage, final_price, max_participants, start_date, end_date, registration_deadline, requirements, learning_outcomes, image_url) VALUES
+(uuid_generate_v4(), 'Full Stack Web Development', 'Complete full-stack development program covering React, Node.js, and databases. Build real-world projects and gain industry experience.', 12, 'intermediate', 15000.00, 20, 12000.00, 50, '2024-02-01', '2024-04-26', '2024-01-25', 'Basic knowledge of HTML, CSS, JavaScript', 'Master React, Node.js, Express, MongoDB, RESTful APIs, Authentication, Deployment', 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500'),
+(uuid_generate_v4(), 'Python Data Science', 'Comprehensive data science program with Python, covering data analysis, machine learning, and visualization.', 10, 'beginner', 12000.00, 15, 10200.00, 40, '2024-02-15', '2024-04-26', '2024-02-08', 'Basic programming knowledge', 'Python fundamentals, Pandas, NumPy, Matplotlib, Scikit-learn, Machine Learning basics', 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500'),
+(uuid_generate_v4(), 'Mobile App Development', 'Learn to build cross-platform mobile applications using React Native and modern development practices.', 8, 'intermediate', 10000.00, 10, 9000.00, 30, '2024-03-01', '2024-04-26', '2024-02-22', 'JavaScript knowledge, React basics', 'React Native, Mobile UI/UX, API integration, App deployment, Performance optimization', 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=500'),
+(uuid_generate_v4(), 'DevOps Engineering', 'Master DevOps practices including CI/CD, containerization, cloud deployment, and infrastructure management.', 14, 'advanced', 18000.00, 25, 13500.00, 25, '2024-02-10', '2024-05-18', '2024-02-03', 'Linux basics, Programming experience', 'Docker, Kubernetes, AWS, CI/CD pipelines, Infrastructure as Code, Monitoring', 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=500'),
+(uuid_generate_v4(), 'UI/UX Design', 'Complete design program covering user research, wireframing, prototyping, and modern design tools.', 6, 'beginner', 8000.00, 30, 5600.00, 35, '2024-03-15', '2024-04-26', '2024-03-08', 'No prior experience required', 'Design thinking, Figma, Adobe XD, User research, Prototyping, Design systems', 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500');
+
+-- Get technology and program IDs for mapping
+DO $$
+DECLARE
+    react_id UUID;
+    nodejs_id UUID;
+    python_id UUID;
+    js_id UUID;
+    postgres_id UUID;
+    mongo_id UUID;
+    express_id UUID;
+    tailwind_id UUID;
+    docker_id UUID;
+    aws_id UUID;
+    
+    fullstack_id UUID;
+    datascience_id UUID;
+    mobile_id UUID;
+    devops_id UUID;
+    uiux_id UUID;
+BEGIN
+    -- Get technology IDs
+    SELECT id INTO react_id FROM technologies WHERE name = 'React';
+    SELECT id INTO nodejs_id FROM technologies WHERE name = 'Node.js';
+    SELECT id INTO python_id FROM technologies WHERE name = 'Python';
+    SELECT id INTO js_id FROM technologies WHERE name = 'JavaScript';
+    SELECT id INTO postgres_id FROM technologies WHERE name = 'PostgreSQL';
+    SELECT id INTO mongo_id FROM technologies WHERE name = 'MongoDB';
+    SELECT id INTO express_id FROM technologies WHERE name = 'Express.js';
+    SELECT id INTO tailwind_id FROM technologies WHERE name = 'Tailwind CSS';
+    SELECT id INTO docker_id FROM technologies WHERE name = 'Docker';
+    SELECT id INTO aws_id FROM technologies WHERE name = 'AWS';
+    
+    -- Get program IDs
+    SELECT id INTO fullstack_id FROM internship_programs WHERE title = 'Full Stack Web Development';
+    SELECT id INTO datascience_id FROM internship_programs WHERE title = 'Python Data Science';
+    SELECT id INTO mobile_id FROM internship_programs WHERE title = 'Mobile App Development';
+    SELECT id INTO devops_id FROM internship_programs WHERE title = 'DevOps Engineering';
+    SELECT id INTO uiux_id FROM internship_programs WHERE title = 'UI/UX Design';
+    
+    -- Insert program-technology mappings
+    INSERT INTO program_technologies (program_id, technology_id, is_primary) VALUES
+    (fullstack_id, react_id, true),
+    (fullstack_id, nodejs_id, true),
+    (fullstack_id, js_id, true),
+    (fullstack_id, express_id, false),
+    (fullstack_id, mongo_id, false),
+    (fullstack_id, tailwind_id, false),
+    
+    (datascience_id, python_id, true),
+    
+    (mobile_id, react_id, true),
+    (mobile_id, js_id, true),
+    
+    (devops_id, docker_id, true),
+    (devops_id, aws_id, true),
+    (devops_id, nodejs_id, false);
+END $$;
+
+-- Insert Student Internship Enrollments
+DO $$
+DECLARE
+    student1_id UUID;
+    student2_id UUID;
+    student3_id UUID;
+    student4_id UUID;
+    student5_id UUID;
+    mentor_id UUID;
+    
+    fullstack_id UUID;
+    datascience_id UUID;
+    mobile_id UUID;
+    devops_id UUID;
+    uiux_id UUID;
+BEGIN
+    -- Get user IDs
+    SELECT id INTO student1_id FROM users WHERE email = 'rahul@example.com';
+    SELECT id INTO student2_id FROM users WHERE email = 'priya@example.com';
+    SELECT id INTO student3_id FROM users WHERE email = 'amit@example.com';
+    SELECT id INTO student4_id FROM users WHERE email = 'sneha@example.com';
+    SELECT id INTO student5_id FROM users WHERE email = 'vikash@example.com';
+    SELECT id INTO mentor_id FROM users WHERE email = 'mentor@lucro.com';
+    
+    -- Get program IDs
+    SELECT id INTO fullstack_id FROM internship_programs WHERE title = 'Full Stack Web Development';
+    SELECT id INTO datascience_id FROM internship_programs WHERE title = 'Python Data Science';
+    SELECT id INTO mobile_id FROM internship_programs WHERE title = 'Mobile App Development';
+    SELECT id INTO devops_id FROM internship_programs WHERE title = 'DevOps Engineering';
+    SELECT id INTO uiux_id FROM internship_programs WHERE title = 'UI/UX Design';
+    
+    -- Insert enrollments
+    INSERT INTO student_internship (student_id, program_id, status, progress_percentage, start_date, mentor_id) VALUES
+    (student1_id, fullstack_id, 'in_progress', 65, '2024-02-01', mentor_id),
+    (student2_id, datascience_id, 'in_progress', 80, '2024-02-15', mentor_id),
+    (student3_id, devops_id, 'completed', 100, '2024-02-10', mentor_id),
+    (student4_id, mobile_id, 'in_progress', 45, '2024-03-01', mentor_id),
+    (student5_id, uiux_id, 'enrolled', 10, '2024-03-15', mentor_id);
+END $$;
 
 -- Insert Orders
-INSERT INTO orders (student_id, tech_id, order_date, total_amount, discount_amount, final_amount, status, order_description) VALUES 
-(3, 1, '2024-01-15 09:30:00', 20000.00, 5000.00, 15000.00, 'paid', 'Web Development Internship Program Fee'),
-(4, 2, '2024-01-10 10:15:00', 25000.00, 5000.00, 20000.00, 'paid', 'Data Science Internship Program Fee'),
-(5, 3, '2023-12-01 11:20:00', 22000.00, 4000.00, 18000.00, 'paid', 'Mobile Development Internship Program Fee'),
-(6, 4, '2024-01-20 14:30:00', 15000.00, 3000.00, 12000.00, 'pending', 'Digital Marketing Internship Program Fee'),
-(7, 5, '2023-11-15 16:10:00', 20000.00, 4000.00, 16000.00, 'paid', 'Cloud Computing Internship Program Fee'),
-(8, 6, '2024-01-05 12:00:00', 25000.00, 3000.00, 22000.00, 'paid', 'Cybersecurity Internship Program Fee'),
-(9, 7, '2024-01-12 13:20:00', 20000.00, 3000.00, 17000.00, 'paid', 'DevOps Internship Program Fee'),
-(10, 8, '2024-01-08 15:30:00', 17000.00, 3000.00, 14000.00, 'paid', 'UI/UX Design Internship Program Fee'),
-(11, 1, '2023-12-20 10:20:00', 20000.00, 5000.00, 15000.00, 'paid', 'Web Development Internship Program Fee'),
-(12, 2, '2024-01-18 11:10:00', 25000.00, 5000.00, 20000.00, 'paid', 'Data Science Internship Program Fee');
+DO $$
+DECLARE
+    student1_id UUID;
+    student2_id UUID;
+    student3_id UUID;
+    student4_id UUID;
+    student5_id UUID;
+    
+    fullstack_id UUID;
+    datascience_id UUID;
+    mobile_id UUID;
+    devops_id UUID;
+    uiux_id UUID;
+BEGIN
+    -- Get user IDs
+    SELECT id INTO student1_id FROM users WHERE email = 'rahul@example.com';
+    SELECT id INTO student2_id FROM users WHERE email = 'priya@example.com';
+    SELECT id INTO student3_id FROM users WHERE email = 'amit@example.com';
+    SELECT id INTO student4_id FROM users WHERE email = 'sneha@example.com';
+    SELECT id INTO student5_id FROM users WHERE email = 'vikash@example.com';
+    
+    -- Get program IDs
+    SELECT id INTO fullstack_id FROM internship_programs WHERE title = 'Full Stack Web Development';
+    SELECT id INTO datascience_id FROM internship_programs WHERE title = 'Python Data Science';
+    SELECT id INTO mobile_id FROM internship_programs WHERE title = 'Mobile App Development';
+    SELECT id INTO devops_id FROM internship_programs WHERE title = 'DevOps Engineering';
+    SELECT id INTO uiux_id FROM internship_programs WHERE title = 'UI/UX Design';
+    
+    -- Insert orders
+    INSERT INTO orders (student_id, program_id, order_number, amount, discount_amount, final_amount, status, payment_method) VALUES
+    (student1_id, fullstack_id, 'ORD-2024-001', 15000.00, 3000.00, 12000.00, 'paid', 'razorpay'),
+    (student2_id, datascience_id, 'ORD-2024-002', 12000.00, 1800.00, 10200.00, 'paid', 'razorpay'),
+    (student3_id, devops_id, 'ORD-2024-003', 18000.00, 4500.00, 13500.00, 'paid', 'paytm'),
+    (student4_id, mobile_id, 'ORD-2024-004', 10000.00, 1000.00, 9000.00, 'paid', 'razorpay'),
+    (student5_id, uiux_id, 'ORD-2024-005', 8000.00, 2400.00, 5600.00, 'paid', 'gpay');
+END $$;
 
 -- Insert Payments
-INSERT INTO payments (order_id, amount, payment_date, payment_method, payment_status, transaction_id, payment_gateway, gateway_response) VALUES 
-(1, 15000.00, '2024-01-15 09:45:00', 'UPI', 'completed', 'TXN123456789', 'Razorpay', '{"status": "success", "gateway_txn_id": "pay_123456789"}'),
-(2, 20000.00, '2024-01-10 10:30:00', 'Credit Card', 'completed', 'TXN123456790', 'Razorpay', '{"status": "success", "gateway_txn_id": "pay_123456790"}'),
-(3, 18000.00, '2023-12-01 11:35:00', 'UPI', 'completed', 'TXN123456791', 'Razorpay', '{"status": "success", "gateway_txn_id": "pay_123456791"}'),
-(4, 12000.00, '2024-01-20 14:45:00', 'Bank Transfer', 'pending', 'TXN123456792', 'Manual', '{"status": "pending", "reference": "NEFT123456"}'),
-(5, 16000.00, '2023-11-15 16:25:00', 'Debit Card', 'completed', 'TXN123456793', 'Razorpay', '{"status": "success", "gateway_txn_id": "pay_123456793"}'),
-(6, 22000.00, '2024-01-05 12:15:00', 'UPI', 'completed', 'TXN123456794', 'Razorpay', '{"status": "success", "gateway_txn_id": "pay_123456794"}'),
-(7, 17000.00, '2024-01-12 13:35:00', 'Credit Card', 'completed', 'TXN123456795', 'Razorpay', '{"status": "success", "gateway_txn_id": "pay_123456795"}'),
-(8, 14000.00, '2024-01-08 15:45:00', 'UPI', 'completed', 'TXN123456796', 'Razorpay', '{"status": "success", "gateway_txn_id": "pay_123456796"}'),
-(9, 15000.00, '2023-12-20 10:35:00', 'Debit Card', 'completed', 'TXN123456797', 'Razorpay', '{"status": "success", "gateway_txn_id": "pay_123456797"}'),
-(10, 20000.00, '2024-01-18 11:25:00', 'UPI', 'completed', 'TXN123456798', 'Razorpay', '{"status": "success", "gateway_txn_id": "pay_123456798"}');
+DO $$
+DECLARE
+    order_rec RECORD;
+BEGIN
+    FOR order_rec IN SELECT id, final_amount FROM orders LOOP
+        INSERT INTO payments (order_id, amount, payment_method, payment_gateway, gateway_transaction_id, status, processed_at) VALUES
+        (order_rec.id, order_rec.final_amount, 'upi', 'razorpay', 'txn_' || substr(order_rec.id::text, 1, 8), 'success', CURRENT_TIMESTAMP - INTERVAL '1 day');
+    END LOOP;
+END $$;
 
 -- Insert Tasks
-INSERT INTO tasks (title, description, tech_id, assigned_to, created_by, due_date, status, points, created_at) VALUES 
--- Web Development Tasks
-('HTML & CSS Fundamentals', 'Create a responsive landing page using HTML5 and CSS3', 1, 3, 1, '2024-01-25', 'completed', 100, '2024-01-15 10:00:00'),
-('JavaScript Basics', 'Build an interactive calculator using vanilla JavaScript', 1, 3, 1, '2024-02-05', 'completed', 150, '2024-01-20 11:00:00'),
-('React Components', 'Create a todo application using React hooks', 1, 3, 1, '2024-02-15', 'in_progress', 200, '2024-01-25 12:00:00'),
-('Node.js API', 'Build a RESTful API using Node.js and Express', 1, 3, 1, '2024-02-25', 'pending', 250, '2024-02-01 13:00:00'),
-('Full Stack Project', 'Develop a complete CRUD application', 1, 3, 1, '2024-03-10', 'pending', 300, '2024-02-10 14:00:00'),
-
--- Data Science Tasks
-('Python Fundamentals', 'Complete Python programming basics and data structures', 2, 4, 1, '2024-01-30', 'completed', 120, '2024-01-10 10:30:00'),
-('Data Analysis with Pandas', 'Analyze a dataset using Pandas and NumPy', 2, 4, 1, '2024-02-10', 'completed', 180, '2024-01-20 11:30:00'),
-('Data Visualization', 'Create interactive charts using Matplotlib and Seaborn', 2, 4, 1, '2024-02-20', 'in_progress', 200, '2024-02-01 12:30:00'),
-('Machine Learning Model', 'Build a predictive model using scikit-learn', 2, 4, 1, '2024-03-05', 'pending', 280, '2024-02-15 13:30:00'),
-('Deep Learning Project', 'Implement a neural network using TensorFlow', 2, 4, 1, '2024-03-20', 'pending', 350, '2024-03-01 14:30:00'),
-
--- Mobile Development Tasks
-('Flutter Setup', 'Set up Flutter development environment', 3, 5, 1, '2023-12-15', 'completed', 80, '2023-12-01 09:00:00'),
-('Basic UI Components', 'Create basic Flutter widgets and layouts', 3, 5, 1, '2023-12-25', 'completed', 120, '2023-12-10 10:00:00'),
-('State Management', 'Implement state management using Provider', 3, 5, 1, '2024-01-10', 'completed', 180, '2023-12-20 11:00:00'),
-('API Integration', 'Connect app to REST API and handle responses', 3, 5, 1, '2024-01-25', 'completed', 220, '2024-01-05 12:00:00'),
-('Final Mobile App', 'Complete mobile application with all features', 3, 5, 1, '2024-02-10', 'completed', 400, '2024-01-20 13:00:00'),
-
--- Cloud Computing Tasks
-('AWS Basics', 'Learn AWS fundamentals and create EC2 instance', 5, 7, 1, '2023-12-01', 'completed', 100, '2023-11-15 10:00:00'),
-('Docker Containerization', 'Containerize an application using Docker', 5, 7, 1, '2023-12-15', 'completed', 150, '2023-11-25 11:00:00'),
-('Kubernetes Deployment', 'Deploy application on Kubernetes cluster', 5, 7, 1, '2024-01-05', 'completed', 200, '2023-12-10 12:00:00'),
-('CI/CD Pipeline', 'Set up automated deployment pipeline', 5, 7, 1, '2024-01-20', 'in_progress', 250, '2023-12-25 13:00:00'),
-('Cloud Architecture', 'Design scalable cloud infrastructure', 5, 7, 1, '2024-02-05', 'pending', 300, '2024-01-10 14:00:00');
+DO $$
+DECLARE
+    fullstack_id UUID;
+    datascience_id UUID;
+    mobile_id UUID;
+BEGIN
+    SELECT id INTO fullstack_id FROM internship_programs WHERE title = 'Full Stack Web Development';
+    SELECT id INTO datascience_id FROM internship_programs WHERE title = 'Python Data Science';
+    SELECT id INTO mobile_id FROM internship_programs WHERE title = 'Mobile App Development';
+    
+    INSERT INTO tasks (program_id, title, description, task_type, difficulty_level, max_points, due_date, order_index) VALUES
+    (fullstack_id, 'HTML/CSS Portfolio', 'Create a personal portfolio website using HTML and CSS', 'assignment', 'easy', 100, CURRENT_TIMESTAMP + INTERVAL '7 days', 1),
+    (fullstack_id, 'JavaScript Todo App', 'Build a todo application using vanilla JavaScript', 'project', 'medium', 150, CURRENT_TIMESTAMP + INTERVAL '14 days', 2),
+    (fullstack_id, 'React Component Library', 'Create reusable React components', 'assignment', 'medium', 200, CURRENT_TIMESTAMP + INTERVAL '21 days', 3),
+    (fullstack_id, 'Full Stack E-commerce', 'Build a complete e-commerce application', 'project', 'hard', 300, CURRENT_TIMESTAMP + INTERVAL '35 days', 4),
+    
+    (datascience_id, 'Data Analysis with Pandas', 'Analyze a dataset using Pandas library', 'assignment', 'easy', 100, CURRENT_TIMESTAMP + INTERVAL '7 days', 1),
+    (datascience_id, 'Machine Learning Model', 'Build and train a ML model', 'project', 'medium', 200, CURRENT_TIMESTAMP + INTERVAL '14 days', 2),
+    (datascience_id, 'Data Visualization Dashboard', 'Create interactive visualizations', 'project', 'hard', 250, CURRENT_TIMESTAMP + INTERVAL '21 days', 3),
+    
+    (mobile_id, 'React Native Setup', 'Setup development environment and create first app', 'assignment', 'easy', 50, CURRENT_TIMESTAMP + INTERVAL '3 days', 1),
+    (mobile_id, 'Navigation App', 'Implement navigation between screens', 'assignment', 'medium', 100, CURRENT_TIMESTAMP + INTERVAL '10 days', 2),
+    (mobile_id, 'Complete Mobile App', 'Build a full-featured mobile application', 'project', 'hard', 300, CURRENT_TIMESTAMP + INTERVAL '28 days', 3);
+END $$;
 
 -- Insert Task Submissions
-INSERT INTO task_submissions (task_id, student_id, submission_text, submission_url, submitted_at, feedback, grade, reviewed_by, reviewed_at) VALUES 
-(1, 3, 'Completed responsive landing page with modern design', 'https://github.com/rahul/landing-page', '2024-01-24 15:30:00', 'Excellent work! Clean code and responsive design.', 'A+', 1, '2024-01-25 10:00:00'),
-(2, 3, 'Interactive calculator with all basic operations', 'https://github.com/rahul/calculator', '2024-02-04 16:45:00', 'Good implementation of JavaScript concepts.', 'A', 1, '2024-02-05 11:30:00'),
-(6, 4, 'Python basics completed with all exercises', 'https://github.com/priya/python-basics', '2024-01-29 14:20:00', 'Strong foundation in Python programming.', 'A', 1, '2024-01-30 09:15:00'),
-(7, 4, 'Comprehensive data analysis of sales dataset', 'https://github.com/priya/data-analysis', '2024-02-09 17:30:00', 'Thorough analysis with good insights.', 'A+', 1, '2024-02-10 10:45:00'),
-(11, 5, 'Flutter environment successfully configured', 'https://github.com/amit/flutter-setup', '2023-12-14 12:00:00', 'Perfect setup and documentation.', 'A+', 1, '2023-12-15 08:30:00'),
-(12, 5, 'Beautiful UI components with proper styling', 'https://github.com/amit/flutter-ui', '2023-12-24 18:15:00', 'Great attention to UI/UX details.', 'A', 1, '2023-12-25 09:00:00'),
-(13, 5, 'State management implemented correctly', 'https://github.com/amit/state-management', '2024-01-09 19:45:00', 'Excellent understanding of state management.', 'A+', 1, '2024-01-10 10:30:00'),
-(14, 5, 'API integration working perfectly', 'https://github.com/amit/api-integration', '2024-01-24 20:30:00', 'Smooth API integration with error handling.', 'A', 1, '2024-01-25 11:15:00'),
-(15, 5, 'Complete mobile app with all required features', 'https://github.com/amit/final-app', '2024-02-09 21:00:00', 'Outstanding final project! Professional quality.', 'A+', 1, '2024-02-10 12:00:00'),
-(16, 7, 'AWS EC2 instance created and configured', 'https://github.com/arjun/aws-basics', '2023-11-30 13:45:00', 'Good understanding of AWS fundamentals.', 'A', 1, '2023-12-01 09:30:00'),
-(17, 7, 'Application successfully containerized', 'https://github.com/arjun/docker-app', '2023-12-14 16:20:00', 'Clean Docker implementation.', 'A', 1, '2023-12-15 10:15:00'),
-(18, 7, 'Kubernetes deployment working correctly', 'https://github.com/arjun/k8s-deploy', '2024-01-04 17:30:00', 'Complex deployment handled well.', 'A+', 1, '2024-01-05 11:45:00');
-
--- Insert Login Sessions
-INSERT INTO login_sessions (user_id, login_time, logout_time, ip_address, user_agent) VALUES 
-(1, '2024-01-21 10:30:00', '2024-01-21 18:45:00', '192.168.1.100', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'),
-(3, '2024-01-20 09:45:00', '2024-01-20 17:30:00', '192.168.1.101', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'),
-(4, '2024-01-19 16:20:00', '2024-01-19 22:15:00', '192.168.1.102', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'),
-(5, '2024-01-18 11:30:00', '2024-01-18 19:45:00', '192.168.1.103', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'),
-(7, '2024-01-21 07:45:00', '2024-01-21 16:30:00', '192.168.1.104', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36');
+DO $$
+DECLARE
+    student1_id UUID;
+    student2_id UUID;
+    task_rec RECORD;
+BEGIN
+    SELECT id INTO student1_id FROM users WHERE email = 'rahul@example.com';
+    SELECT id INTO student2_id FROM users WHERE email = 'priya@example.com';
+    
+    -- Get some tasks and insert submissions
+    FOR task_rec IN SELECT id FROM tasks LIMIT 5 LOOP
+        INSERT INTO task_submissions (task_id, student_id, submission_text, github_url, status, points_earned) VALUES
+        (task_rec.id, student1_id, 'Completed the assignment as per requirements', 'https://github.com/rahulsharma/task-' || substr(task_rec.id::text, 1, 8), 'approved', 85),
+        (task_rec.id, student2_id, 'Submitted the project with additional features', 'https://github.com/priyapatel/task-' || substr(task_rec.id::text, 1, 8), 'approved', 92);
+    END LOOP;
+END $$;
 
 -- Insert Certificates
-INSERT INTO internship_certificates (student_id, tech_id, issue_date, certificate_url, certificate_number, remarks, issued_by, is_verified) VALUES 
-(5, 3, '2024-02-15', 'https://certificates.lucro.com/cert_AMT_MOB_001.pdf', 'LUCRO-MOB-2024-001', 'Completed with distinction. Excellent project work.', 1, TRUE),
-(7, 5, '2024-02-20', 'https://certificates.lucro.com/cert_ARJ_CLD_001.pdf', 'LUCRO-CLD-2024-001', 'Outstanding performance in cloud technologies.', 1, TRUE);
+DO $$
+DECLARE
+    completed_internship_id UUID;
+BEGIN
+    SELECT id INTO completed_internship_id FROM student_internship WHERE status = 'completed' LIMIT 1;
+    
+    IF completed_internship_id IS NOT NULL THEN
+        INSERT INTO internship_certificates (student_internship_id, certificate_number, issue_date, verification_code, issued_by) VALUES
+        (completed_internship_id, 'LUCRO-2024-001', CURRENT_DATE, 'VERIFY-' || substr(completed_internship_id::text, 1, 8), (SELECT id FROM users WHERE role = 'admin' LIMIT 1));
+    END IF;
+END $$;
+
+-- Insert Announcements
+INSERT INTO announcements (title, content, announcement_type, target_audience, priority, created_by) VALUES
+('Welcome to Lucro Internship Portal', 'Welcome to our comprehensive internship management system. We are excited to have you on board!', 'general', 'all', 1, (SELECT id FROM users WHERE role = 'admin' LIMIT 1)),
+('New Python Data Science Batch Starting', 'Registration is now open for our Python Data Science internship program. Limited seats available!', 'program_specific', 'students', 2, (SELECT id FROM users WHERE role = 'admin' LIMIT 1)),
+('System Maintenance Scheduled', 'The portal will be under maintenance on Sunday from 2 AM to 4 AM IST.', 'maintenance', 'all', 3, (SELECT id FROM users WHERE role = 'admin' LIMIT 1));
+
+-- Update program participant counts
+UPDATE internship_programs SET current_participants = (
+    SELECT COUNT(*) FROM student_internship WHERE program_id = internship_programs.id
+);
