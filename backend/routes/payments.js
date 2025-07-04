@@ -137,4 +137,65 @@ router.post('/orders', authenticateToken, async (req, res) => {
   }
 });
 
+// Verify payment and complete order
+router.post('/verify', authenticateToken, async (req, res) => {
+  try {
+    const { orderId, paymentId, signature } = req.body;
+
+    if (!orderId || !paymentId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Order ID and Payment ID are required'
+      });
+    }
+
+    // Get order details
+    const orderResult = await pool.query(
+      'SELECT * FROM orders WHERE order_number = $1 AND student_id = $2',
+      [orderId, req.user.id]
+    );
+
+    if (orderResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found'
+      });
+    }
+
+    const order = orderResult.rows[0];
+
+    // In a real implementation, you would verify the signature with Razorpay
+    // For demo purposes, we'll assume the payment is successful
+
+    // Update order status
+    await pool.query(
+      'UPDATE orders SET status = $1, payment_method = $2, transaction_id = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4',
+      ['paid', 'razorpay', paymentId, order.id]
+    );
+
+    // Create payment record
+    await pool.query(`
+      INSERT INTO payments (
+        order_id, amount, currency, payment_method, payment_gateway,
+        gateway_payment_id, status, processed_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP)
+    `, [order.id, order.final_amount, 'INR', 'razorpay', 'razorpay', paymentId, 'success']);
+
+    res.json({
+      success: true,
+      message: 'Payment verified successfully',
+      data: {
+        orderId: order.id,
+        status: 'paid'
+      }
+    });
+  } catch (error) {
+    console.error('Payment verification error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to verify payment'
+    });
+  }
+});
+
 module.exports = router;

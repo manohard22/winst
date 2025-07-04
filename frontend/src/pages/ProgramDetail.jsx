@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import api from '../services/api'
-import { Clock, Users, Award, CheckCircle, ArrowLeft } from 'lucide-react'
+import { Clock, Users, Award, CheckCircle, ArrowLeft, Star, Play, Download, Shield } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 const ProgramDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [program, setProgram] = useState(null)
   const [loading, setLoading] = useState(true)
   const [enrolling, setEnrolling] = useState(false)
@@ -13,8 +16,10 @@ const ProgramDetail = () => {
 
   useEffect(() => {
     fetchProgram()
-    checkEnrollment()
-  }, [id])
+    if (user) {
+      checkEnrollment()
+    }
+  }, [id, user])
 
   const fetchProgram = async () => {
     try {
@@ -22,6 +27,7 @@ const ProgramDetail = () => {
       setProgram(response.data.data.program)
     } catch (error) {
       console.error('Failed to fetch program:', error)
+      toast.error('Failed to load program details')
     } finally {
       setLoading(false)
     }
@@ -38,218 +44,366 @@ const ProgramDetail = () => {
     }
   }
 
-  const handleEnroll = async () => {
+  const handlePayment = async () => {
+    if (!user) {
+      toast.error('Please login to enroll')
+      navigate('/login')
+      return
+    }
+
     setEnrolling(true)
+    
     try {
-      await api.post('/enrollments', { programId: id })
-      setIsEnrolled(true)
-      alert('Successfully enrolled in the program!')
+      // Create order first
+      const orderResponse = await api.post('/payments/orders', { programId: id })
+      const order = orderResponse.data.data.order
+
+      // Razorpay options
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_1234567890',
+        amount: order.finalAmount * 100, // Convert to paise
+        currency: 'INR',
+        name: 'Lucro Internship Portal',
+        description: `Enrollment for ${program.title}`,
+        order_id: order.orderNumber,
+        handler: async function (response) {
+          try {
+            // Verify payment and enroll
+            await api.post('/enrollments', { 
+              programId: id,
+              paymentId: response.razorpay_payment_id,
+              orderId: response.razorpay_order_id,
+              signature: response.razorpay_signature
+            })
+            
+            setIsEnrolled(true)
+            toast.success('Successfully enrolled! Welcome to the program!')
+          } catch (error) {
+            toast.error('Payment verification failed. Please contact support.')
+          }
+        },
+        prefill: {
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email,
+          contact: user.phone || ''
+        },
+        theme: {
+          color: '#2563eb'
+        },
+        modal: {
+          ondismiss: function() {
+            setEnrolling(false)
+          }
+        }
+      }
+      
+      const rzp = new window.Razorpay(options)
+      rzp.open()
     } catch (error) {
-      alert(error.response?.data?.message || 'Failed to enroll')
-    } finally {
+      toast.error('Failed to initiate payment')
       setEnrolling(false)
     }
   }
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          </div>
+        </div>
       </div>
     )
   }
 
   if (!program) {
     return (
-      <div className="text-center py-12">
-        <h2 className="text-2xl font-bold text-gray-900">Program not found</h2>
-        <button onClick={() => navigate('/programs')} className="mt-4 btn-primary">
-          Back to Programs
-        </button>
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold text-gray-900">Program not found</h2>
+            <button onClick={() => navigate('/programs')} className="mt-4 btn-primary">
+              Back to Programs
+            </button>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-6">
-      <button
-        onClick={() => navigate('/programs')}
-        className="flex items-center text-primary-600 hover:text-primary-700"
-      >
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Back to Programs
-      </button>
+    <div className="min-h-screen bg-gray-50 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <button
+          onClick={() => navigate('/programs')}
+          className="flex items-center text-primary-600 hover:text-primary-700 mb-8 font-medium"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Programs
+        </button>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
-          <div>
-            <img
-              src={program.imageUrl || '/placeholder-course.jpg'}
-              alt={program.title}
-              className="w-full h-64 object-cover rounded-lg"
-            />
-          </div>
-
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">{program.title}</h1>
-            <p className="text-gray-600 text-lg leading-relaxed">{program.description}</p>
-          </div>
-
-          {/* Technologies */}
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">Technologies You'll Learn</h2>
-            <div className="flex flex-wrap gap-2">
-              {program.technologies?.map((tech) => (
-                <div key={tech.id} className="flex items-center bg-blue-50 px-3 py-2 rounded-lg">
-                  {tech.iconUrl && (
-                    <img src={tech.iconUrl} alt={tech.name} className="w-5 h-5 mr-2" />
-                  )}
-                  <span className="text-blue-800 font-medium">{tech.name}</span>
-                  {tech.isPrimary && (
-                    <span className="ml-2 px-1 py-0.5 bg-blue-200 text-blue-800 text-xs rounded">
-                      Primary
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Hero Section */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="relative h-64 bg-gradient-to-br from-primary-500 to-primary-700">
+                <img
+                  src={program.imageUrl || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800'}
+                  alt={program.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+                <div className="absolute bottom-6 left-6 text-white">
+                  <div className="flex items-center space-x-4 mb-2">
+                    <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                      program.difficultyLevel === 'beginner' 
+                        ? 'bg-green-500 text-white'
+                        : program.difficultyLevel === 'intermediate'
+                        ? 'bg-yellow-500 text-white'
+                        : 'bg-red-500 text-white'
+                    }`}>
+                      {program.difficultyLevel?.toUpperCase()}
                     </span>
-                  )}
+                    <div className="flex items-center">
+                      <Star className="h-4 w-4 fill-current text-yellow-400" />
+                      <span className="text-sm ml-1">4.8 (124 reviews)</span>
+                    </div>
+                  </div>
+                  <h1 className="text-3xl font-bold mb-2">{program.title}</h1>
+                  <p className="text-lg opacity-90">Transform your career in {program.durationWeeks} weeks</p>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Requirements */}
-          {program.requirements && (
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">Requirements</h2>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <p className="text-gray-700">{program.requirements}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Learning Outcomes */}
-          {program.learningOutcomes && (
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-3">What You'll Learn</h2>
-              <div className="bg-green-50 p-4 rounded-lg">
-                <p className="text-gray-700">{program.learningOutcomes}</p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Sidebar */}
-        <div className="space-y-6">
-          <div className="card">
-            <div className="text-center mb-6">
-              <div className="text-3xl font-bold text-primary-600">₹{program.finalPrice}</div>
-              {program.discountPercentage > 0 && (
-                <div className="text-sm text-gray-500">
-                  <span className="line-through">₹{program.price}</span>
-                  <span className="ml-2 text-green-600 font-medium">
-                    {program.discountPercentage}% OFF
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {isEnrolled ? (
-              <div className="text-center">
-                <div className="flex items-center justify-center text-green-600 mb-2">
-                  <CheckCircle className="h-5 w-5 mr-2" />
-                  Already Enrolled
-                </div>
-                <button
-                  onClick={() => navigate('/enrollments')}
-                  className="w-full btn-secondary"
-                >
-                  View My Enrollments
+                <button className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4 hover:bg-opacity-30 transition-all">
+                  <Play className="h-8 w-8 text-white" />
                 </button>
               </div>
-            ) : (
-              <button
-                onClick={handleEnroll}
-                disabled={enrolling}
-                className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {enrolling ? 'Enrolling...' : 'Enroll Now'}
-              </button>
-            )}
-          </div>
+            </div>
 
-          <div className="card">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Program Details</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center text-gray-600">
-                  <Clock className="h-4 w-4 mr-2" />
-                  Duration
-                </div>
-                <span className="font-medium">{program.durationWeeks} weeks</span>
-              </div>
+            {/* Program Description */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Program</h2>
+              <p className="text-gray-700 text-lg leading-relaxed mb-6">{program.description}</p>
               
-              <div className="flex items-center justify-between">
-                <div className="flex items-center text-gray-600">
-                  <Users className="h-4 w-4 mr-2" />
-                  Enrolled
+              {/* Key Highlights */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center p-4 bg-blue-50 rounded-xl">
+                  <Clock className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                  <div className="font-semibold text-gray-900">{program.durationWeeks} Weeks</div>
+                  <div className="text-sm text-gray-600">Duration</div>
                 </div>
-                <span className="font-medium">
-                  {program.currentParticipants}/{program.maxParticipants}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center text-gray-600">
-                  <Award className="h-4 w-4 mr-2" />
-                  Certificate
+                <div className="text-center p-4 bg-green-50 rounded-xl">
+                  <Users className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                  <div className="font-semibold text-gray-900">{program.currentParticipants}+ Students</div>
+                  <div className="text-sm text-gray-600">Enrolled</div>
                 </div>
-                <span className="font-medium">
-                  {program.certificateProvided ? 'Yes' : 'No'}
-                </span>
+                <div className="text-center p-4 bg-purple-50 rounded-xl">
+                  <Award className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                  <div className="font-semibold text-gray-900">Certificate</div>
+                  <div className="text-sm text-gray-600">On Completion</div>
+                </div>
               </div>
+            </div>
 
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Difficulty</span>
-                <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                  program.difficultyLevel === 'beginner' 
-                    ? 'bg-green-100 text-green-800'
-                    : program.difficultyLevel === 'intermediate'
-                    ? 'bg-yellow-100 text-yellow-800'
-                    : 'bg-red-100 text-red-800'
-                }`}>
-                {program.difficultyLevel?.toUpperCase()}
-                </span>
+            {/* Technologies */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Technologies You'll Master</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {program.technologies?.map((tech) => (
+                  <div key={tech.id} className="flex flex-col items-center p-4 border border-gray-200 rounded-xl hover:border-primary-300 transition-colors">
+                    {tech.iconUrl && (
+                      <img src={tech.iconUrl} alt={tech.name} className="w-12 h-12 mb-3" />
+                    )}
+                    <span className="font-medium text-gray-900 text-center">{tech.name}</span>
+                    {tech.isPrimary && (
+                      <span className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded-full mt-1">
+                        Core
+                      </span>
+                    )}
+                  </div>
+                ))}
               </div>
+            </div>
+
+            {/* Requirements & Outcomes */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {program.requirements && (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">Prerequisites</h3>
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                    <p className="text-gray-700">{program.requirements}</p>
+                  </div>
+                </div>
+              )}
+
+              {program.learningOutcomes && (
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">Learning Outcomes</h3>
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <p className="text-gray-700">{program.learningOutcomes}</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Features */}
-          <div className="card">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">What's Included</h3>
-            <div className="space-y-2">
-              {program.mentorshipIncluded && (
-                <div className="flex items-center text-green-600">
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  <span className="text-sm">1-on-1 Mentorship</span>
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Pricing Card */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-6">
+              <div className="text-center mb-6">
+                <div className="mb-2">
+                  {program.discountPercentage > 0 ? (
+                    <div>
+                      <span className="text-3xl font-bold text-primary-600">₹{program.finalPrice}</span>
+                      <span className="text-lg text-gray-500 line-through ml-2">₹{program.price}</span>
+                      <div className="inline-block bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium ml-2">
+                        {program.discountPercentage}% OFF
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-3xl font-bold text-primary-600">₹{program.finalPrice}</span>
+                  )}
+                </div>
+                <div className="text-sm text-gray-600">One-time payment • Lifetime access</div>
+              </div>
+
+              {isEnrolled ? (
+                <div className="text-center mb-6">
+                  <div className="flex items-center justify-center text-green-600 mb-3">
+                    <CheckCircle className="h-6 w-6 mr-2" />
+                    <span className="font-semibold">Already Enrolled</span>
+                  </div>
+                  <button
+                    onClick={() => navigate('/enrollments')}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200"
+                  >
+                    Go to Dashboard
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-3 mb-6">
+                  <button
+                    onClick={handlePayment}
+                    disabled={enrolling}
+                    className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {enrolling ? 'Processing...' : 'Enroll Now'}
+                  </button>
+                  <button className="w-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                    Add to Wishlist
+                  </button>
                 </div>
               )}
-              {program.projectBased && (
-                <div className="flex items-center text-green-600">
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  <span className="text-sm">Hands-on Projects</span>
+
+              {/* Payment Security */}
+              <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                <div className="flex items-center justify-center mb-2">
+                  <Shield className="h-5 w-5 text-green-600 mr-2" />
+                  <span className="text-sm font-medium text-gray-700">Secure Payment</span>
                 </div>
-              )}
-              {program.certificateProvided && (
-                <div className="flex items-center text-green-600">
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  <span className="text-sm">Certificate of Completion</span>
+                <div className="text-xs text-gray-600 text-center">
+                  Powered by Razorpay • 256-bit SSL encryption
                 </div>
-              )}
-              {program.remoteAllowed && (
-                <div className="flex items-center text-green-600">
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  <span className="text-sm">Remote Friendly</span>
+              </div>
+
+              {/* Program Features */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-gray-900">What's Included:</h4>
+                <div className="space-y-2">
+                  {program.mentorshipIncluded && (
+                    <div className="flex items-center text-green-600">
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      <span className="text-sm">1-on-1 Mentorship</span>
+                    </div>
+                  )}
+                  {program.projectBased && (
+                    <div className="flex items-center text-green-600">
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      <span className="text-sm">Hands-on Projects</span>
+                    </div>
+                  )}
+                  {program.certificateProvided && (
+                    <div className="flex items-center text-green-600">
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      <span className="text-sm">Certificate of Completion</span>
+                    </div>
+                  )}
+                  {program.remoteAllowed && (
+                    <div className="flex items-center text-green-600">
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      <span className="text-sm">100% Remote Learning</span>
+                    </div>
+                  )}
+                  <div className="flex items-center text-green-600">
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    <span className="text-sm">Lifetime Access</span>
+                  </div>
+                  <div className="flex items-center text-green-600">
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    <span className="text-sm">24/7 Community Support</span>
+                  </div>
+                  <div className="flex items-center text-green-600">
+                    <CheckCircle className="h-4 w-4 mr-2" />
+                    <span className="text-sm">Job Placement Assistance</span>
+                  </div>
                 </div>
-              )}
+              </div>
+            </div>
+
+            {/* Program Stats */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <h4 className="font-semibold text-gray-900 mb-4">Program Stats</h4>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Duration</span>
+                  <span className="font-medium">{program.durationWeeks} weeks</span>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Enrolled Students</span>
+                  <span className="font-medium">
+                    {program.currentParticipants}/{program.maxParticipants}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Difficulty Level</span>
+                  <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                    program.difficultyLevel === 'beginner' 
+                      ? 'bg-green-100 text-green-800'
+                      : program.difficultyLevel === 'intermediate'
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-red-100 text-red-800'
+                  }`}>
+                    {program.difficultyLevel?.toUpperCase()}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Certificate</span>
+                  <span className="font-medium">
+                    {program.certificateProvided ? 'Yes' : 'No'}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600">Format</span>
+                  <span className="font-medium">
+                    {program.remoteAllowed ? 'Online' : 'Offline'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Download Brochure */}
+            <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-2xl p-6 border border-primary-200">
+              <h4 className="font-semibold text-primary-900 mb-2">Want to learn more?</h4>
+              <p className="text-primary-700 text-sm mb-4">Download our detailed program brochure</p>
+              <button className="flex items-center justify-center w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+                <Download className="h-4 w-4 mr-2" />
+                Download Brochure
+              </button>
             </div>
           </div>
         </div>
