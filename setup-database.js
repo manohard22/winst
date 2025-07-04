@@ -1,36 +1,44 @@
-const { Client } = require("pg");
-const fs = require("fs");
-const path = require("path");
+const { Client } = require('pg');
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
 
 // Database configuration
 const DB_CONFIG = {
-  host: "localhost",
+  host: 'localhost',
   port: 5432,
-  database: "postgres", // Connect to default database first
-  user: "postgres",
-  password: "root",
+  database: 'postgres', // Connect to default database first
+  user: 'postgres',
+  password: 'root'
 };
 
 const TARGET_DB = {
-  name: "lucro_portal_db",
-  user: "lucro_db_user",
-  password: "root",
+  name: 'lucro_portal_db_1',
+  user: 'lucro_db_user_1',
+  password: 'root'
 };
 
+// Simple password hashing using crypto
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+  return `${salt}:${hash}`;
+}
+
 async function setupDatabase() {
-  console.log("🚀 Setting up Lucro Internship Portal Database...");
-
+  console.log('🚀 Setting up Lucro Internship Portal Database...');
+  
   let client;
-
+  
   try {
     // Connect to PostgreSQL as superuser
     client = new Client(DB_CONFIG);
     await client.connect();
-    console.log("✅ Connected to PostgreSQL");
+    console.log('✅ Connected to PostgreSQL');
 
     // Create database and user
-    console.log("📊 Creating database and user...");
-
+    console.log('📊 Creating database and user...');
+    
     try {
       await client.query(`DROP DATABASE IF EXISTS ${TARGET_DB.name}`);
       await client.query(`DROP USER IF EXISTS ${TARGET_DB.user}`);
@@ -39,16 +47,12 @@ async function setupDatabase() {
     }
 
     await client.query(`CREATE DATABASE ${TARGET_DB.name}`);
-    await client.query(
-      `CREATE USER ${TARGET_DB.user} WITH PASSWORD '${TARGET_DB.password}'`
-    );
-    await client.query(
-      `GRANT ALL PRIVILEGES ON DATABASE ${TARGET_DB.name} TO ${TARGET_DB.user}`
-    );
+    await client.query(`CREATE USER ${TARGET_DB.user} WITH PASSWORD '${TARGET_DB.password}'`);
+    await client.query(`GRANT ALL PRIVILEGES ON DATABASE ${TARGET_DB.name} TO ${TARGET_DB.user}`);
     await client.query(`ALTER USER ${TARGET_DB.user} CREATEDB SUPERUSER`);
-
-    console.log("✅ Database and user created successfully!");
-
+    
+    console.log('✅ Database and user created successfully!');
+    
     // Close connection to default database
     await client.end();
 
@@ -58,33 +62,21 @@ async function setupDatabase() {
       port: DB_CONFIG.port,
       database: TARGET_DB.name,
       user: DB_CONFIG.user,
-      password: DB_CONFIG.password,
+      password: DB_CONFIG.password
     });
 
     await superuserClient.connect();
-    console.log("✅ Connected to target database as superuser");
+    console.log('✅ Connected to target database as superuser');
 
     // Fix schema permissions
-    console.log("🔧 Fixing schema permissions...");
-    await superuserClient.query(
-      `GRANT ALL ON SCHEMA public TO ${TARGET_DB.user}`
-    );
-    await superuserClient.query(
-      `ALTER SCHEMA public OWNER TO ${TARGET_DB.user}`
-    );
-    await superuserClient.query(
-      `GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ${TARGET_DB.user}`
-    );
-    await superuserClient.query(
-      `GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO ${TARGET_DB.user}`
-    );
-    await superuserClient.query(
-      `ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO ${TARGET_DB.user}`
-    );
-    await superuserClient.query(
-      `ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO ${TARGET_DB.user}`
-    );
-
+    console.log('🔧 Fixing schema permissions...');
+    await superuserClient.query(`GRANT ALL ON SCHEMA public TO ${TARGET_DB.user}`);
+    await superuserClient.query(`ALTER SCHEMA public OWNER TO ${TARGET_DB.user}`);
+    await superuserClient.query(`GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO ${TARGET_DB.user}`);
+    await superuserClient.query(`GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO ${TARGET_DB.user}`);
+    await superuserClient.query(`ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO ${TARGET_DB.user}`);
+    await superuserClient.query(`ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO ${TARGET_DB.user}`);
+    
     await superuserClient.end();
 
     // Now connect as the target user
@@ -93,83 +85,79 @@ async function setupDatabase() {
       port: DB_CONFIG.port,
       database: TARGET_DB.name,
       user: TARGET_DB.user,
-      password: TARGET_DB.password,
+      password: TARGET_DB.password
     });
 
     await targetClient.connect();
-    console.log("✅ Connected to target database as target user");
+    console.log('✅ Connected to target database as target user');
 
     // Read and execute schema
-    console.log("🏗️ Creating tables and schema...");
-    const schemaPath = path.join(__dirname, "database", "schema.sql");
-
+    console.log('🏗️ Creating tables and schema...');
+    const schemaPath = path.join(__dirname, 'database', 'schema.sql');
+    
     if (fs.existsSync(schemaPath)) {
-      const schema = fs.readFileSync(schemaPath, "utf8");
+      const schema = fs.readFileSync(schemaPath, 'utf8');
       await targetClient.query(schema);
-      console.log("✅ Schema created successfully!");
+      console.log('✅ Schema created successfully!');
     } else {
-      console.log("⚠️ Schema file not found, creating basic schema...");
+      console.log('⚠️ Schema file not found, creating basic schema...');
       await createBasicSchema(targetClient);
     }
 
-    // Read and execute dummy data
-    console.log("📝 Inserting dummy data...");
-    const dummyDataPath = path.join(__dirname, "database", "dummy_data.sql");
+    // Insert basic data with proper password hashing
+    console.log('📝 Inserting basic user data...');
+    await createBasicData(targetClient);
 
+    // Read and execute dummy data
+    console.log('📝 Inserting additional dummy data...');
+    const dummyDataPath = path.join(__dirname, 'database', 'dummy_data.sql');
+    
     if (fs.existsSync(dummyDataPath)) {
-      const dummyData = fs.readFileSync(dummyDataPath, "utf8");
+      const dummyData = fs.readFileSync(dummyDataPath, 'utf8');
       await targetClient.query(dummyData);
-      console.log("✅ Dummy data inserted successfully!");
-    } else {
-      console.log("⚠️ Dummy data file not found, creating basic data...");
-      await createBasicData(targetClient);
+      console.log('✅ Dummy data inserted successfully!');
     }
 
     // Verify data insertion
-    console.log("🔍 Running verification queries...");
+    console.log('🔍 Running verification queries...');
     const verificationQueries = [
-      "SELECT COUNT(*) as users FROM users",
-      "SELECT COUNT(*) as programs FROM internship_programs",
-      "SELECT COUNT(*) as enrollments FROM student_internship",
-      "SELECT COUNT(*) as orders FROM orders",
-      "SELECT COUNT(*) as payments FROM payments",
+      'SELECT COUNT(*) as users FROM users',
+      'SELECT COUNT(*) as programs FROM internship_programs',
+      'SELECT COUNT(*) as enrollments FROM student_internship',
+      'SELECT COUNT(*) as orders FROM orders',
+      'SELECT COUNT(*) as payments FROM payments'
     ];
 
     for (const query of verificationQueries) {
       try {
         const result = await targetClient.query(query);
-        console.log(
-          `   ${query.split(" ")[3]}: ${result.rows[0][query.split(" ")[3]]}`
-        );
+        console.log(`   ${query.split(' ')[3]}: ${result.rows[0][query.split(' ')[3]]}`);
       } catch (error) {
-        console.log(`   ${query.split(" ")[3]}: 0 (table not found)`);
+        console.log(`   ${query.split(' ')[3]}: 0 (table not found)`);
       }
     }
 
     await targetClient.end();
 
-    console.log("\n🎉 Database setup completed successfully!");
-    console.log("\n📋 Database Connection Details:");
+    console.log('\n🎉 Database setup completed successfully!');
+    console.log('\n📋 Database Connection Details:');
     console.log(`   Host: ${DB_CONFIG.host}`);
     console.log(`   Port: ${DB_CONFIG.port}`);
     console.log(`   Database: ${TARGET_DB.name}`);
     console.log(`   Username: ${TARGET_DB.user}`);
     console.log(`   Password: ${TARGET_DB.password}`);
-    console.log("\n🔗 Connection String:");
-    console.log(
-      `   postgresql://${TARGET_DB.user}:${TARGET_DB.password}@${DB_CONFIG.host}:${DB_CONFIG.port}/${TARGET_DB.name}`
-    );
-    console.log("\n👥 Sample Login Credentials:");
-    console.log("   Admin: admin@lucro.com / password123");
-    console.log("   Student: rahul@example.com / password123");
-    console.log("\n💡 Next Steps:");
-    console.log(
-      "   1. Update your .env file with the database connection details"
-    );
-    console.log("   2. Install Node.js dependencies: npm run install-all");
-    console.log("   3. Start the development server: npm run dev");
+    console.log('\n🔗 Connection String:');
+    console.log(`   postgresql://${TARGET_DB.user}:${TARGET_DB.password}@${DB_CONFIG.host}:${DB_CONFIG.port}/${TARGET_DB.name}`);
+    console.log('\n👥 Sample Login Credentials:');
+    console.log('   Admin: admin@lucro.com / password123');
+    console.log('   Student: rahul@example.com / password123');
+    console.log('\n💡 Next Steps:');
+    console.log('   1. Update your .env file with the database connection details');
+    console.log('   2. Install Node.js dependencies: npm run install-all');
+    console.log('   3. Start the development server: npm run dev');
+
   } catch (error) {
-    console.error("❌ Database setup failed:", error.message);
+    console.error('❌ Database setup failed:', error.message);
     process.exit(1);
   }
 }
@@ -370,32 +358,20 @@ async function createBasicSchema(client) {
 }
 
 async function createBasicData(client) {
+  // Hash passwords using crypto
+  const adminPasswordHash = hashPassword('password123');
+  const studentPasswordHash = hashPassword('password123');
+
   const basicData = `
     -- Insert admin user (password: password123)
     INSERT INTO users (email, password_hash, first_name, last_name, role) VALUES
-    ('admin@lucro.com', '$2b$10$rOzJaHq.V8ZhAoQGZqGzKOKxGxGxGxGxGxGxGxGxGxGxGxGxGxGxGx', 'Admin', 'User', 'admin')
+    ('admin@lucro.com', '${adminPasswordHash}', 'Admin', 'User', 'admin')
     ON CONFLICT (email) DO NOTHING;
 
     -- Insert sample student (password: password123)
     INSERT INTO users (email, password_hash, first_name, last_name, role, college_name, degree, branch, year_of_study, cgpa) VALUES
-    ('rahul@example.com', '$2b$10$rOzJaHq.V8ZhAoQGZqGzKOKxGxGxGxGxGxGxGxGxGxGxGxGxGxGxGx', 'Rahul', 'Sharma', 'student', 'IIT Delhi', 'B.Tech', 'Computer Science', 3, 8.5)
+    ('rahul@example.com', '${studentPasswordHash}', 'Rahul', 'Sharma', 'student', 'IIT Delhi', 'B.Tech', 'Computer Science', 3, 8.5)
     ON CONFLICT (email) DO NOTHING;
-
-    -- Insert technologies
-    INSERT INTO technologies (name, category, description, icon_url) VALUES
-    ('React', 'Frontend', 'A JavaScript library for building user interfaces', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg'),
-    ('Node.js', 'Backend', 'JavaScript runtime built on Chrome V8 engine', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg'),
-    ('Python', 'Programming Language', 'High-level programming language', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg'),
-    ('JavaScript', 'Programming Language', 'Dynamic programming language', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg'),
-    ('PostgreSQL', 'Database', 'Open source relational database', 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg')
-    ON CONFLICT (name) DO NOTHING;
-
-    -- Insert sample programs
-    INSERT INTO internship_programs (title, description, duration_weeks, difficulty_level, price, discount_percentage, final_price, max_participants, requirements, learning_outcomes, image_url) VALUES
-    ('Full Stack Web Development', 'Complete full-stack development program covering React, Node.js, and databases. Build real-world projects and gain industry experience.', 12, 'intermediate', 15000.00, 20, 12000.00, 50, 'Basic knowledge of HTML, CSS, JavaScript', 'Master React, Node.js, Express, MongoDB, RESTful APIs, Authentication, Deployment', 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500'),
-    ('Python Data Science', 'Comprehensive data science program with Python, covering data analysis, machine learning, and visualization.', 10, 'beginner', 12000.00, 15, 10200.00, 40, 'Basic programming knowledge', 'Python fundamentals, Pandas, NumPy, Matplotlib, Scikit-learn, Machine Learning basics', 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=500'),
-    ('Mobile App Development', 'Learn to build cross-platform mobile applications using React Native and modern development practices.', 8, 'intermediate', 10000.00, 10, 9000.00, 30, 'JavaScript knowledge, React basics', 'React Native, Mobile UI/UX, API integration, App deployment, Performance optimization', 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=500')
-    ON CONFLICT DO NOTHING;
   `;
 
   await client.query(basicData);

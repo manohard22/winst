@@ -1,6 +1,5 @@
 import React from 'react'
 import { Target, Users, Award, Globe } from 'lucide-react'
-import Card from '../components/Card'
 
 const About = () => {
   const values = [
@@ -87,7 +86,7 @@ const About = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {values.map((value, index) => (
-              <Card key={index} className="hover:shadow-lg transition-shadow">
+              <div key={index} className="card hover:shadow-lg transition-shadow">
                 <div className="flex items-start space-x-4">
                   <div className="bg-primary-100 w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0">
                     <value.icon className="h-6 w-6 text-primary-600" />
@@ -101,7 +100,7 @@ const About = () => {
                     </p>
                   </div>
                 </div>
-              </Card>
+              </div>
             ))}
           </div>
         </div>

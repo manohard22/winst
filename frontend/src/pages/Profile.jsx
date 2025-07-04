@@ -91,50 +91,13 @@ const Profile = () => {
               <div className="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <User className="h-12 w-12 text-primary-600" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h3 className="text-lg font-semibold text-gray-900">
                 {user?.firstName} {user?.lastName}
-              </h2>
+              </h3>
               <p className="text-gray-600">{user?.email}</p>
-              <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 mt-2">
+              <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800 mt-2">
                 {user?.role?.toUpperCase()}
               </span>
-            </div>
-
-            <div className="mt-6 space-y-3">
-              {user?.phone && (
-                <div className="flex items-center text-sm text-gray-600">
-                  <Phone className="h-4 w-4 mr-3" />
-                  {user.phone}
-                </div>
-              )}
-              {user?.city && (
-                <div className="flex items-center text-sm text-gray-600">
-                  <MapPin className="h-4 w-4 mr-3" />
-                  {user.city}, {user.state}
-                </div>
-              )}
-              {user?.collegeName && (
-                <div className="flex items-center text-sm text-gray-600">
-                  <GraduationCap className="h-4 w-4 mr-3" />
-                  {user.collegeName}
-                </div>
-              )}
-              {user?.githubUrl && (
-                <div className="flex items-center text-sm text-gray-600">
-                  <Github className="h-4 w-4 mr-3" />
-                  <a href={user.githubUrl} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700">
-                    GitHub Profile
-                  </a>
-                </div>
-              )}
-              {user?.linkedinUrl && (
-                <div className="flex items-center text-sm text-gray-600">
-                  <Linkedin className="h-4 w-4 mr-3" />
-                  <a href={user.linkedinUrl} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:text-primary-700">
-                    LinkedIn Profile
-                  </a>
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -142,66 +105,76 @@ const Profile = () => {
         {/* Profile Form */}
         <div className="lg:col-span-2">
           <div className="card">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {message && (
-                <div className={`p-4 rounded-lg ${
-                  message.includes('successfully') 
-                    ? 'bg-green-50 border border-green-200 text-green-600'
-                    : 'bg-red-50 border border-red-200 text-red-600'
-                }`}>
-                  {message}
-                </div>
-              )}
+            {message && (
+              <div className={`mb-6 p-4 rounded-lg ${
+                message.includes('successfully') 
+                  ? 'bg-green-50 border border-green-200 text-green-600'
+                  : 'bg-red-50 border border-red-200 text-red-600'
+              }`}>
+                {message}
+              </div>
+            )}
 
+            <form onSubmit={handleSubmit} className="space-y-6">
               {/* Personal Information */}
               <div>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Personal Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">First Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      First Name
+                    </label>
                     <input
                       type="text"
                       name="firstName"
-                      className="input-field mt-1"
+                      className="input-field"
                       value={formData.firstName}
                       onChange={handleChange}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Last Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Last Name
+                    </label>
                     <input
                       type="text"
                       name="lastName"
-                      className="input-field mt-1"
+                      className="input-field"
                       value={formData.lastName}
                       onChange={handleChange}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Phone</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Phone
+                    </label>
                     <input
                       type="tel"
                       name="phone"
-                      className="input-field mt-1"
+                      className="input-field"
                       value={formData.phone}
                       onChange={handleChange}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Date of Birth
+                    </label>
                     <input
                       type="date"
                       name="dateOfBirth"
-                      className="input-field mt-1"
+                      className="input-field"
                       value={formData.dateOfBirth}
                       onChange={handleChange}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Gender</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Gender
+                    </label>
                     <select
                       name="gender"
-                      className="input-field mt-1"
+                      className="input-field"
                       value={formData.gender}
                       onChange={handleChange}
                     >
@@ -214,94 +187,55 @@ const Profile = () => {
                 </div>
               </div>
 
-              {/* Address Information */}
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Address Information</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Address</label>
-                    <textarea
-                      name="address"
-                      rows={2}
-                      className="input-field mt-1"
-                      value={formData.address}
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">City</label>
-                      <input
-                        type="text"
-                        name="city"
-                        className="input-field mt-1"
-                        value={formData.city}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">State</label>
-                      <input
-                        type="text"
-                        name="state"
-                        className="input-field mt-1"
-                        value={formData.state}
-                        onChange={handleChange}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">Pincode</label>
-                      <input
-                        type="text"
-                        name="pincode"
-                        className="input-field mt-1"
-                        value={formData.pincode}
-                        onChange={handleChange}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
               {/* Academic Information */}
               <div>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Academic Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">College Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      College Name
+                    </label>
                     <input
-                      type="text"
+                type="text"
                       name="collegeName"
-                      className="input-field mt-1"
+                      className="input-field"
                       value={formData.collegeName}
                       onChange={handleChange}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Degree</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Degree
+                    </label>
                     <input
                       type="text"
                       name="degree"
-                      className="input-field mt-1"
+                      className="input-field"
+                      placeholder="e.g., B.Tech, B.E., BCA"
                       value={formData.degree}
                       onChange={handleChange}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Branch</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Branch
+                    </label>
                     <input
                       type="text"
                       name="branch"
-                      className="input-field mt-1"
+                      className="input-field"
+                      placeholder="e.g., Computer Science"
                       value={formData.branch}
                       onChange={handleChange}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Year of Study</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Year of Study
+                    </label>
                     <select
                       name="yearOfStudy"
-                      className="input-field mt-1"
+                      className="input-field"
                       value={formData.yearOfStudy}
                       onChange={handleChange}
                     >
@@ -313,14 +247,17 @@ const Profile = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">CGPA</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      CGPA
+                    </label>
                     <input
                       type="number"
                       name="cgpa"
                       step="0.01"
                       min="0"
                       max="10"
-                      className="input-field mt-1"
+                      className="input-field"
+                      placeholder="e.g., 8.5"
                       value={formData.cgpa}
                       onChange={handleChange}
                     />
@@ -331,33 +268,42 @@ const Profile = () => {
               {/* Social Links */}
               <div>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Social Links</h3>
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">LinkedIn URL</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      LinkedIn URL
+                    </label>
                     <input
                       type="url"
                       name="linkedinUrl"
-                      className="input-field mt-1"
+                      className="input-field"
+                      placeholder="https://linkedin.com/in/yourprofile"
                       value={formData.linkedinUrl}
                       onChange={handleChange}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">GitHub URL</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      GitHub URL
+                    </label>
                     <input
                       type="url"
                       name="githubUrl"
-                      className="input-field mt-1"
+                      className="input-field"
+                      placeholder="https://github.com/yourusername"
                       value={formData.githubUrl}
                       onChange={handleChange}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Portfolio URL</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Portfolio URL
+                    </label>
                     <input
                       type="url"
                       name="portfolioUrl"
-                      className="input-field mt-1"
+                      className="input-field"
+                      placeholder="https://yourportfolio.com"
                       value={formData.portfolioUrl}
                       onChange={handleChange}
                     />

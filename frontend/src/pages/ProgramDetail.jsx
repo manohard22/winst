@@ -216,7 +216,7 @@ const ProgramDetail = () => {
                     ? 'bg-yellow-100 text-yellow-800'
                     : 'bg-red-100 text-red-800'
                 }`}>
-                  {program.difficultyLevel?.toUpperCase()}
+                {program.difficultyLevel?.toUpperCase()}
                 </span>
               </div>
             </div>

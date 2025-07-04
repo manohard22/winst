@@ -8,7 +8,8 @@
     "install-all": "cd frontend && npm install && cd ../admin-portal && npm install && cd ../backend && npm install",
     "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\" \"cd admin-portal && npm run dev\"",
     "build": "cd frontend && npm run build && cd ../admin-portal && npm run build",
-    "setup-db": "node setup-database.js"
+    "setup-db": "node setup-database.js",
+    "start": "npm run setup-db && npm run install-all && npm run dev"
   },
   "keywords": [
     "internship",
@@ -20,7 +21,7 @@
   "author": "Lucro Team",
   "license": "MIT",
   "dependencies": {
-    "pg": "^8.16.3"
+    "pg": "^8.11.3"
   },
   "devDependencies": {
     "concurrently": "^7.6.0"

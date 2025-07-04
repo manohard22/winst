@@ -69,8 +69,8 @@ const Home = () => {
                 Connect with top companies, gain real-world experience, and build the skills that matter in today's competitive job market.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/internships" className="bg-white text-blue-600 hover:bg-blue-50 font-semibold py-4 px-8 rounded-lg transition-all duration-200 text-center shadow-lg hover:shadow-xl">
-                  Explore Internships
+                <Link to="/programs" className="bg-white text-blue-600 hover:bg-blue-50 font-semibold py-4 px-8 rounded-lg transition-all duration-200 text-center shadow-lg hover:shadow-xl">
+                  Explore Programs
                 </Link>
                 <Link to="/signup" className="border-2 border-white text-white hover:bg-white hover:text-blue-600 font-semibold py-4 px-8 rounded-lg transition-all duration-200 text-center">
                   Get Started Free
@@ -164,9 +164,7 @@ const Home = () => {
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Create Your Profile</h3>
               <p className="text-gray-600">Sign up and build your professional profile with your skills and interests</p>
-            </div>
-
-            <div className="text-center">
+            </div><div className="text-center">
               <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold text-white">2</span>
               </div>
@@ -237,8 +235,8 @@ const Home = () => {
             <Link to="/signup" className="bg-white text-blue-600 hover:bg-blue-50 font-semibold py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
               Get Started Free
             </Link>
-            <Link to="/internships" className="border-2 border-white text-white hover:bg-white hover:text-blue-600 font-semibold py-4 px-8 rounded-lg transition-all duration-200 flex items-center justify-center">
-              Browse Internships
+            <Link to="/programs" className="border-2 border-white text-white hover:bg-white hover:text-blue-600 font-semibold py-4 px-8 rounded-lg transition-all duration-200 flex items-center justify-center">
+              Browse Programs
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </div>

@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import { Mail, Phone, MapPin, Send } from 'lucide-react'
-import Card from '../components/Card'
-import Button from '../components/Button'
 import toast from 'react-hot-toast'
 
 const Contact = () => {
@@ -112,7 +110,7 @@ const Contact = () => {
 
           {/* Contact Form */}
           <div className="lg:col-span-2">
-            <Card>
+            <div className="card">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -176,16 +174,16 @@ const Contact = () => {
                   />
                 </div>
                 
-                <Button 
+                <button 
                   type="submit" 
                   disabled={loading}
-                  className="w-full md:w-auto"
+                  className="w-full md:w-auto btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Send className="h-4 w-4 mr-2" />
                   {loading ? 'Sending...' : 'Send Message'}
-                </Button>
+                </button>
               </form>
-            </Card>
+            </div>
           </div>
         </div>
       </div>

@@ -2,6 +2,17 @@
 
 A comprehensive full-stack internship management system built with React, Node.js, and PostgreSQL.
 
+## 🚀 **ONE-COMMAND SETUP**
+
+```bash
+npm start
+```
+
+This single command will:
+- ✅ Setup PostgreSQL database
+- ✅ Install all dependencies  
+- ✅ Start all servers (Frontend + Admin + Backend)
+
 ## 🏗️ Project Structure
 
 ```
@@ -23,31 +34,25 @@ lucro-internship-portal/
 ```bash
 git clone <repository-url>
 cd lucro-internship-portal
-npm run install-all
+npm start
 ```
 
-### 2. Database Setup
-```bash
-# Create PostgreSQL database
-createdb lucro_portal
+### 2. Database Setup (Automatic)
+The `npm start` command automatically:
+- Creates PostgreSQL database: `lucro_portal_db_1`
+- Creates user: `lucro_db_user_1`
+- Sets up all tables and relationships
+- Inserts sample data
 
-# Set up environment variables
-cp backend/.env.example backend/.env
-# Edit backend/.env with your database credentials
-
-# Run database setup script
-npm run setup-db
-```
-
-### 3. Environment Configuration
+### 3. Environment Configuration (Optional)
 
 **Backend (.env):**
 ```env
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=lucro_portal
-DB_USER=lucro_admin
-DB_PASSWORD=lucro_secure_2024
+DB_NAME=lucro_portal_db_1
+DB_USER=lucro_db_user_1
+DB_PASSWORD=root
 JWT_SECRET=your-super-secret-jwt-key-change-in-production
 ```
 
@@ -55,11 +60,6 @@ JWT_SECRET=your-super-secret-jwt-key-change-in-production
 ```env
 VITE_API_URL=http://localhost:3001/api
 VITE_RAZORPAY_KEY_ID=your-razorpay-key-id
-```
-
-### 4. Start Development Servers
-```bash
-npm run dev
 ```
 
 ## 🌐 Access Points
@@ -79,7 +79,7 @@ npm run dev
 - **Frontend:** React 18, TailwindCSS, Vite
 - **Backend:** Node.js, Express.js, PostgreSQL
 - **Database:** PostgreSQL
-- **Authentication:** JWT Tokens
+- **Authentication:** JWT Tokens (No bcrypt - uses Node.js crypto)
 
 ## 📱 Features
 
@@ -97,32 +97,30 @@ npm run dev
 - Analytics and statistics
 - Task management
 
-## 🔧 Development
+## 🔧 Development Commands
 
-### Backend Commands
+### All-in-One Commands
 ```bash
-cd backend
-npm run dev          # Start development server
-npm start           # Start production server
+npm start           # Setup DB + Install + Start all servers
+npm run dev         # Start all development servers
+npm run install-all # Install dependencies for all modules
+npm run setup-db    # Setup database only
+npm run build       # Build frontend and admin for production
 ```
 
-### Frontend Commands
+### Individual Commands
 ```bash
-cd frontend
-npm run dev         # Start development server
-npm run build       # Build for production
-npm run preview     # Preview production build
+# Backend
+cd backend && npm run dev
+
+# Frontend  
+cd frontend && npm run dev
+
+# Admin Portal
+cd admin-portal && npm run dev
 ```
 
-### Admin Portal Commands
-```bash
-cd admin-portal
-npm run dev         # Start development server
-npm run build       # Build for production
-npm run preview     # Preview production build
-```
-
-## 📦 Installation Steps
+## 📦 Manual Installation (if needed)
 
 1. **Install Dependencies:**
    ```bash
@@ -134,11 +132,7 @@ npm run preview     # Preview production build
    npm run setup-db
    ```
 
-3. **Configure Environment:**
-   - Copy `.env.example` files and update with your credentials
-   - Set up database connection details
-
-4. **Start Development:**
+3. **Start Development:**
    ```bash
    npm run dev
    ```
@@ -182,6 +176,26 @@ cd admin-portal
 npm run build
 # Deploy dist/ folder to your hosting service
 ```
+
+## 🔧 Troubleshooting
+
+### Database Issues
+```bash
+# Reset database
+npm run setup-db
+```
+
+### Dependency Issues
+```bash
+# Clean and reinstall
+npm run clean
+npm run install-all
+```
+
+### Port Conflicts
+- Frontend: 5173
+- Admin: 5174  
+- Backend: 3001
 
 ## 🤝 Contributing
 

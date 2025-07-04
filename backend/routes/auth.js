@@ -1,11 +1,24 @@
 const express = require('express');
-const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const pool = require('../config/database');
 const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
+
+// Simple password hashing using crypto
+function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+  return `${salt}:${hash}`;
+}
+
+function verifyPassword(password, hashedPassword) {
+  const [salt, hash] = hashedPassword.split(':');
+  const verifyHash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+  return hash === verifyHash;
+}
 
 // Register
 router.post('/register', [
@@ -55,9 +68,8 @@ router.post('/register', [
       });
     }
 
-    // Hash password
-    const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(password, saltRounds);
+    // Hash password using crypto
+    const passwordHash = hashPassword(password);
 
     // Insert new user
     const result = await pool.query(`
@@ -144,8 +156,8 @@ router.post('/login', [
       });
     }
 
-    // Verify password
-    const isValidPassword = await bcrypt.compare(password, user.password_hash);
+    // Verify password using crypto
+    const isValidPassword = verifyPassword(password, user.password_hash);
     if (!isValidPassword) {
       return res.status(401).json({
         success: false,
