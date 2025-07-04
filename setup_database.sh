@@ -6,9 +6,9 @@
 echo "🚀 Setting up Lucro Internship Portal Database..."
 
 # Database configuration
-DB_NAME="lucro_portal"
-DB_USER="lucro_admin"
-DB_PASSWORD="lucro_secure_2024"
+DB_NAME="lucro_portal_db"
+DB_USER="lucro_db_user"
+DB_PASSWORD="root"
 DB_HOST="localhost"
 DB_PORT="5432"
 

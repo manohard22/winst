@@ -13,8 +13,8 @@ const DB_CONFIG = {
 };
 
 const TARGET_DB = {
-  name: "lucro_portal_db_2",
-  user: "lucro_db_user_2",
+  name: "lucro_portal_db",
+  user: "lucro_db_user",
   password: "root",
 };
 

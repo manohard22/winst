@@ -1,23 +1,23 @@
-const { Pool } = require('pg');
+const { Pool } = require("pg");
 
 const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
+  host: process.env.DB_HOST || "localhost",
   port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || 'lucro_portal_db_1',
-  user: process.env.DB_USER || 'lucro_db_user_1',
-  password: process.env.DB_PASSWORD || 'root',
+  database: process.env.DB_NAME || "lucro_portal_db",
+  user: process.env.DB_USER || "lucro_db_user",
+  password: process.env.DB_PASSWORD || "root",
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
 });
 
 // Test database connection
-pool.on('connect', () => {
-  console.log('✅ Connected to PostgreSQL database');
+pool.on("connect", () => {
+  console.log("✅ Connected to PostgreSQL database");
 });
 
-pool.on('error', (err) => {
-  console.error('❌ Database connection error:', err);
+pool.on("error", (err) => {
+  console.error("❌ Database connection error:", err);
 });
 
 module.exports = pool;
