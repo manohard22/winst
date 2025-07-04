@@ -45,7 +45,7 @@ const About = () => {
             <div>
               <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
               <p className="text-gray-600 mb-4">
-                Founded in 2020, Lucro emerged from a simple observation: the internship application process 
+                Founded in 2020 in Hyderabad, Lucro emerged from a simple observation: the internship application process 
                 was broken. Students struggled to find quality opportunities, while companies couldn't connect 
                 with the right talent.
               </p>
@@ -55,7 +55,7 @@ const About = () => {
               </p>
               <p className="text-gray-600">
                 Today, we're proud to be the trusted bridge between ambitious students and forward-thinking 
-                companies, facilitating thousands of successful internship placements.
+                companies, facilitating thousands of successful internship placements across India.
               </p>
             </div>
             <div className="bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg p-8">

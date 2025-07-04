@@ -155,7 +155,7 @@ const Dashboard = () => {
             <p className="mt-1 text-sm text-gray-500">Get started by enrolling in a program</p>
             <div className="mt-6">
               <Link to="/programs" className="btn-primary">
-                Browse Programs
+                Browse Internships
               </Link>
             </div>
           </div>

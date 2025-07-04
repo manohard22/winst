@@ -44,13 +44,13 @@ const Contact = () => {
     {
       icon: Phone,
       title: 'Call Us',
-      details: '+1 (555) 123-4567',
-      description: 'Mon-Fri from 8am to 6pm'
+      details: '+91 98765 43210',
+      description: 'Mon-Fri from 9am to 6pm'
     },
     {
       icon: MapPin,
       title: 'Visit Us',
-      details: '123 Innovation Drive, Tech City, TC 12345',
+      details: 'HITEC City, Hyderabad, Telangana 500081',
       description: 'Come say hello at our office'
     }
   ]

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { Menu, X, User, LogOut, BookOpen, Search } from 'lucide-react'
+import { Menu, X, User, LogOut, BookOpen, Search, GraduationCap } from 'lucide-react'
 
 const Navbar = () => {
   const { user, logout } = useAuth()
@@ -19,18 +19,25 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <BookOpen className="h-5 w-5 text-white" />
+            <Link to="/" className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <GraduationCap className="h-6 w-6 text-white" />
               </div>
-              <span className="text-2xl font-bold text-gray-900">Lucro</span>
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Lucro
+                </span>
+                <span className="text-xs text-gray-500 font-medium -mt-1">
+                  Empowering Careers
+                </span>
+              </div>
             </Link>
           </div>
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
             <Link to="/" className="navbar-link">Home</Link>
-            <Link to="/programs" className="navbar-link">Programs</Link>
+            <Link to="/programs" className="navbar-link">Internships</Link>
             <Link to="/about" className="navbar-link">About</Link>
             <Link to="/contact" className="navbar-link">Contact</Link>
           </div>
@@ -83,7 +90,7 @@ const Navbar = () => {
         <div className="md:hidden bg-white border-t border-gray-100">
           <div className="px-4 py-3 space-y-2">
             <Link to="/" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg">Home</Link>
-            <Link to="/programs" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg">Programs</Link>
+            <Link to="/programs" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg">Internships</Link>
             <Link to="/about" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg">About</Link>
             <Link to="/contact" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg">Contact</Link>
             

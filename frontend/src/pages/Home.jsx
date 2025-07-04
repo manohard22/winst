@@ -1,8 +1,37 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, Briefcase, Users, Award, TrendingUp, Star, ArrowRight, CheckCircle, Play } from 'lucide-react'
+import api from '../services/api'
+import Carousel from '../components/Carousel'
+import { Search, Briefcase, Users, Award, TrendingUp, Star, ArrowRight, CheckCircle, Play, ChevronLeft, ChevronRight, Clock } from 'lucide-react'
 
 const Home = () => {
+  const [featuredPrograms, setFeaturedPrograms] = useState([])
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchFeaturedPrograms()
+  }, [])
+
+  const fetchFeaturedPrograms = async () => {
+    try {
+      const response = await api.get('/programs?limit=6')
+      setFeaturedPrograms(response.data.data.programs || [])
+    } catch (error) {
+      console.error('Failed to fetch featured programs:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % Math.ceil(featuredPrograms.length / 3))
+  }
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + Math.ceil(featuredPrograms.length / 3)) % Math.ceil(featuredPrograms.length / 3))
+  }
+
   const features = [
     {
       icon: Search,
@@ -70,7 +99,7 @@ const Home = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link to="/programs" className="bg-white text-blue-600 hover:bg-blue-50 font-semibold py-4 px-8 rounded-lg transition-all duration-200 text-center shadow-lg hover:shadow-xl">
-                  Explore Programs
+                  Explore Internships
                 </Link>
                 <Link to="/signup" className="border-2 border-white text-white hover:bg-white hover:text-blue-600 font-semibold py-4 px-8 rounded-lg transition-all duration-200 text-center">
                   Get Started Free
@@ -115,8 +144,149 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Featured Programs Carousel */}
       <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Featured Internships
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Discover our most popular internship programs designed by industry experts - All at ₹2,000 only!
+            </p>
+          </div>
+
+          {!loading && featuredPrograms.length > 0 && (
+            <div className="relative">
+              {/* Carousel Container */}
+              <div className="overflow-hidden">
+                <div 
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                >
+                  {Array.from({ length: Math.ceil(featuredPrograms.length / 3) }).map((_, slideIndex) => (
+                    <div key={slideIndex} className="w-full flex-shrink-0">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {featuredPrograms.slice(slideIndex * 3, slideIndex * 3 + 3).map((program) => (
+                          <div key={program.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                            <div className="relative h-48 bg-gradient-to-br from-primary-500 to-primary-700">
+                              <img
+                                src={program.imageUrl || 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400'}
+                                alt={program.title}
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute top-4 left-4">
+                                <span className={`px-3 py-1 text-xs font-semibold rounded-full ${
+                                  program.difficultyLevel === 'beginner' 
+                                    ? 'bg-green-100 text-green-800'
+                                    : program.difficultyLevel === 'intermediate'
+                                    ? 'bg-yellow-100 text-yellow-800'
+                                    : 'bg-red-100 text-red-800'
+                                }`}>
+                                  {program.difficultyLevel?.toUpperCase()}
+                                </span>
+                              </div>
+                              <div className="absolute top-4 right-4">
+                                <div className="bg-white bg-opacity-90 backdrop-blur-sm rounded-lg px-2 py-1">
+                                  <div className="flex items-center text-yellow-500">
+                                    <Star className="h-3 w-3 fill-current" />
+                                    <span className="text-xs font-medium text-gray-700 ml-1">4.8</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="p-6">
+                              <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+                                {program.title}
+                              </h3>
+                              <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                                {program.description}
+                              </p>
+
+                              <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center text-sm text-gray-600">
+                                  <Users className="h-4 w-4 mr-1" />
+                                  <span>{program.durationWeeks} weeks</span>
+                                </div>
+                                <div className="text-right">
+                                  <span className="text-lg font-bold text-primary-600">₹{program.finalPrice}</span>
+                                  {program.discountPercentage > 0 && (
+                                    <span className="text-sm text-gray-500 line-through ml-2">₹{program.price}</span>
+                                  )}
+                                </div>
+                              </div>
+
+                              <Link
+                                to={`/programs/${program.id}`}
+                                className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 text-center block"
+                              >
+                                View Details
+                              </Link>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Navigation Buttons */}
+              {Math.ceil(featuredPrograms.length / 3) > 1 && (
+                <>
+                  <button
+                    onClick={prevSlide}
+                    className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    <ChevronLeft className="h-6 w-6 text-gray-600" />
+                  </button>
+                  <button
+                    onClick={nextSlide}
+                    className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 bg-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    <ChevronRight className="h-6 w-6 text-gray-600" />
+                  </button>
+                </>
+              )}
+
+              {/* Dots Indicator */}
+              {Math.ceil(featuredPrograms.length / 3) > 1 && (
+                <div className="flex justify-center mt-8 space-x-2">
+                  {Array.from({ length: Math.ceil(featuredPrograms.length / 3) }).map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentSlide(index)}
+                      className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                        currentSlide === index ? 'bg-primary-600' : 'bg-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {loading && (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+            </div>
+          )}
+
+          <div className="text-center mt-12">
+            <Link 
+              to="/programs" 
+              className="inline-flex items-center bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+            >
+              View All Internships
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -146,7 +316,7 @@ const Home = () => {
       </section>
 
       {/* How It Works */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -164,7 +334,9 @@ const Home = () => {
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-3">Create Your Profile</h3>
               <p className="text-gray-600">Sign up and build your professional profile with your skills and interests</p>
-            </div><div className="text-center">
+            </div>
+
+            <div className="text-center">
               <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold text-white">2</span>
               </div>
@@ -184,7 +356,7 @@ const Home = () => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
