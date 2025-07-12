@@ -1,11 +1,11 @@
-import React from 'react'
+import React from "react";
 
-const Card = ({ children, className = '', ...props }) => {
+const Card = ({ children, className = "", ...props }) => {
   return (
     <div className={`card ${className}`} {...props}>
       {children}
     </div>
-  )
-}
+  );
+};
 
-export default Card
+export default Card;

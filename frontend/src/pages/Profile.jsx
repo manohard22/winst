@@ -1,86 +1,96 @@
-import React, { useState, useEffect } from 'react'
-import { useAuth } from '../contexts/AuthContext'
-import api from '../services/api'
-import { User, Mail, Phone, MapPin, GraduationCap, Github, Linkedin } from 'lucide-react'
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import api from "../services/api";
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  GraduationCap,
+  Github,
+  Linkedin,
+} from "lucide-react";
 
 const Profile = () => {
-  const { user, fetchProfile } = useAuth()
+  const { user, fetchProfile } = useAuth();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    phone: '',
-    dateOfBirth: '',
-    gender: '',
-    address: '',
-    city: '',
-    state: '',
-    country: 'India',
-    pincode: '',
-    collegeName: '',
-    degree: '',
-    branch: '',
-    yearOfStudy: '',
-    cgpa: '',
-    linkedinUrl: '',
-    githubUrl: '',
-    portfolioUrl: ''
-  })
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
+    firstName: "",
+    lastName: "",
+    phone: "",
+    dateOfBirth: "",
+    gender: "",
+    address: "",
+    city: "",
+    state: "",
+    country: "India",
+    pincode: "",
+    collegeName: "",
+    degree: "",
+    branch: "",
+    yearOfStudy: "",
+    cgpa: "",
+    linkedinUrl: "",
+    githubUrl: "",
+    portfolioUrl: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (user) {
       setFormData({
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
-        phone: user.phone || '',
-        dateOfBirth: user.dateOfBirth ? user.dateOfBirth.split('T')[0] : '',
-        gender: user.gender || '',
-        address: user.address || '',
-        city: user.city || '',
-        state: user.state || '',
-        country: user.country || 'India',
-        pincode: user.pincode || '',
-        collegeName: user.collegeName || '',
-        degree: user.degree || '',
-        branch: user.branch || '',
-        yearOfStudy: user.yearOfStudy || '',
-        cgpa: user.cgpa || '',
-        linkedinUrl: user.linkedinUrl || '',
-        githubUrl: user.githubUrl || '',
-        portfolioUrl: user.portfolioUrl || ''
-      })
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        phone: user.phone || "",
+        dateOfBirth: user.dateOfBirth ? user.dateOfBirth.split("T")[0] : "",
+        gender: user.gender || "",
+        address: user.address || "",
+        city: user.city || "",
+        state: user.state || "",
+        country: user.country || "India",
+        pincode: user.pincode || "",
+        collegeName: user.collegeName || "",
+        degree: user.degree || "",
+        branch: user.branch || "",
+        yearOfStudy: user.yearOfStudy || "",
+        cgpa: user.cgpa || "",
+        linkedinUrl: user.linkedinUrl || "",
+        githubUrl: user.githubUrl || "",
+        portfolioUrl: user.portfolioUrl || "",
+      });
     }
-  }, [user])
+  }, [user]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setMessage('')
+    e.preventDefault();
+    setLoading(true);
+    setMessage("");
 
     try {
-      await api.put('/users/profile', formData)
-      await fetchProfile()
-      setMessage('Profile updated successfully!')
+      await api.put("/users/profile", formData);
+      await fetchProfile();
+      setMessage("Profile updated successfully!");
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Failed to update profile')
+      setMessage(error.response?.data?.message || "Failed to update profile");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Profile Settings</h1>
-        <p className="text-gray-600">Manage your account information and preferences</p>
+        <p className="text-gray-600">
+          Manage your account information and preferences
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -106,11 +116,13 @@ const Profile = () => {
         <div className="lg:col-span-2">
           <div className="card">
             {message && (
-              <div className={`mb-6 p-4 rounded-lg ${
-                message.includes('successfully') 
-                  ? 'bg-green-50 border border-green-200 text-green-600'
-                  : 'bg-red-50 border border-red-200 text-red-600'
-              }`}>
+              <div
+                className={`mb-6 p-4 rounded-lg ${
+                  message.includes("successfully")
+                    ? "bg-green-50 border border-green-200 text-green-600"
+                    : "bg-red-50 border border-red-200 text-red-600"
+                }`}
+              >
                 {message}
               </div>
             )}
@@ -118,7 +130,9 @@ const Profile = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Personal Information */}
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Personal Information</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Personal Information
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -189,14 +203,16 @@ const Profile = () => {
 
               {/* Academic Information */}
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Academic Information</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Academic Information
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       College Name
                     </label>
                     <input
-                type="text"
+                      type="text"
                       name="collegeName"
                       className="input-field"
                       value={formData.collegeName}
@@ -267,7 +283,9 @@ const Profile = () => {
 
               {/* Social Links */}
               <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Social Links</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Social Links
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -317,7 +335,7 @@ const Profile = () => {
                   disabled={loading}
                   className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Updating...' : 'Update Profile'}
+                  {loading ? "Updating..." : "Update Profile"}
                 </button>
               </div>
             </form>
@@ -325,7 +343,7 @@ const Profile = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;

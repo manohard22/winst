@@ -1,61 +1,65 @@
-import React, { useState } from 'react'
-import { Save, Bell, Shield, Database, Mail } from 'lucide-react'
+import React, { useState } from "react";
+import { Save, Bell, Shield, Database, Mail } from "lucide-react";
 
 const Settings = () => {
   const [settings, setSettings] = useState({
-    siteName: 'Lucro Internship Portal',
-    siteDescription: 'Comprehensive internship management system',
-    adminEmail: 'admin@lucro.com',
-    supportEmail: 'support@lucro.com',
-    maxFileSize: '5',
+    siteName: "Lucro Internship Portal",
+    siteDescription: "Comprehensive internship management system",
+    adminEmail: "admin@lucro.com",
+    supportEmail: "support@lucro.com",
+    maxFileSize: "5",
     allowRegistration: true,
     requireEmailVerification: true,
     enableNotifications: true,
     maintenanceMode: false,
     autoBackup: true,
-    backupFrequency: 'daily'
-  })
-  const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
+    backupFrequency: "daily",
+  });
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setMessage('')
+    e.preventDefault();
+    setLoading(true);
+    setMessage("");
 
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      setMessage('Settings updated successfully!')
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setMessage("Settings updated successfully!");
     } catch (error) {
-      setMessage('Failed to update settings')
+      setMessage("Failed to update settings");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setSettings(prev => ({
+    const { name, value, type, checked } = e.target;
+    setSettings((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }))
-  }
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-600">Manage your portal configuration and preferences</p>
+        <p className="text-gray-600">
+          Manage your portal configuration and preferences
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {message && (
-          <div className={`p-4 rounded-lg ${
-            message.includes('successfully') 
-              ? 'bg-green-50 border border-green-200 text-green-600'
-              : 'bg-red-50 border border-red-200 text-red-600'
-          }`}>
+          <div
+            className={`p-4 rounded-lg ${
+              message.includes("successfully")
+                ? "bg-green-50 border border-green-200 text-green-600"
+                : "bg-red-50 border border-red-200 text-red-600"
+            }`}
+          >
             {message}
           </div>
         )}
@@ -64,12 +68,16 @@ const Settings = () => {
         <div className="card">
           <div className="flex items-center mb-4">
             <Shield className="h-5 w-5 text-gray-600 mr-2" />
-            <h2 className="text-lg font-semibold text-gray-900">General Settings</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              General Settings
+            </h2>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">Site Name</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Site Name
+              </label>
               <input
                 type="text"
                 name="siteName"
@@ -79,7 +87,9 @@ const Settings = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Admin Email</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Admin Email
+              </label>
               <input
                 type="email"
                 name="adminEmail"
@@ -89,7 +99,9 @@ const Settings = () => {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700">Site Description</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Site Description
+              </label>
               <textarea
                 name="siteDescription"
                 rows={3}
@@ -99,7 +111,9 @@ const Settings = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Support Email</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Support Email
+              </label>
               <input
                 type="email"
                 name="supportEmail"
@@ -109,7 +123,9 @@ const Settings = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Max File Size (MB)</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Max File Size (MB)
+              </label>
               <input
                 type="number"
                 name="maxFileSize"
@@ -125,14 +141,20 @@ const Settings = () => {
         <div className="card">
           <div className="flex items-center mb-4">
             <Shield className="h-5 w-5 text-gray-600 mr-2" />
-            <h2 className="text-lg font-semibold text-gray-900">User Management</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              User Management
+            </h2>
           </div>
-          
+
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-900">Allow User Registration</h3>
-                <p className="text-sm text-gray-600">Allow new users to register for accounts</p>
+                <h3 className="text-sm font-medium text-gray-900">
+                  Allow User Registration
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Allow new users to register for accounts
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -148,8 +170,12 @@ const Settings = () => {
 
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-900">Require Email Verification</h3>
-                <p className="text-sm text-gray-600">Users must verify their email before accessing the portal</p>
+                <h3 className="text-sm font-medium text-gray-900">
+                  Require Email Verification
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Users must verify their email before accessing the portal
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -169,14 +195,20 @@ const Settings = () => {
         <div className="card">
           <div className="flex items-center mb-4">
             <Bell className="h-5 w-5 text-gray-600 mr-2" />
-            <h2 className="text-lg font-semibold text-gray-900">Notifications</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Notifications
+            </h2>
           </div>
-          
+
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-900">Enable Notifications</h3>
-                <p className="text-sm text-gray-600">Send email notifications for important events</p>
+                <h3 className="text-sm font-medium text-gray-900">
+                  Enable Notifications
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Send email notifications for important events
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -198,12 +230,16 @@ const Settings = () => {
             <Database className="h-5 w-5 text-gray-600 mr-2" />
             <h2 className="text-lg font-semibold text-gray-900">System</h2>
           </div>
-          
+
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-900">Maintenance Mode</h3>
-                <p className="text-sm text-gray-600">Temporarily disable access to the portal</p>
+                <h3 className="text-sm font-medium text-gray-900">
+                  Maintenance Mode
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Temporarily disable access to the portal
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -219,8 +255,12 @@ const Settings = () => {
 
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-medium text-gray-900">Auto Backup</h3>
-                <p className="text-sm text-gray-600">Automatically backup database and files</p>
+                <h3 className="text-sm font-medium text-gray-900">
+                  Auto Backup
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Automatically backup database and files
+                </p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -236,7 +276,9 @@ const Settings = () => {
 
             {settings.autoBackup && (
               <div>
-                <label className="block text-sm font-medium text-gray-700">Backup Frequency</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  Backup Frequency
+                </label>
                 <select
                   name="backupFrequency"
                   className="input-field mt-1 w-full md:w-auto"
@@ -259,12 +301,12 @@ const Settings = () => {
             className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Save className="h-4 w-4 mr-2" />
-            {loading ? 'Saving...' : 'Save Settings'}
+            {loading ? "Saving..." : "Save Settings"}
           </button>
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default Settings
+export default Settings;

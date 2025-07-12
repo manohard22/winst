@@ -1,24 +1,24 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
-import { 
-  Home, 
-  Users, 
-  BookOpen, 
-  GraduationCap, 
-  CheckSquare, 
+import React from "react";
+import { NavLink } from "react-router-dom";
+import {
+  Home,
+  Users,
+  BookOpen,
+  GraduationCap,
+  CheckSquare,
   BarChart3,
-  Settings
-} from 'lucide-react'
+  Settings,
+} from "lucide-react";
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: Home },
-  { name: 'Students', href: '/students', icon: Users },
-  { name: 'Programs', href: '/programs', icon: BookOpen },
-  { name: 'Enrollments', href: '/enrollments', icon: GraduationCap },
-  { name: 'Tasks', href: '/tasks', icon: CheckSquare },
-  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-  { name: 'Settings', href: '/settings', icon: Settings },
-]
+  { name: "Dashboard", href: "/", icon: Home },
+  { name: "Students", href: "/students", icon: Users },
+  { name: "Programs", href: "/programs", icon: BookOpen },
+  { name: "Enrollments", href: "/enrollments", icon: GraduationCap },
+  { name: "Tasks", href: "/tasks", icon: CheckSquare },
+  { name: "Analytics", href: "/analytics", icon: BarChart3 },
+  { name: "Settings", href: "/settings", icon: Settings },
+];
 
 const Sidebar = () => {
   return (
@@ -32,8 +32,8 @@ const Sidebar = () => {
                 className={({ isActive }) =>
                   `flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
                     isActive
-                      ? 'bg-primary-100 text-primary-700'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ? "bg-primary-100 text-primary-700"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                   }`
                 }
               >
@@ -45,7 +45,7 @@ const Sidebar = () => {
         </ul>
       </nav>
     </div>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;

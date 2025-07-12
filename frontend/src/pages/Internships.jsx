@@ -1,58 +1,67 @@
-import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { Search, MapPin, DollarSign, Clock, Filter, Star, Bookmark, Users } from 'lucide-react'
-import api from '../services/api'
-import toast from 'react-hot-toast'
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import {
+  Search,
+  MapPin,
+  DollarSign,
+  Clock,
+  Filter,
+  Star,
+  Bookmark,
+  Users,
+} from "lucide-react";
+import api from "../services/api";
+import toast from "react-hot-toast";
 
 const Internships = () => {
-  const [internships, setInternships] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [internships, setInternships] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
-    search: '',
-    location: '',
-    stipend: '',
-    duration: ''
-  })
+    search: "",
+    location: "",
+    stipend: "",
+    duration: "",
+  });
 
   useEffect(() => {
-    fetchInternships()
-  }, [filters])
+    fetchInternships();
+  }, [filters]);
 
   const fetchInternships = async () => {
     try {
-      const params = new URLSearchParams()
+      const params = new URLSearchParams();
       Object.entries(filters).forEach(([key, value]) => {
-        if (value) params.append(key, value)
-      })
-      
-      const response = await api.get(`/internships?${params.toString()}`)
-      setInternships(response.data)
+        if (value) params.append(key, value);
+      });
+
+      const response = await api.get(`/internships?${params.toString()}`);
+      setInternships(response.data);
     } catch (error) {
-      console.error('Failed to fetch internships:', error)
-      toast.error('Failed to load internships')
+      console.error("Failed to fetch internships:", error);
+      toast.error("Failed to load internships");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleFilterChange = (key, value) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [key]: value
-    }))
-  }
+      [key]: value,
+    }));
+  };
 
   const formatStipend = (stipend) => {
-    if (stipend === 0) return 'Unpaid'
-    return `₹${stipend.toLocaleString()}/month`
-  }
+    if (stipend === 0) return "Unpaid";
+    return `₹${stipend.toLocaleString()}/month`;
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
-    )
+    );
   }
 
   return (
@@ -64,7 +73,8 @@ const Internships = () => {
             Find Your Perfect Internship
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover opportunities that match your skills and interests from top companies worldwide
+            Discover opportunities that match your skills and interests from top
+            companies worldwide
           </p>
         </div>
 
@@ -79,7 +89,7 @@ const Internships = () => {
                 placeholder="Search internships, companies, skills..."
                 className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 value={filters.search}
-                onChange={(e) => handleFilterChange('search', e.target.value)}
+                onChange={(e) => handleFilterChange("search", e.target.value)}
               />
             </div>
 
@@ -89,7 +99,7 @@ const Internships = () => {
               <select
                 className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
                 value={filters.location}
-                onChange={(e) => handleFilterChange('location', e.target.value)}
+                onChange={(e) => handleFilterChange("location", e.target.value)}
               >
                 <option value="">All Locations</option>
                 <option value="Remote">Remote</option>
@@ -108,7 +118,7 @@ const Internships = () => {
               <select
                 className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
                 value={filters.stipend}
-                onChange={(e) => handleFilterChange('stipend', e.target.value)}
+                onChange={(e) => handleFilterChange("stipend", e.target.value)}
               >
                 <option value="">All Stipends</option>
                 <option value="0">Unpaid</option>
@@ -126,7 +136,7 @@ const Internships = () => {
               <select
                 className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none bg-white"
                 value={filters.duration}
-                onChange={(e) => handleFilterChange('duration', e.target.value)}
+                onChange={(e) => handleFilterChange("duration", e.target.value)}
               >
                 <option value="">All Durations</option>
                 <option value="1-3">1-3 months</option>
@@ -140,14 +150,16 @@ const Internships = () => {
         {/* Results Header */}
         <div className="flex items-center justify-between mb-6">
           <p className="text-gray-600">
-            Showing <span className="font-semibold">{internships.length}</span> internship{internships.length !== 1 ? 's' : ''}
+            Showing <span className="font-semibold">{internships.length}</span>{" "}
+            internship{internships.length !== 1 ? "s" : ""}
           </p>
           <div className="flex items-center space-x-2">
             <Filter className="h-5 w-5 text-gray-400" />
             <select className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option>Most Relevant</option>
               <option>Newest First</option>
-              <option>Highest Stipend</option><option>Shortest Duration</option>
+              <option>Highest Stipend</option>
+              <option>Shortest Duration</option>
             </select>
           </div>
         </div>
@@ -170,16 +182,20 @@ const Internships = () => {
                           <h3 className="text-xl font-semibold text-gray-900 hover:text-blue-600 transition-colors">
                             {internship.title}
                           </h3>
-                          <p className="text-gray-600 font-medium">{internship.company}</p>
+                          <p className="text-gray-600 font-medium">
+                            {internship.company}
+                          </p>
                         </div>
                       </div>
                       <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                         <Bookmark className="h-5 w-5 text-gray-400" />
                       </button>
                     </div>
-                    
-                    <p className="text-gray-600 mb-4 line-clamp-2 leading-relaxed">{internship.description}</p>
-                    
+
+                    <p className="text-gray-600 mb-4 line-clamp-2 leading-relaxed">
+                      {internship.description}
+                    </p>
+
                     <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-4">
                       <div className="flex items-center">
                         <MapPin className="h-4 w-4 mr-1" />
@@ -204,24 +220,28 @@ const Internships = () => {
                       <span className="badge badge-green">Immediate Start</span>
                       <div className="flex items-center text-yellow-500">
                         <Star className="h-4 w-4 fill-current" />
-                        <span className="text-sm text-gray-600 ml-1">4.8 (24 reviews)</span>
+                        <span className="text-sm text-gray-600 ml-1">
+                          4.8 (24 reviews)
+                        </span>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="mt-6 lg:mt-0 lg:ml-6 flex flex-col items-end">
                     <div className="text-right mb-4">
                       <div className="text-2xl font-bold text-blue-600">
                         {formatStipend(internship.stipend)}
                       </div>
-                      <div className="text-sm text-gray-500">+ Performance Bonus</div>
+                      <div className="text-sm text-gray-500">
+                        + Performance Bonus
+                      </div>
                     </div>
-                    
+
                     <div className="flex space-x-3">
                       <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                         View Details
                       </button>
-                      <Link 
+                      <Link
                         to={`/payment/${internship.id}`}
                         className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                       >
@@ -237,10 +257,21 @@ const Internships = () => {
               <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
                 <Search className="h-12 w-12 text-gray-400" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No internships found</h3>
-              <p className="text-gray-600 mb-6">Try adjusting your search filters to find more opportunities</p>
-              <button 
-                onClick={() => setFilters({ search: '', location: '', stipend: '', duration: '' })}
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                No internships found
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Try adjusting your search filters to find more opportunities
+              </p>
+              <button
+                onClick={() =>
+                  setFilters({
+                    search: "",
+                    location: "",
+                    stipend: "",
+                    duration: "",
+                  })
+                }
                 className="btn-primary"
               >
                 Clear Filters
@@ -252,14 +283,12 @@ const Internships = () => {
         {/* Load More */}
         {internships.length > 0 && (
           <div className="text-center mt-12">
-            <button className="btn-secondary">
-              Load More Internships
-            </button>
+            <button className="btn-secondary">Load More Internships</button>
           </div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Internships
+export default Internships;

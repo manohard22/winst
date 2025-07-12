@@ -1,48 +1,62 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { GraduationCap, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram, Youtube } from 'lucide-react'
+import React from "react";
+import { Link } from "react-router-dom";
+import {
+  GraduationCap,
+  Mail,
+  Phone,
+  MapPin,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+  Youtube,
+} from "lucide-react";
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getFullYear();
 
   const footerLinks = {
     company: [
-      { name: 'About Us', href: '/about' },
-      { name: 'Contact', href: '/contact' },
-      { name: 'Careers', href: '/careers' },
-      { name: 'Press', href: '/press' },
-      { name: 'Blog', href: '/blog' }
+      { name: "About Us", href: "/about" },
+      { name: "Contact", href: "/contact" },
+      { name: "Careers", href: "/careers" },
+      { name: "Press", href: "/press" },
+      { name: "Blog", href: "/blog" },
     ],
     internships: [
-      { name: 'Full Stack Development', href: '/programs?category=fullstack' },
-      { name: 'UI/UX Design', href: '/programs?category=design' },
-      { name: 'Data Science', href: '/programs?category=datascience' },
-      { name: 'Mobile Development', href: '/programs?category=mobile' },
-      { name: 'Digital Marketing', href: '/programs?category=marketing' }
+      { name: "Full Stack Development", href: "/programs?category=fullstack" },
+      { name: "UI/UX Design", href: "/programs?category=design" },
+      { name: "Data Science", href: "/programs?category=datascience" },
+      { name: "Mobile Development", href: "/programs?category=mobile" },
+      { name: "Digital Marketing", href: "/programs?category=marketing" },
     ],
     support: [
-      { name: 'Help Center', href: '/help' },
-      { name: 'Student Support', href: '/student-support' },
-      { name: 'Employer Support', href: '/employer-support' },
-      { name: 'Community', href: '/community' },
-      { name: 'FAQ', href: '/faq' }
+      { name: "Help Center", href: "/help" },
+      { name: "Student Support", href: "/student-support" },
+      { name: "Employer Support", href: "/employer-support" },
+      { name: "Community", href: "/community" },
+      { name: "FAQ", href: "/faq" },
     ],
     legal: [
-      { name: 'Privacy Policy', href: '/privacy' },
-      { name: 'Terms of Service', href: '/terms' },
-      { name: 'Cookie Policy', href: '/cookies' },
-      { name: 'Refund Policy', href: '/refund' },
-      { name: 'Disclaimer', href: '/disclaimer' }
-    ]
-  }
+      { name: "Privacy Policy", href: "/privacy" },
+      { name: "Terms of Service", href: "/terms" },
+      { name: "Cookie Policy", href: "/cookies" },
+      { name: "Refund Policy", href: "/refund" },
+      { name: "Disclaimer", href: "/disclaimer" },
+    ],
+  };
 
   const socialLinks = [
-    { name: 'Facebook', icon: Facebook, href: 'https://facebook.com/lucro' },
-    { name: 'Twitter', icon: Twitter, href: 'https://twitter.com/lucro' },
-    { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com/company/lucro' },
-    { name: 'Instagram', icon: Instagram, href: 'https://instagram.com/lucro' },
-    { name: 'YouTube', icon: Youtube, href: 'https://youtube.com/lucro' }
-  ]
+    { name: "Facebook", icon: Facebook, href: "https://facebook.com/lucro" },
+    { name: "Twitter", icon: Twitter, href: "https://twitter.com/lucro" },
+    {
+      name: "LinkedIn",
+      icon: Linkedin,
+      href: "https://linkedin.com/company/lucro",
+    },
+    { name: "Instagram", icon: Instagram, href: "https://instagram.com/lucro" },
+    { name: "YouTube", icon: Youtube, href: "https://youtube.com/lucro" },
+  ];
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -65,10 +79,11 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-gray-300 mb-6 leading-relaxed">
-              Lucro is India's leading internship platform connecting talented students with top companies. 
-              We provide comprehensive training programs and real-world experience to launch successful careers.
+              Lucro is India's leading internship platform connecting talented
+              students with top companies. We provide comprehensive training
+              programs and real-world experience to launch successful careers.
             </p>
-            
+
             {/* Contact Info */}
             <div className="space-y-3">
               <div className="flex items-center text-gray-300">
@@ -81,7 +96,9 @@ const Footer = () => {
               </div>
               <div className="flex items-center text-gray-300">
                 <MapPin className="h-4 w-4 mr-3 text-blue-400" />
-                <span className="text-sm">HITEC City, Hyderabad, Telangana 500081</span>
+                <span className="text-sm">
+                  HITEC City, Hyderabad, Telangana 500081
+                </span>
               </div>
             </div>
           </div>
@@ -92,8 +109,8 @@ const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    to={link.href} 
+                  <Link
+                    to={link.href}
                     className="text-gray-300 hover:text-blue-400 transition-colors duration-200 text-sm"
                   >
                     {link.name}
@@ -105,12 +122,14 @@ const Footer = () => {
 
           {/* Internships Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-white">Internships</h3>
+            <h3 className="text-lg font-semibold mb-4 text-white">
+              Internships
+            </h3>
             <ul className="space-y-3">
               {footerLinks.internships.map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    to={link.href} 
+                  <Link
+                    to={link.href}
                     className="text-gray-300 hover:text-blue-400 transition-colors duration-200 text-sm"
                   >
                     {link.name}
@@ -126,8 +145,8 @@ const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.support.map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    to={link.href} 
+                  <Link
+                    to={link.href}
                     className="text-gray-300 hover:text-blue-400 transition-colors duration-200 text-sm"
                   >
                     {link.name}
@@ -143,8 +162,8 @@ const Footer = () => {
             <ul className="space-y-3">
               {footerLinks.legal.map((link) => (
                 <li key={link.name}>
-                  <Link 
-                    to={link.href} 
+                  <Link
+                    to={link.href}
                     className="text-gray-300 hover:text-blue-400 transition-colors duration-200 text-sm"
                   >
                     {link.name}
@@ -159,9 +178,12 @@ const Footer = () => {
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div>
-              <h3 className="text-xl font-semibold mb-2 text-white">Stay Updated</h3>
+              <h3 className="text-xl font-semibold mb-2 text-white">
+                Stay Updated
+              </h3>
               <p className="text-gray-300 text-sm">
-                Get the latest internship opportunities and career tips delivered to your inbox.
+                Get the latest internship opportunities and career tips
+                delivered to your inbox.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
@@ -236,7 +258,7 @@ const Footer = () => {
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

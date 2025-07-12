@@ -1,43 +1,45 @@
-import React, { useState, useEffect } from 'react'
-import api from '../services/api'
-import { Search, Filter, Eye, Mail, Phone, GraduationCap } from 'lucide-react'
+import React, { useState, useEffect } from "react";
+import api from "../services/api";
+import { Search, Filter, Eye, Mail, Phone, GraduationCap } from "lucide-react";
 
 const Students = () => {
-  const [students, setStudents] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedStudent, setSelectedStudent] = useState(null)
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedStudent, setSelectedStudent] = useState(null);
 
   useEffect(() => {
-    fetchStudents()
-  }, [searchTerm])
+    fetchStudents();
+  }, [searchTerm]);
 
   const fetchStudents = async () => {
     try {
-      const params = new URLSearchParams()
-      if (searchTerm) params.append('search', searchTerm)
-      
-      const response = await api.get(`/admin/students?${params.toString()}`)
-      setStudents(response.data.data.students)
+      const params = new URLSearchParams();
+      if (searchTerm) params.append("search", searchTerm);
+
+      const response = await api.get(`/admin/students?${params.toString()}`);
+      setStudents(response.data.data.students);
     } catch (error) {
-      console.error('Failed to fetch students:', error)
+      console.error("Failed to fetch students:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Students Management</h1>
+        <h1 className="text-2xl font-bold text-gray-900">
+          Students Management
+        </h1>
         <p className="text-gray-600">Manage and monitor student accounts</p>
       </div>
 
@@ -91,7 +93,8 @@ const Students = () => {
                       <div className="flex-shrink-0 h-10 w-10">
                         <div className="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
                           <span className="text-primary-600 font-medium text-sm">
-                            {student.firstName.charAt(0)}{student.lastName.charAt(0)}
+                            {student.firstName.charAt(0)}
+                            {student.lastName.charAt(0)}
                           </span>
                         </div>
                       </div>
@@ -99,7 +102,9 @@ const Students = () => {
                         <div className="text-sm font-medium text-gray-900">
                           {student.firstName} {student.lastName}
                         </div>
-                        <div className="text-sm text-gray-500">{student.email}</div>
+                        <div className="text-sm text-gray-500">
+                          {student.email}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -115,30 +120,36 @@ const Students = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-900">
-                      {student.collegeName && (
-                        <div>{student.collegeName}</div>
-                      )}
+                      {student.collegeName && <div>{student.collegeName}</div>}
                       {student.degree && student.branch && (
                         <div className="text-sm text-gray-500">
                           {student.degree} - {student.branch}
                         </div>
                       )}
                       {student.cgpa && (
-                        <div className="text-sm text-gray-500">CGPA: {student.cgpa}</div>
+                        <div className="text-sm text-gray-500">
+                          CGPA: {student.cgpa}
+                        </div>
                       )}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{student.enrollmentCount}</div>
-                    <div className="text-sm text-gray-500">₹{student.totalSpent.toLocaleString()}</div>
+                    <div className="text-sm text-gray-900">
+                      {student.enrollmentCount}
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      ₹{student.totalSpent.toLocaleString()}
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      student.isActive 
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                    }`}>
-                      {student.isActive ? 'Active' : 'Inactive'}
+                    <span
+                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        student.isActive
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {student.isActive ? "Active" : "Inactive"}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -165,8 +176,12 @@ const Students = () => {
       {students.length === 0 && (
         <div className="text-center py-12">
           <GraduationCap className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-sm font-medium text-gray-900">No students found</h3>
-          <p className="mt-1 text-sm text-gray-500">Try adjusting your search criteria</p>
+          <h3 className="mt-2 text-sm font-medium text-gray-900">
+            No students found
+          </h3>
+          <p className="mt-1 text-sm text-gray-500">
+            Try adjusting your search criteria
+          </p>
         </div>
       )}
 
@@ -176,7 +191,9 @@ const Students = () => {
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900">Student Details</h2>
+                <h2 className="text-xl font-bold text-gray-900">
+                  Student Details
+                </h2>
                 <button
                   onClick={() => setSelectedStudent(null)}
                   className="text-gray-400 hover:text-gray-600"
@@ -184,12 +201,13 @@ const Students = () => {
                   ×
                 </button>
               </div>
-              
+
               <div className="space-y-6">
                 <div className="flex items-center space-x-4">
                   <div className="h-16 w-16 rounded-full bg-primary-100 flex items-center justify-center">
                     <span className="text-primary-600 font-medium text-lg">
-                      {selectedStudent.firstName.charAt(0)}{selectedStudent.lastName.charAt(0)}
+                      {selectedStudent.firstName.charAt(0)}
+                      {selectedStudent.lastName.charAt(0)}
                     </span>
                   </div>
                   <div>
@@ -202,51 +220,83 @@ const Students = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Personal Information</h4>
+                    <h4 className="font-medium text-gray-900 mb-3">
+                      Personal Information
+                    </h4>
                     <div className="space-y-2 text-sm">
                       {selectedStudent.phone && (
-                        <div><strong>Phone:</strong> {selectedStudent.phone}</div>
+                        <div>
+                          <strong>Phone:</strong> {selectedStudent.phone}
+                        </div>
                       )}
                       {selectedStudent.dateOfBirth && (
-                        <div><strong>Date of Birth:</strong> {new Date(selectedStudent.dateOfBirth).toLocaleDateString()}</div>
+                        <div>
+                          <strong>Date of Birth:</strong>{" "}
+                          {new Date(
+                            selectedStudent.dateOfBirth
+                          ).toLocaleDateString()}
+                        </div>
                       )}
                       {selectedStudent.gender && (
-                        <div><strong>Gender:</strong> {selectedStudent.gender}</div>
+                        <div>
+                          <strong>Gender:</strong> {selectedStudent.gender}
+                        </div>
                       )}
                     </div>
                   </div>
 
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Academic Information</h4>
+                    <h4 className="font-medium text-gray-900 mb-3">
+                      Academic Information
+                    </h4>
                     <div className="space-y-2 text-sm">
                       {selectedStudent.collegeName && (
-                        <div><strong>College:</strong> {selectedStudent.collegeName}</div>
+                        <div>
+                          <strong>College:</strong>{" "}
+                          {selectedStudent.collegeName}
+                        </div>
                       )}
                       {selectedStudent.degree && (
-                        <div><strong>Degree:</strong> {selectedStudent.degree}</div>
+                        <div>
+                          <strong>Degree:</strong> {selectedStudent.degree}
+                        </div>
                       )}
                       {selectedStudent.branch && (
-                        <div><strong>Branch:</strong> {selectedStudent.branch}</div>
+                        <div>
+                          <strong>Branch:</strong> {selectedStudent.branch}
+                        </div>
                       )}
                       {selectedStudent.yearOfStudy && (
-                        <div><strong>Year:</strong> {selectedStudent.yearOfStudy}</div>
+                        <div>
+                          <strong>Year:</strong> {selectedStudent.yearOfStudy}
+                        </div>
                       )}
                       {selectedStudent.cgpa && (
-                        <div><strong>CGPA:</strong> {selectedStudent.cgpa}</div>
+                        <div>
+                          <strong>CGPA:</strong> {selectedStudent.cgpa}
+                        </div>
                       )}
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Enrollment Statistics</h4>
+                  <h4 className="font-medium text-gray-900 mb-3">
+                    Enrollment Statistics
+                  </h4>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-blue-50 p-4 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">{selectedStudent.enrollmentCount}</div>
-                      <div className="text-sm text-blue-800">Total Enrollments</div>
+                      <div className="text-2xl font-bold text-blue-600">
+                        {selectedStudent.enrollmentCount}
+                      </div>
+                      <div className="text-sm text-blue-800">
+                        Total Enrollments
+                      </div>
                     </div>
                     <div className="bg-green-50 p-4 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">₹{selectedStudent.totalSpent.toLocaleString()}</div>
+                      <div className="text-2xl font-bold text-green-600">
+                        ₹{selectedStudent.totalSpent.toLocaleString()}
+                      </div>
                       <div className="text-sm text-green-800">Total Spent</div>
                     </div>
                   </div>
@@ -254,7 +304,9 @@ const Students = () => {
 
                 {(selectedStudent.linkedinUrl || selectedStudent.githubUrl) && (
                   <div>
-                    <h4 className="font-medium text-gray-900 mb-3">Social Links</h4>
+                    <h4 className="font-medium text-gray-900 mb-3">
+                      Social Links
+                    </h4>
                     <div className="space-y-2">
                       {selectedStudent.linkedinUrl && (
                         <a
@@ -285,7 +337,7 @@ const Students = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Students
+export default Students;

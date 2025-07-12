@@ -1,51 +1,51 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
-import { Eye, EyeOff } from 'lucide-react'
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { Eye, EyeOff } from "lucide-react";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    phone: '',
-    dateOfBirth: '',
-    gender: '',
-    collegeName: '',
-    degree: '',
-    branch: '',
-    yearOfStudy: '',
-    cgpa: '',
-    linkedinUrl: '',
-    githubUrl: ''
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    phone: "",
+    dateOfBirth: "",
+    gender: "",
+    collegeName: "",
+    degree: "",
+    branch: "",
+    yearOfStudy: "",
+    cgpa: "",
+    linkedinUrl: "",
+    githubUrl: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const { register } = useAuth()
+  const { register } = useAuth();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    const result = await register(formData)
-    
+    const result = await register(formData);
+
     if (!result.success) {
-      setError(result.message)
+      setError(result.message);
     }
-    
-    setLoading(false)
-  }
+
+    setLoading(false);
+  };
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -58,7 +58,7 @@ const Register = () => {
             Create your student account to get started
           </p>
         </div>
-        
+
         <div className="bg-white shadow rounded-lg p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
@@ -66,13 +66,17 @@ const Register = () => {
                 {error}
               </div>
             )}
-            
+
             {/* Personal Information */}
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Personal Information</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Personal Information
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">First Name *</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    First Name *
+                  </label>
                   <input
                     type="text"
                     name="firstName"
@@ -83,7 +87,9 @@ const Register = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Last Name *</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Last Name *
+                  </label>
                   <input
                     type="text"
                     name="lastName"
@@ -94,7 +100,9 @@ const Register = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Email *</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Email *
+                  </label>
                   <input
                     type="email"
                     name="email"
@@ -105,7 +113,9 @@ const Register = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Phone</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Phone
+                  </label>
                   <input
                     type="tel"
                     name="phone"
@@ -115,7 +125,9 @@ const Register = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Date of Birth
+                  </label>
                   <input
                     type="date"
                     name="dateOfBirth"
@@ -125,7 +137,9 @@ const Register = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Gender</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Gender
+                  </label>
                   <select
                     name="gender"
                     className="input-field mt-1"
@@ -143,10 +157,14 @@ const Register = () => {
 
             {/* Academic Information */}
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Academic Information</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Academic Information
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">College Name</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    College Name
+                  </label>
                   <input
                     type="text"
                     name="collegeName"
@@ -156,7 +174,9 @@ const Register = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Degree</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Degree
+                  </label>
                   <input
                     type="text"
                     name="degree"
@@ -167,7 +187,9 @@ const Register = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Branch</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Branch
+                  </label>
                   <input
                     type="text"
                     name="branch"
@@ -178,7 +200,9 @@ const Register = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Year of Study</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Year of Study
+                  </label>
                   <select
                     name="yearOfStudy"
                     className="input-field mt-1"
@@ -193,7 +217,9 @@ const Register = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">CGPA</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    CGPA
+                  </label>
                   <input
                     type="number"
                     name="cgpa"
@@ -211,10 +237,14 @@ const Register = () => {
 
             {/* Social Links */}
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Social Links</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Social Links
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">LinkedIn URL</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    LinkedIn URL
+                  </label>
                   <input
                     type="url"
                     name="linkedinUrl"
@@ -225,7 +255,9 @@ const Register = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">GitHub URL</label>
+                  <label className="block text-sm font-medium text-gray-700">
+                    GitHub URL
+                  </label>
                   <input
                     type="url"
                     name="githubUrl"
@@ -240,10 +272,12 @@ const Register = () => {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700">Password *</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Password *
+              </label>
               <div className="relative mt-1">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   required
                   className="input-field pr-10"
@@ -271,14 +305,17 @@ const Register = () => {
                 disabled={loading}
                 className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Creating Account...' : 'Create Account'}
+                {loading ? "Creating Account..." : "Create Account"}
               </button>
             </div>
 
             <div className="text-center">
               <p className="text-sm text-gray-600">
-                Already have an account?{' '}
-                <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500">
+                Already have an account?{" "}
+                <Link
+                  to="/login"
+                  className="font-medium text-primary-600 hover:text-primary-500"
+                >
                   Sign in here
                 </Link>
               </p>
@@ -287,7 +324,7 @@ const Register = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

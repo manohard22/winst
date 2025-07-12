@@ -1,67 +1,74 @@
-import React, { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import React, { useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const Carousel = ({ 
-  children, 
-  itemsPerSlide = 4, 
-  autoPlay = false, 
+const Carousel = ({
+  children,
+  itemsPerSlide = 4,
+  autoPlay = false,
   autoPlayInterval = 5000,
   showDots = true,
   showArrows = true,
-  className = ""
+  className = "",
 }) => {
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const totalSlides = Math.ceil(React.Children.count(children) / itemsPerSlide)
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const totalSlides = Math.ceil(React.Children.count(children) / itemsPerSlide);
 
   useEffect(() => {
     if (autoPlay && totalSlides > 1) {
       const interval = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % totalSlides)
-      }, autoPlayInterval)
+        setCurrentSlide((prev) => (prev + 1) % totalSlides);
+      }, autoPlayInterval);
 
-      return () => clearInterval(interval)
+      return () => clearInterval(interval);
     }
-  }, [autoPlay, autoPlayInterval, totalSlides])
+  }, [autoPlay, autoPlayInterval, totalSlides]);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % totalSlides)
-  }
+    setCurrentSlide((prev) => (prev + 1) % totalSlides);
+  };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides)
-  }
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+  };
 
   const goToSlide = (index) => {
-    setCurrentSlide(index)
-  }
+    setCurrentSlide(index);
+  };
 
   if (React.Children.count(children) === 0) {
-    return null
+    return null;
   }
 
   return (
     <div className={`relative ${className}`}>
       {/* Carousel Container */}
       <div className="overflow-hidden">
-        <div 
+        <div
           className="flex transition-transform duration-500 ease-in-out"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
         >
           {Array.from({ length: totalSlides }).map((_, slideIndex) => (
             <div key={slideIndex} className="w-full flex-shrink-0">
-              <div className={`grid gap-6 ${
-                itemsPerSlide === 1 ? 'grid-cols-1' :
-                itemsPerSlide === 2 ? 'grid-cols-1 md:grid-cols-2' :
-                itemsPerSlide === 3 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' :
-                itemsPerSlide === 4 ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4' :
-                'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5'
-              }`}>
+              <div
+                className={`grid gap-6 ${
+                  itemsPerSlide === 1
+                    ? "grid-cols-1"
+                    : itemsPerSlide === 2
+                    ? "grid-cols-1 md:grid-cols-2"
+                    : itemsPerSlide === 3
+                    ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                    : itemsPerSlide === 4
+                    ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+                    : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+                }`}
+              >
                 {React.Children.toArray(children)
-                  .slice(slideIndex * itemsPerSlide, slideIndex * itemsPerSlide + itemsPerSlide)
+                  .slice(
+                    slideIndex * itemsPerSlide,
+                    slideIndex * itemsPerSlide + itemsPerSlide
+                  )
                   .map((child, index) => (
-                    <div key={index}>
-                      {child}
-                    </div>
+                    <div key={index}>{child}</div>
                   ))}
               </div>
             </div>
@@ -97,7 +104,7 @@ const Carousel = ({
               key={index}
               onClick={() => goToSlide(index)}
               className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                currentSlide === index ? 'bg-blue-600' : 'bg-gray-300'
+                currentSlide === index ? "bg-blue-600" : "bg-gray-300"
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />
@@ -105,7 +112,7 @@ const Carousel = ({
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Carousel
+export default Carousel;
