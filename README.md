@@ -44,8 +44,8 @@ npm start
 
 The `npm start` command automatically:
 
-- Creates PostgreSQL database: `lucro_portal_db`
-- Creates user: `lucro_db_user`
+- Creates PostgreSQL database: `lucro_portal_db_10`
+- Creates user: `lucro_db_user_10`
 - Sets up all tables and relationships
 - Inserts sample data
 
@@ -56,8 +56,8 @@ The `npm start` command automatically:
 ```env
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=lucro_portal_db
-DB_USER=lucro_db_user
+DB_NAME=lucro_portal_db_10
+DB_USER=lucro_db_user_10
 DB_PASSWORD=root
 JWT_SECRET=your-super-secret-jwt-key-change-in-production
 ```

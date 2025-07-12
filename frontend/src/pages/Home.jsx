@@ -35,51 +35,51 @@ const Home = () => {
   const features = [
     {
       icon: Search,
-      title: 'Smart Search',
-      description: 'Find internships that match your skills and interests with our intelligent search system'
+      title: 'Industry-Focused Learning',
+      description: 'Our internships are designed with real industry requirements, ensuring you learn skills that employers actually need in today\'s competitive market.'
     },
     {
       icon: Briefcase,
-      title: 'Quality Opportunities',
-      description: 'Access curated internships from top companies across various industries'
+      title: 'Hands-On Experience',
+      description: 'Work on live projects and build a portfolio that showcases your abilities. Every internship includes practical assignments that mirror real workplace scenarios.'
     },
     {
       icon: Users,
       title: 'Expert Mentorship',
-      description: 'Get guidance from industry experts and experienced professionals'
+      description: 'Learn directly from industry professionals who have years of experience. Get personalized guidance and career advice throughout your journey.'
     },
     {
       icon: Award,
-      title: 'Skill Certification',
-      description: 'Earn recognized certificates upon successful completion of internships'
+      title: 'Recognized Certification',
+      description: 'Earn certificates that are valued by top companies. Our completion certificates demonstrate your commitment to professional development.'
     }
   ]
 
   const stats = [
-    { number: '10,000+', label: 'Students Placed' },
-    { number: '500+', label: 'Active Internships' },
-    { number: '200+', label: 'Partner Companies' },
-    { number: '95%', label: 'Success Rate' }
+    { number: '2,500+', label: 'Students Trained' },
+    { number: '50+', label: 'Live Internships' },
+    { number: '100+', label: 'Partner Companies' },
+    { number: '94%', label: 'Placement Success' }
   ]
 
   const testimonials = [
     {
-      name: 'Priya Sharma',
-      role: 'Software Engineer at Google',
-      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150',
-      content: 'Lucro helped me land my dream internship at Google. The platform is amazing!'
-    },
-    {
-      name: 'Rahul Kumar',
-      role: 'Data Scientist at Microsoft',
+      name: 'Arjun Mehta',
+      role: 'Software Developer at TCS',
       image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-      content: 'The mentorship and guidance I received through Lucro was invaluable for my career.'
+      content: 'Lucro\'s Full Stack internship gave me the confidence and skills I needed to land my first job. The practical approach made all the difference.'
     },
     {
-      name: 'Anita Patel',
-      role: 'Product Manager at Amazon',
-      image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150',
-      content: 'Thanks to Lucro, I gained practical experience that set me apart from other candidates.'
+      name: 'Kavya Reddy',
+      role: 'UI/UX Designer at Flipkart',
+      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150',
+      content: 'The UI/UX design internship at Lucro was incredibly comprehensive. I learned industry-standard tools and design thinking methodologies.'
+    },
+    {
+      name: 'Rohit Sharma',
+      role: 'Data Analyst at Accenture',
+      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150',
+      content: 'The data science program helped me transition from a non-tech background to a successful career in analytics. Highly recommended!'
     }
   ]
 
@@ -91,18 +91,18 @@ const Home = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="fade-in">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                Launch Your Career with 
-                <span className="text-yellow-300"> Dream Internships</span>
+                Transform Your Career with 
+                <span className="text-yellow-300"> Real-World Internships</span>
               </h1>
               <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed">
-                Connect with top companies, gain real-world experience, and build the skills that matter in today's competitive job market.
+                Bridge the gap between academic learning and industry requirements. Join Lucro's practical internship programs designed by industry experts.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link to="/programs" className="bg-white text-blue-600 hover:bg-blue-50 font-semibold py-4 px-8 rounded-lg transition-all duration-200 text-center shadow-lg hover:shadow-xl">
                   Explore Internships
                 </Link>
                 <Link to="/signup" className="border-2 border-white text-white hover:bg-white hover:text-blue-600 font-semibold py-4 px-8 rounded-lg transition-all duration-200 text-center">
-                  Get Started Free
+                  Start Learning Today
                 </Link>
               </div>
             </div>
@@ -110,7 +110,7 @@ const Home = () => {
               <div className="relative">
                 <img 
                   src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600" 
-                  alt="Students collaborating" 
+                  alt="Students learning together" 
                   className="rounded-2xl shadow-2xl"
                 />
                 <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg">
@@ -120,7 +120,7 @@ const Home = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-gray-900">Success Rate</p>
-                      <p className="text-2xl font-bold text-green-600">95%</p>
+                      <p className="text-2xl font-bold text-green-600">94%</p>
                     </div>
                   </div>
                 </div>
@@ -149,10 +149,10 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Featured Internships
+              Popular Internship Programs
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Discover our most popular internship programs designed by industry experts - All at ₹2,000 only!
+              Choose from our carefully crafted internship programs, each designed to provide industry-relevant skills and practical experience.
             </p>
           </div>
 
@@ -293,7 +293,7 @@ const Home = () => {
               Why Choose Lucro?
             </h2>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              We provide everything you need to find, apply for, and succeed in your dream internship
+              We're committed to providing high-quality, practical learning experiences that prepare you for real-world challenges
             </p>
           </div>
           
@@ -320,10 +320,10 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              How It Works
+              Your Learning Journey
             </h2>
             <p className="text-xl text-gray-600">
-              Get started in just 3 simple steps
+              Simple steps to kickstart your career transformation
             </p>
           </div>
 
@@ -332,24 +332,24 @@ const Home = () => {
               <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold text-white">1</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Create Your Profile</h3>
-              <p className="text-gray-600">Sign up and build your professional profile with your skills and interests</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Choose Your Path</h3>
+              <p className="text-gray-600">Select from our diverse range of internship programs based on your interests and career goals</p>
             </div>
 
             <div className="text-center">
               <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold text-white">2</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Find & Apply</h3>
-              <p className="text-gray-600">Browse through curated internships and apply to positions that match your goals</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Learn & Practice</h3>
+              <p className="text-gray-600">Engage with hands-on projects, receive mentorship, and build real-world skills through practical assignments</p>
             </div>
 
             <div className="text-center">
               <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-2xl font-bold text-white">3</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Start Learning</h3>
-              <p className="text-gray-600">Get selected and begin your journey with mentorship and real-world experience</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">Launch Your Career</h3>
+              <p className="text-gray-600">Graduate with a strong portfolio, industry connections, and the confidence to excel in your chosen field</p>
             </div>
           </div>
         </div>
@@ -363,7 +363,7 @@ const Home = () => {
               Success Stories
             </h2>
             <p className="text-xl text-gray-600">
-              Hear from students who transformed their careers with Lucro
+              Real stories from students who transformed their careers with Lucro
             </p>
           </div>
 
@@ -400,15 +400,15 @@ const Home = () => {
             Ready to Start Your Journey?
           </h2>
           <p className="text-xl text-blue-100 mb-8 leading-relaxed">
-            Join thousands of students who have found their dream internships through Lucro. 
-            Your career transformation starts here.
+            Join thousands of students who have successfully launched their careers through Lucro's practical internship programs. 
+            Your future starts here.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/signup" className="bg-white text-blue-600 hover:bg-blue-50 font-semibold py-4 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl">
-              Get Started Free
+              Start Learning Today
             </Link>
             <Link to="/programs" className="border-2 border-white text-white hover:bg-white hover:text-blue-600 font-semibold py-4 px-8 rounded-lg transition-all duration-200 flex items-center justify-center">
-              Browse Programs
+              Explore Programs
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </div>

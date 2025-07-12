@@ -7,7 +7,7 @@ const router = express.Router();
 // Get all active programs
 router.get('/', async (req, res) => {
   try {
-    const { category, difficulty, search, limit = 10, offset = 0 } = req.query;
+    const { category, difficulty, search, technology, limit = 10, offset = 0 } = req.query;
     
     let query = `
       SELECT 
@@ -43,6 +43,16 @@ router.get('/', async (req, res) => {
       paramCount++;
       query += ` AND p.difficulty_level = $${paramCount}`;
       queryParams.push(difficulty);
+    }
+
+    if (technology) {
+      paramCount++;
+      query += ` AND EXISTS (
+        SELECT 1 FROM program_technologies pt2 
+        JOIN technologies t2 ON pt2.technology_id = t2.id 
+        WHERE pt2.program_id = p.id AND t2.name ILIKE $${paramCount}
+      )`;
+      queryParams.push(`%${technology}%`);
     }
 
     query += ` GROUP BY p.id ORDER BY p.created_at DESC`;

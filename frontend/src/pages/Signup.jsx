@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { Eye, EyeOff, BookOpen, CheckCircle } from 'lucide-react'
+import { Eye, EyeOff, BookOpen, CheckCircle, Gift } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 const Signup = () => {
@@ -10,8 +10,11 @@ const Signup = () => {
     lastName: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    referralCode: '',
+    affiliateCode: ''
   })
+  const [discountInfo, setDiscountInfo] = useState(null)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -51,6 +54,34 @@ const Signup = () => {
       ...formData,
       [e.target.name]: e.target.value
     })
+  }
+
+  const validateReferralCode = async (code) => {
+    if (!code) return
+    try {
+      const response = await api.post('/referrals/validate', { referralCode: code })
+      setDiscountInfo({
+        type: 'referral',
+        amount: response.data.data.discountAmount,
+        referrerName: response.data.data.referrerName
+      })
+    } catch (error) {
+      setDiscountInfo(null)
+    }
+  }
+
+  const validateAffiliateCode = async (code) => {
+    if (!code) return
+    try {
+      const response = await api.post('/affiliates/validate', { affiliateCode: code })
+      setDiscountInfo({
+        type: 'affiliate',
+        amount: response.data.data.discountAmount,
+        affiliateName: response.data.data.affiliateName
+      })
+    } catch (error) {
+      setDiscountInfo(null)
+    }
   }
 
   const benefits = [
@@ -219,6 +250,58 @@ const Signup = () => {
                     </button>
                   </div>
                 </div>
+
+                {/* Referral/Affiliate Codes */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Referral Code (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      name="referralCode"
+                      className="input-field"
+                      placeholder="Enter referral code"
+                      value={formData.referralCode}
+                      onChange={handleChange}
+                      onBlur={(e) => validateReferralCode(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Affiliate Code (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      name="affiliateCode"
+                      className="input-field"
+                      placeholder="Enter affiliate code"
+                      value={formData.affiliateCode}
+                      onChange={handleChange}
+                      onBlur={(e) => validateAffiliateCode(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Discount Info */}
+                {discountInfo && (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-center">
+                      <Gift className="h-5 w-5 text-green-600 mr-2" />
+                      <div>
+                        <p className="text-sm font-medium text-green-800">
+                          Great! You'll get ₹{discountInfo.amount} discount
+                        </p>
+                        <p className="text-xs text-green-600">
+                          {discountInfo.type === 'referral' 
+                            ? `Referred by ${discountInfo.referrerName}`
+                            : `Affiliate: ${discountInfo.affiliateName}`
+                          }
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="flex items-center">
                   <input

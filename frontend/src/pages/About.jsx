@@ -1,27 +1,71 @@
 import React from 'react'
-import { Target, Users, Award, Globe } from 'lucide-react'
+import { Target, Users, Award, Globe, Heart, Lightbulb, Shield, Zap } from 'lucide-react'
 
 const About = () => {
   const values = [
     {
       icon: Target,
       title: 'Our Mission',
-      description: 'To bridge the gap between talented students and innovative companies, creating meaningful internship opportunities that shape the future workforce.'
+      description: 'To bridge the skills gap between academic education and industry requirements by providing practical, hands-on learning experiences that prepare students for successful careers.'
     },
     {
       icon: Users,
       title: 'Our Community',
-      description: 'A thriving ecosystem of 10,000+ students, 200+ companies, and countless success stories that inspire us every day.'
+      description: 'A vibrant ecosystem of 2,500+ learners, 50+ industry mentors, and 100+ partner companies working together to create meaningful career opportunities.'
     },
     {
       icon: Award,
       title: 'Our Standards',
-      description: 'We maintain the highest standards in vetting opportunities, ensuring every internship provides real value and learning experiences.'
+      description: 'We maintain rigorous quality standards in our curriculum design, mentor selection, and project assignments to ensure every student receives world-class education.'
     },
     {
       icon: Globe,
-      title: 'Our Reach',
-      description: 'Connecting talent globally with opportunities across industries, from startups to Fortune 500 companies.'
+      title: 'Our Impact',
+      description: 'Empowering students across India with industry-relevant skills, helping them secure better job opportunities and build successful careers in technology.'
+    }
+  ]
+
+  const team = [
+    {
+      name: 'Rajesh Kumar',
+      role: 'Founder & CEO',
+      image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300',
+      description: 'Former Tech Lead at Microsoft with 12+ years of experience in software development and team management.'
+    },
+    {
+      name: 'Priya Sharma',
+      role: 'Head of Curriculum',
+      image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=300',
+      description: 'Ex-Google engineer and education specialist with expertise in designing industry-aligned learning programs.'
+    },
+    {
+      name: 'Arjun Patel',
+      role: 'Head of Partnerships',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300',
+      description: 'Former startup founder with extensive network in the tech industry, connecting students with opportunities.'
+    }
+  ]
+
+  const principles = [
+    {
+      icon: Heart,
+      title: 'Student-First Approach',
+      description: 'Every decision we make prioritizes student success and learning outcomes.'
+    },
+    {
+      icon: Lightbulb,
+      title: 'Innovation in Learning',
+      description: 'We continuously evolve our teaching methods to match industry trends.'
+    },
+    {
+      icon: Shield,
+      title: 'Quality Assurance',
+      description: 'Rigorous standards ensure consistent, high-quality educational experiences.'
+    },
+    {
+      icon: Zap,
+      title: 'Practical Focus',
+      description: 'Real-world projects and hands-on learning take precedence over theory.'
     }
   ]
 
@@ -34,8 +78,8 @@ const About = () => {
             About Lucro
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            We're on a mission to revolutionize how students find and secure meaningful internship opportunities. 
-            Since our founding, we've been dedicated to creating a platform that truly serves both students and employers.
+            Founded in 2021 in Hyderabad, Lucro is dedicated to transforming how students prepare for their careers. 
+            We believe that practical experience, combined with expert mentorship, is the key to professional success.
           </p>
         </div>
 
@@ -45,31 +89,31 @@ const About = () => {
             <div>
               <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Story</h2>
               <p className="text-gray-600 mb-4">
-                Founded in 2020 in Hyderabad, Lucro emerged from a simple observation: the internship application process 
-                was broken. Students struggled to find quality opportunities, while companies couldn't connect 
-                with the right talent.
+                Lucro was born from a simple observation: despite having strong academic backgrounds, many students 
+                struggled to find meaningful employment because they lacked practical, industry-relevant skills.
               </p>
               <p className="text-gray-600 mb-4">
-                We set out to change that by creating a platform that prioritizes quality over quantity, 
-                transparency over confusion, and meaningful connections over mass applications.
+                Our founders, having worked at top tech companies like Microsoft and Google, recognized the gap 
+                between what students learn in college and what employers actually need. They decided to create 
+                a platform that would bridge this gap through practical, project-based learning.
               </p>
               <p className="text-gray-600">
-                Today, we're proud to be the trusted bridge between ambitious students and forward-thinking 
-                companies, facilitating thousands of successful internship placements across India.
+                Today, Lucro has helped over 2,500 students gain practical skills and secure better job opportunities. 
+                Our success is measured not just in numbers, but in the career transformations of our students.
               </p>
             </div>
             <div className="bg-gradient-to-br from-primary-100 to-primary-200 rounded-lg p-8">
               <div className="text-center">
                 <div className="text-6xl font-bold text-primary-600 mb-2">3+</div>
-                <div className="text-gray-700 mb-6">Years of Excellence</div>
+                <div className="text-gray-700 mb-6">Years of Impact</div>
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div>
-                    <div className="text-2xl font-bold text-primary-600">98%</div>
-                    <div className="text-sm text-gray-600">Success Rate</div>
+                    <div className="text-2xl font-bold text-primary-600">94%</div>
+                    <div className="text-sm text-gray-600">Placement Rate</div>
                   </div>
                   <div>
-                    <div className="text-2xl font-bold text-primary-600">4.9/5</div>
-                    <div className="text-sm text-gray-600">User Rating</div>
+                    <div className="text-2xl font-bold text-primary-600">4.8/5</div>
+                    <div className="text-sm text-gray-600">Student Rating</div>
                   </div>
                 </div>
               </div>
@@ -80,8 +124,8 @@ const About = () => {
         {/* Values Section */}
         <div className="mb-20">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Values</h2>
-            <p className="text-xl text-gray-600">The principles that guide everything we do</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">What Drives Us</h2>
+            <p className="text-xl text-gray-600">The core values that guide our mission and shape our approach</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -105,21 +149,80 @@ const About = () => {
           </div>
         </div>
 
+        {/* Principles Section */}
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Principles</h2>
+            <p className="text-xl text-gray-600">The fundamental beliefs that shape how we operate</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {principles.map((principle, index) => (
+              <div key={index} className="text-center p-6 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <principle.icon className="h-6 w-6 text-blue-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  {principle.title}
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  {principle.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Team Section */}
-        <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Team</h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Meet the passionate individuals working to transform internship experiences
-          </p>
-          <div className="bg-primary-50 rounded-lg p-8">
-            <p className="text-gray-700 italic">
-              "We believe that every student deserves access to meaningful opportunities that can 
-              shape their career trajectory. That's why we've built Lucro to be more than just a 
-              platform – it's a community dedicated to student success."
-            </p>
-            <div className="mt-4">
-              <div className="font-semibold text-gray-900">- The Lucro Team</div>
+        <div className="mb-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Meet Our Team</h2>
+            <p className="text-xl text-gray-600">Experienced professionals dedicated to your success</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {team.map((member, index) => (
+              <div key={index} className="text-center">
+                <img 
+                  src={member.image} 
+                  alt={member.name}
+                  className="w-32 h-32 rounded-full object-cover mx-auto mb-4"
+                />
+                <h3 className="text-xl font-semibold text-gray-900 mb-1">{member.name}</h3>
+                <p className="text-primary-600 font-medium mb-3">{member.role}</p>
+                <p className="text-gray-600 text-sm">{member.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Impact Section */}
+        <div className="text-center bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">Our Impact</h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <div className="text-3xl font-bold text-blue-600 mb-2">2,500+</div>
+              <div className="text-gray-600">Students Trained</div>
             </div>
+            <div>
+              <div className="text-3xl font-bold text-green-600 mb-2">100+</div>
+              <div className="text-gray-600">Partner Companies</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-purple-600 mb-2">50+</div>
+              <div className="text-gray-600">Industry Mentors</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-orange-600 mb-2">94%</div>
+              <div className="text-gray-600">Success Rate</div>
+            </div>
+          </div>
+          <p className="text-gray-700 text-lg max-w-3xl mx-auto">
+            "We measure our success by the career transformations of our students. Every placement, 
+            every skill gained, and every confidence boost represents our commitment to excellence in education."
+          </p>
+          <div className="mt-6">
+            <div className="font-semibold text-gray-900">- The Lucro Team</div>
           </div>
         </div>
       </div>

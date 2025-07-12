@@ -14,6 +14,9 @@ import Dashboard from './pages/Dashboard'
 import MyEnrollments from './pages/MyEnrollments'
 import Tasks from './pages/Tasks'
 import Profile from './pages/Profile'
+import Assessment from './pages/Assessment'
+import ProjectSubmission from './pages/ProjectSubmission'
+import Referrals from './pages/Referrals'
 import ProtectedRoute from './components/ProtectedRoute'
 import LoadingSpinner from './components/LoadingSpinner'
 
@@ -67,6 +70,30 @@ function App() {
             element={
               <ProtectedRoute role="student">
                 <Profile />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/assessment/:programId" 
+            element={
+              <ProtectedRoute role="student">
+                <Assessment />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/project-submission/:programId" 
+            element={
+              <ProtectedRoute role="student">
+                <ProjectSubmission />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/referrals" 
+            element={
+              <ProtectedRoute role="student">
+                <Referrals />
               </ProtectedRoute>
             } 
           />

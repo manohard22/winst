@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../services/api'
-import { Calendar, Clock, Award, CheckSquare } from 'lucide-react'
+import { Calendar, Clock, Award, CheckSquare, BookOpen, Upload } from 'lucide-react'
 
 const MyEnrollments = () => {
   const [enrollments, setEnrollments] = useState([])
@@ -112,20 +112,55 @@ const MyEnrollments = () => {
               </div>
 
               {/* Actions */}
-              <div className="mt-6 flex space-x-3">
-                <Link
-                  to={`/tasks/${enrollment.programId}`}
-                  className="flex-1 btn-primary text-center"
-                >
-                  <CheckSquare className="h-4 w-4 mr-2 inline" />
-                  View Tasks
-                </Link>
-                <Link
-                  to={`/programs/${enrollment.programId}`}
-                  className="flex-1 btn-secondary text-center"
-                >
-                  View Program
-                </Link>
+              <div className="mt-6 space-y-3">
+                {/* Assessment */}
+                {!enrollment.assessmentCompleted ? (
+                  <Link
+                    to={`/assessment/${enrollment.programId}`}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                  >
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    Take Assessment
+                  </Link>
+                ) : (
+                  <div className="w-full bg-green-100 text-green-800 font-semibold py-2 px-4 rounded-lg flex items-center justify-center">
+                    <CheckSquare className="h-4 w-4 mr-2" />
+                    Assessment Completed ({enrollment.assessmentScore}%)
+                  </div>
+                )}
+
+                {/* Project Submission */}
+                {enrollment.assessmentCompleted && !enrollment.projectSubmitted ? (
+                  <Link
+                    to={`/project-submission/${enrollment.programId}`}
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Submit Project
+                  </Link>
+                ) : enrollment.projectSubmitted ? (
+                  <div className="w-full bg-yellow-100 text-yellow-800 font-semibold py-2 px-4 rounded-lg flex items-center justify-center">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Project Submitted - Under Review
+                  </div>
+                ) : null}
+
+                {/* Other Actions */}
+                <div className="flex space-x-3">
+                  <Link
+                    to={`/tasks/${enrollment.programId}`}
+                    className="flex-1 btn-secondary text-center"
+                  >
+                    <CheckSquare className="h-4 w-4 mr-2 inline" />
+                    View Tasks
+                  </Link>
+                  <Link
+                    to={`/programs/${enrollment.programId}`}
+                    className="flex-1 btn-secondary text-center"
+                  >
+                    View Program
+                  </Link>
+                </div>
               </div>
 
               {enrollment.feedback && (

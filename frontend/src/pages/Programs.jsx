@@ -1,26 +1,40 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import api from '../services/api'
-import { Clock, Users, Star, Filter, MapPin, Award, BookOpen, TrendingUp } from 'lucide-react'
+import { Clock, Users, Star, Filter, MapPin, Award, BookOpen, TrendingUp, Search } from 'lucide-react'
 
 const Programs = () => {
   const [programs, setPrograms] = useState([])
+  const [technologies, setTechnologies] = useState([])
   const [loading, setLoading] = useState(true)
+  const [searchParams, setSearchParams] = useSearchParams()
   const [filters, setFilters] = useState({
-    search: '',
-    difficulty: '',
-    category: ''
+    search: searchParams.get('search') || '',
+    difficulty: searchParams.get('difficulty') || '',
+    technology: searchParams.get('technology') || '',
+    category: searchParams.get('category') || ''
   })
 
   useEffect(() => {
     fetchPrograms()
+    fetchTechnologies()
   }, [filters])
+
+  useEffect(() => {
+    // Update URL params when filters change
+    const params = new URLSearchParams()
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value) params.set(key, value)
+    })
+    setSearchParams(params)
+  }, [filters, setSearchParams])
 
   const fetchPrograms = async () => {
     try {
       const params = new URLSearchParams()
       if (filters.search) params.append('search', filters.search)
       if (filters.difficulty) params.append('difficulty', filters.difficulty)
+      if (filters.technology) params.append('technology', filters.technology)
       
       const response = await api.get(`/programs?${params.toString()}`)
       setPrograms(response.data.data.programs)
@@ -31,11 +45,29 @@ const Programs = () => {
     }
   }
 
+  const fetchTechnologies = async () => {
+    try {
+      const response = await api.get('/technologies')
+      setTechnologies(response.data.data.technologies)
+    } catch (error) {
+      console.error('Failed to fetch technologies:', error)
+    }
+  }
+
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({
       ...prev,
       [key]: value
     }))
+  }
+
+  const clearFilters = () => {
+    setFilters({
+      search: '',
+      difficulty: '',
+      technology: '',
+      category: ''
+    })
   }
 
   const getDifficultyColor = (level) => {
@@ -46,6 +78,14 @@ const Programs = () => {
       default: return 'bg-gray-100 text-gray-800 border-gray-200'
     }
   }
+
+  const groupedTechnologies = technologies.reduce((acc, tech) => {
+    if (!acc[tech.category]) {
+      acc[tech.category] = []
+    }
+    acc[tech.category].push(tech)
+    return acc
+  }, {})
 
   if (loading) {
     return (
@@ -74,16 +114,20 @@ const Programs = () => {
 
         {/* Filters */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Search */}
             <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <input
                 type="text"
                 placeholder="Search programs..."
-                className="w-full pl-4 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
               />
             </div>
+
+            {/* Difficulty */}
             <div>
               <select
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none bg-white"
@@ -96,16 +140,81 @@ const Programs = () => {
                 <option value="advanced">Advanced</option>
               </select>
             </div>
+
+            {/* Technology */}
+            <div>
+              <select
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none bg-white"
+                value={filters.technology}
+                onChange={(e) => handleFilterChange('technology', e.target.value)}
+              >
+                <option value="">All Technologies</option>
+                {Object.entries(groupedTechnologies).map(([category, techs]) => (
+                  <optgroup key={category} label={category}>
+                    {techs.map((tech) => (
+                      <option key={tech.id} value={tech.name}>
+                        {tech.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+            </div>
+
+            {/* Clear Filters */}
             <div className="flex items-center justify-between">
               <span className="text-gray-600 font-medium">
                 {programs.length} Programs Available
               </span>
-              <div className="flex items-center space-x-2">
-                <Filter className="h-4 w-4 text-gray-400" />
-                <span className="text-sm text-gray-500">Sort by Popular</span>
-              </div>
+              {(filters.search || filters.difficulty || filters.technology) && (
+                <button
+                  onClick={clearFilters}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  Clear Filters
+                </button>
+              )}
             </div>
           </div>
+
+          {/* Active Filters */}
+          {(filters.search || filters.difficulty || filters.technology) && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {filters.search && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                  Search: "{filters.search}"
+                  <button
+                    onClick={() => handleFilterChange('search', '')}
+                    className="ml-2 text-blue-600 hover:text-blue-800"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {filters.difficulty && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                  {filters.difficulty}
+                  <button
+                    onClick={() => handleFilterChange('difficulty', '')}
+                    className="ml-2 text-green-600 hover:text-green-800"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+              {filters.technology && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-purple-100 text-purple-800">
+                  {filters.technology}
+                  <button
+                    onClick={() => handleFilterChange('technology', '')}
+                    className="ml-2 text-purple-600 hover:text-purple-800"
+                  >
+                    ×
+                  </button>
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Programs Grid */}
@@ -151,7 +260,7 @@ const Programs = () => {
                     {program.technologies?.slice(0, 3).map((tech) => (
                       <div key={tech.id} className="flex items-center bg-gray-100 px-2 py-1 rounded-md">
                         {tech.iconUrl && (
-                          <img src={tech.iconUrl} alt={tech.name} className="w-4 h-4 mr-1" />
+                          <img src={tech.iconUrl}alt={tech.name} className="w-4 h-4 mr-1" />
                         )}
                         <span className="text-xs font-medium text-gray-700">{tech.name}</span>
                       </div>
@@ -212,21 +321,12 @@ const Programs = () => {
                 <div className="border-t border-gray-100 pt-4">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      {program.discountPercentage > 0 ? (
-                        <div>
-                          <span className="text-lg font-bold text-primary-600">₹{program.finalPrice}</span>
-                          <span className="text-sm text-gray-500 line-through ml-2">₹{program.price}</span>
-                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full ml-2">
-                            {program.discountPercentage}% OFF
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-lg font-bold text-primary-600">₹{program.finalPrice}</span>
-                      )}
+                      <span className="text-lg font-bold text-primary-600">₹2,000</span>
+                      <div className="text-xs text-gray-500">Fixed price for all internships</div>
                     </div>
                     <div className="text-right">
                       <div className="text-xs text-gray-500">Starting from</div>
-                      <div className="text-sm font-medium text-gray-700">₹{Math.round(program.finalPrice / program.durationWeeks)}/week</div>
+                      <div className="text-sm font-medium text-gray-700">₹{Math.round(2000 / program.durationWeeks)}/week</div>
                     </div>
                   </div>
 
@@ -255,7 +355,7 @@ const Programs = () => {
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No programs found</h3>
             <p className="text-gray-600 mb-6">Try adjusting your search filters to find more opportunities</p>
             <button 
-              onClick={() => setFilters({ search: '', difficulty: '', category: '' })}
+              onClick={clearFilters}
               className="btn-primary"
             >
               Clear Filters
