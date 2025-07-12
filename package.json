@@ -117,16 +117,16 @@
     "login_credentials": {
       "admin": {
         "email": "admin@lucro.com",
-        "password": "password123"
+        "password": "admin123"
       },
       "students": [
         {
-          "email": "john.doe@example.com",
-          "password": "password123"
+          "email": "student1@example.com",
+          "password": "student123"
         },
         {
-          "email": "jane.smith@example.com",
-          "password": "password123"
+          "email": "student2@example.com",
+          "password": "student123"
         }
       ]
     }

@@ -1,38 +1,38 @@
-import React, { useState } from 'react'
-import { useAuth } from '../contexts/AuthContext'
-import { Eye, EyeOff, Shield } from 'lucide-react'
+import React, { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { Eye, EyeOff, Shield } from "lucide-react";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+    email: "",
+    password: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const { login } = useAuth()
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    const result = await login(formData.email, formData.password)
-    
+    const result = await login(formData.email, formData.password);
+
     if (!result.success) {
-      setError(result.message)
+      setError(result.message);
     }
-    
-    setLoading(false)
-  }
+
+    setLoading(false);
+  };
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -50,17 +50,20 @@ const Login = () => {
             Sign in to access the admin dashboard
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
               {error}
             </div>
           )}
-          
+
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email Address
               </label>
               <input
@@ -74,16 +77,19 @@ const Login = () => {
                 onChange={handleChange}
               />
             </div>
-            
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Password
               </label>
               <div className="relative mt-1">
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   required
                   className="input-field pr-10"
                   placeholder="Enter password"
@@ -111,20 +117,24 @@ const Login = () => {
               disabled={loading}
               className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? "Signing in..." : "Sign In"}
             </button>
           </div>
 
           <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h3 className="text-sm font-medium text-blue-800 mb-2">Demo Credentials:</h3>
+            <h3 className="text-sm font-medium text-blue-800 mb-2">
+              Demo Credentials:
+            </h3>
             <div className="text-xs text-blue-700">
-              <p><strong>Admin:</strong> admin@lucro.com / password123</p>
+              <p>
+                <strong>Admin:</strong> admin@lucro.com / admin123
+              </p>
             </div>
           </div>
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

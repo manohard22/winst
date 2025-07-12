@@ -78,8 +78,8 @@ VITE_RAZORPAY_KEY_ID=your-razorpay-key-id
 
 ## 👥 Demo Credentials
 
-- **Admin:** admin@lucro.com / password123
-- **Student:** rahul@example.com / password123
+- **Admin:** admin@lucro.com / admin123
+- **Student:** student1@example.com / student123
 
 ## 🛠️ Technologies
 

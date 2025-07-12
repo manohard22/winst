@@ -1,42 +1,42 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
-import { Eye, EyeOff, BookOpen } from 'lucide-react'
-import toast from 'react-hot-toast'
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { Eye, EyeOff, BookOpen } from "lucide-react";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
+    email: "",
+    password: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth()
-  const navigate = useNavigate()
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
-    const result = await login(formData.email, formData.password)
-    
+    const result = await login(formData.email, formData.password);
+
     if (result.success) {
-      toast.success('Welcome back!')
-      navigate('/dashboard')
+      toast.success("Welcome back!");
+      navigate("/dashboard");
     } else {
-      toast.error(result.message)
+      toast.error(result.message);
     }
-    
-    setLoading(false)
-  }
+
+    setLoading(false);
+  };
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -50,9 +50,11 @@ const Login = () => {
               </div>
             </div>
             <h2 className="text-3xl font-bold text-gray-900">Welcome Back</h2>
-            <p className="text-gray-600 mt-2">Sign in to continue your journey</p>
+            <p className="text-gray-600 mt-2">
+              Sign in to continue your journey
+            </p>
           </div>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -68,14 +70,14 @@ const Login = () => {
                 onChange={handleChange}
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Password
               </label>
               <div className="relative">
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   required
                   className="input-field pr-12"
@@ -105,27 +107,36 @@ const Login = () => {
                   type="checkbox"
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-gray-700"
+                >
                   Remember me
                 </label>
               </div>
-              <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-500">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-blue-600 hover:text-blue-500"
+              >
                 Forgot password?
               </Link>
             </div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={loading}
               className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? "Signing in..." : "Sign In"}
             </button>
 
             <div className="text-center">
               <p className="text-sm text-gray-600">
-                Don't have an account?{' '}
-                <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+                Don't have an account?{" "}
+                <Link
+                  to="/signup"
+                  className="font-medium text-blue-600 hover:text-blue-500"
+                >
                   Sign up for free
                 </Link>
               </p>
@@ -134,22 +145,32 @@ const Login = () => {
 
           {/* Demo Credentials */}
           <div className="mt-8 p-4 bg-blue-50 rounded-xl border border-blue-200">
-            <h3 className="text-sm font-medium text-blue-800 mb-3">Demo Credentials:</h3>
+            <h3 className="text-sm font-medium text-blue-800 mb-3">
+              Demo Credentials:
+            </h3>
             <div className="space-y-2 text-xs text-blue-700">
               <div className="flex justify-between">
-                <span><strong>Admin:</strong> admin@lucro.com</span>
-                <span><strong>Password:</strong> password123</span>
+                <span>
+                  <strong>Admin:</strong> admin@lucro.com
+                </span>
+                <span>
+                  <strong>Password:</strong> admin123
+                </span>
               </div>
               <div className="flex justify-between">
-                <span><strong>Student:</strong> rahul@example.com</span>
-                <span><strong>Password:</strong> password123</span>
+                <span>
+                  <strong>Student:</strong> student1@example.com
+                </span>
+                <span>
+                  <strong>Password:</strong> student123
+                </span>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

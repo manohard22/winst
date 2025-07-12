@@ -446,9 +446,9 @@ async function generateVerificationSummary(client) {
     console.log(`   User: ${DB_CONFIG.user}`);
 
     console.log("\n👥 Login Credentials:");
-    console.log("   Admin: admin@lucro.com / password123");
-    console.log("   Student: john.doe@example.com / password123");
-    console.log("   Student: jane.smith@example.com / password123");
+    console.log("   Admin: admin@lucro.com / admin123");
+    console.log("   Student: student1@example.com / student123");
+    console.log("   Student: student2@example.com / student123");
 
     console.log("\n🚀 Next Steps:");
     console.log("   1. Start development: npm run dev");
