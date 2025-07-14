@@ -11,6 +11,14 @@ import {
   GraduationCap,
   ChevronDown,
   Gift,
+  Settings,
+  CreditCard,
+  Users,
+  Award,
+  Bell,
+  HelpCircle,
+  Shield,
+  UserCircle,
 } from "lucide-react";
 import api from "../services/api";
 
@@ -19,6 +27,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isInternshipsOpen, setIsInternshipsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [technologies, setTechnologies] = useState([]);
 
   useEffect(() => {
@@ -154,29 +163,190 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-4">
             {user ? (
               <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2">
-                  <Link
-                    to="/dashboard"
-                    className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
-                  >
-                    <User className="h-4 w-4" />
-                    <span className="font-medium">Dashboard</span>
-                  </Link>
-                  <Link
-                    to="/referrals"
-                    className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
-                  >
-                    <Gift className="h-4 w-4" />
-                    <span className="font-medium">Refer Friends</span>
-                  </Link>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                {/* Quick Access Links */}
+                <Link
+                  to="/referrals"
+                  className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
                 >
-                  <LogOut className="h-4 w-4" />
-                  <span>Logout</span>
-                </button>
+                  <Gift className="h-4 w-4" />
+                  <span className="font-medium">Refer Friends</span>
+                </Link>
+
+                {/* Profile Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+                    onMouseEnter={() => setIsProfileOpen(true)}
+                  >
+                    <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-semibold">
+                        {user?.fullName?.charAt(0) ||
+                          user?.email?.charAt(0) ||
+                          "U"}
+                      </span>
+                    </div>
+                    <span className="font-medium">
+                      {user?.fullName || "Profile"}
+                    </span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+
+                  {isProfileOpen && (
+                    <div
+                      className="absolute top-full right-0 mt-1 w-72 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
+                      onMouseLeave={() => setIsProfileOpen(false)}
+                    >
+                      {/* Profile Header */}
+                      <div className="px-4 py-3 border-b border-gray-100">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                            <span className="text-white text-lg font-semibold">
+                              {user?.fullName?.charAt(0) ||
+                                user?.email?.charAt(0) ||
+                                "U"}
+                            </span>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-gray-900">
+                              {user?.fullName || "User"}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              {user?.email}
+                            </p>
+                            <p className="text-xs text-blue-600 font-medium capitalize">
+                              {user?.role || "Student"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Dashboard Section */}
+                      <div className="py-2">
+                        <Link
+                          to="/dashboard"
+                          className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <User className="h-4 w-4" />
+                          <span>Dashboard</span>
+                        </Link>
+
+                        <Link
+                          to="/my-enrollments"
+                          className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <BookOpen className="h-4 w-4" />
+                          <span>My Enrollments</span>
+                        </Link>
+
+                        <Link
+                          to="/my-certificates"
+                          className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <Award className="h-4 w-4" />
+                          <span>Certificates</span>
+                        </Link>
+                      </div>
+
+                      <div className="border-t border-gray-100"></div>
+
+                      {/* Referral & Earnings Section */}
+                      <div className="py-2">
+                        <Link
+                          to="/referrals"
+                          className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <Users className="h-4 w-4" />
+                          <span>Refer Friends</span>
+                          <span className="ml-auto bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                            ₹499 Off
+                          </span>
+                        </Link>
+
+                        {user?.role === "affiliate" && (
+                          <Link
+                            to="/affiliate-dashboard"
+                            className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                            onClick={() => setIsProfileOpen(false)}
+                          >
+                            <CreditCard className="h-4 w-4" />
+                            <span>Affiliate Earnings</span>
+                            <span className="ml-auto bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                              25%
+                            </span>
+                          </Link>
+                        )}
+                      </div>
+
+                      <div className="border-t border-gray-100"></div>
+
+                      {/* Account Section */}
+                      <div className="py-2">
+                        <Link
+                          to="/payments"
+                          className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <CreditCard className="h-4 w-4" />
+                          <span>Payment History</span>
+                        </Link>
+
+                        <Link
+                          to="/notifications"
+                          className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <Bell className="h-4 w-4" />
+                          <span>Notifications</span>
+                        </Link>
+
+                        <Link
+                          to="/profile-settings"
+                          className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <Settings className="h-4 w-4" />
+                          <span>Account Settings</span>
+                        </Link>
+
+                        <Link
+                          to="/privacy"
+                          className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <Shield className="h-4 w-4" />
+                          <span>Privacy & Security</span>
+                        </Link>
+                      </div>
+
+                      <div className="border-t border-gray-100"></div>
+
+                      {/* Support Section */}
+                      <div className="py-2">
+                        <Link
+                          to="/help"
+                          className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <HelpCircle className="h-4 w-4" />
+                          <span>Help & Support</span>
+                        </Link>
+
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center space-x-3 px-4 py-2 w-full text-left text-red-600 hover:bg-red-50 transition-colors"
+                        >
+                          <LogOut className="h-4 w-4" />
+                          <span>Sign Out</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="flex items-center space-x-3">
@@ -245,6 +415,30 @@ const Navbar = () => {
                   className="block px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg font-medium"
                 >
                   Dashboard
+                </Link>
+                <Link
+                  to="/my-enrollments"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg"
+                >
+                  My Enrollments
+                </Link>
+                <Link
+                  to="/referrals"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg"
+                >
+                  Refer Friends
+                </Link>
+                <Link
+                  to="/payments"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg"
+                >
+                  Payments
+                </Link>
+                <Link
+                  to="/profile-settings"
+                  className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg"
+                >
+                  Settings
                 </Link>
                 <button
                   onClick={handleLogout}
