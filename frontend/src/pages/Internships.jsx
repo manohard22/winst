@@ -22,10 +22,19 @@ const Internships = () => {
     stipend: "",
     duration: "",
   });
+  const [courses, setCourses] = useState({}); // Store courses by program id
 
   useEffect(() => {
     fetchInternships();
   }, [filters]);
+
+  useEffect(() => {
+    if (internships.length > 0) {
+      internships.forEach((internship) => {
+        fetchCourses(internship.id);
+      });
+    }
+  }, [internships]);
 
   const fetchInternships = async () => {
     try {
@@ -41,6 +50,15 @@ const Internships = () => {
       toast.error("Failed to load internships");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCourses = async (programId) => {
+    try {
+      const response = await api.get(`/programs/${programId}/courses`);
+      setCourses((prev) => ({ ...prev, [programId]: response.data.data.courses || [] }));
+    } catch (error) {
+      setCourses((prev) => ({ ...prev, [programId]: [] }));
     }
   };
 
@@ -224,6 +242,25 @@ const Internships = () => {
                           4.8 (24 reviews)
                         </span>
                       </div>
+                    </div>
+
+                    {/* Render courses for this internship/program */}
+                    <div className="mt-4">
+                      <h4 className="text-lg font-semibold text-blue-700 mb-2">Courses</h4>
+                      {courses[internship.id] && courses[internship.id].length > 0 ? (
+                        <ul className="list-disc pl-6 text-gray-700">
+                          {courses[internship.id].map((course) => (
+                            <li key={course.id} className="mb-1">
+                              <span className="font-medium text-gray-900">{course.title}</span>
+                              {course.description && (
+                                <span className="text-gray-600 ml-2">- {course.description}</span>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <div className="text-gray-400 text-sm">No courses found for this program.</div>
+                      )}
                     </div>
                   </div>
 

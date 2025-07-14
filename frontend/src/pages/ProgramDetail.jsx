@@ -23,9 +23,11 @@ const ProgramDetail = () => {
   const [loading, setLoading] = useState(true);
   const [enrolling, setEnrolling] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [courses, setCourses] = useState([]);
 
   useEffect(() => {
     fetchProgram();
+    fetchCourses();
     if (user) {
       checkEnrollment();
     }
@@ -40,6 +42,16 @@ const ProgramDetail = () => {
       toast.error("Failed to load program details");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCourses = async () => {
+    try {
+      const response = await api.get(`/programs/${id}/courses`);
+      console.log("FFF Courses response:", response.data);
+      setCourses(response.data.data.courses || []);
+    } catch (error) {
+      setCourses([]);
     }
   };
 
@@ -213,188 +225,42 @@ const ProgramDetail = () => {
                 {program.description}
               </p>
 
-              {/* Detailed Program Content */}
-              {program.title.toLowerCase().includes("full stack") && (
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
-                    🚀 Full Stack Development Tracks
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-white rounded-lg p-4 border border-blue-200">
-                      <h4 className="font-semibold text-blue-900 mb-2">
-                        🔥 MERN Stack
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        MongoDB + Express.js + React + Node.js
-                      </p>
-                      <div className="text-xs text-blue-600 mt-2">
-                        Most Popular Choice
+              {/* Courses Section - dynamic from API */}
+              <div className="mb-6">
+                <h3 className="text-xl font-bold text-blue-700 mb-4">
+                  Courses Included
+                </h3>
+                {courses.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {courses.map((course) => (
+                      <div
+                        key={course.id}
+                        className="bg-white rounded-xl shadow border border-gray-100 p-4 flex flex-col items-center"
+                      >
+                        {course.imageUrl && (
+                          <img
+                            src={course.imageUrl}
+                            alt={course.title}
+                            className="w-20 h-20 object-cover rounded-lg mb-3"
+                          />
+                        )}
+                        <span className="font-bold text-lg text-gray-900 mb-2 text-center">
+                          {course.title}
+                        </span>
+                        {course.description && (
+                          <span className="text-gray-600 text-center text-sm">
+                            {course.description}
+                          </span>
+                        )}
                       </div>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 border border-green-200">
-                      <h4 className="font-semibold text-green-900 mb-2">
-                        ⚡ MEAN Stack
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        MongoDB + Express.js + Angular + Node.js
-                      </p>
-                      <div className="text-xs text-green-600 mt-2">
-                        Enterprise Ready
-                      </div>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 border border-purple-200">
-                      <h4 className="font-semibold text-purple-900 mb-2">
-                        🎯 React + .NET
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        React Frontend + .NET Core Backend
-                      </p>
-                      <div className="text-xs text-purple-600 mt-2">
-                        Microsoft Stack
-                      </div>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 border border-orange-200">
-                      <h4 className="font-semibold text-orange-900 mb-2">
-                        🔧 Vue + Laravel
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        Vue.js Frontend + Laravel PHP Backend
-                      </p>
-                      <div className="text-xs text-orange-600 mt-2">
-                        Rapid Development
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                </div>
-              )}
-
-              {program.title.toLowerCase().includes("frontend") && (
-                <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 mb-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
-                    🎨 Frontend Specializations
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-white rounded-lg p-4 border border-blue-200">
-                      <h4 className="font-semibold text-blue-900 mb-2">
-                        ⚛️ React Ecosystem
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        React, Redux, Next.js, TypeScript
-                      </p>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 border border-green-200">
-                      <h4 className="font-semibold text-green-900 mb-2">
-                        🟢 Vue.js Stack
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        Vue 3, Vuex, Nuxt.js, Composition API
-                      </p>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 border border-red-200">
-                      <h4 className="font-semibold text-red-900 mb-2">
-                        🅰️ Angular Framework
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        Angular 15+, RxJS, NgRx, Material
-                      </p>
-                    </div>
+                ) : (
+                  <div className="text-gray-400 text-sm">
+                    No courses found for this program.
                   </div>
-                </div>
-              )}
-
-              {program.title.toLowerCase().includes("backend") && (
-                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-6 mb-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
-                    ⚙️ Backend Technologies
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-white rounded-lg p-4 border border-green-200">
-                      <h4 className="font-semibold text-green-900 mb-2">
-                        🟢 Node.js Stack
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        Express.js, MongoDB, PostgreSQL, Redis
-                      </p>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 border border-blue-200">
-                      <h4 className="font-semibold text-blue-900 mb-2">
-                        🐍 Python Stack
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        Django, Flask, FastAPI, PostgreSQL
-                      </p>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 border border-purple-200">
-                      <h4 className="font-semibold text-purple-900 mb-2">
-                        ☕ Java Stack
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        Spring Boot, Hibernate, MySQL
-                      </p>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 border border-orange-200">
-                      <h4 className="font-semibold text-orange-900 mb-2">
-                        🔷 .NET Stack
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        .NET Core, Entity Framework, SQL Server
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {program.title.toLowerCase().includes("ui") && (
-                <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl p-6 mb-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
-                    🎨 UI Design Specializations
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-white rounded-lg p-4 border border-pink-200">
-                      <h4 className="font-semibold text-pink-900 mb-2">
-                        🎯 Web UI Design
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        Responsive Design, CSS Grid, Flexbox
-                      </p>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 border border-purple-200">
-                      <h4 className="font-semibold text-purple-900 mb-2">
-                        📱 Mobile UI Design
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        iOS, Android, Cross-platform Design
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {program.title.toLowerCase().includes("data") && (
-                <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl p-6 mb-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
-                    📊 Data Science Tracks
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-white rounded-lg p-4 border border-blue-200">
-                      <h4 className="font-semibold text-blue-900 mb-2">
-                        🐍 Python for Data Science
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        Pandas, NumPy, Matplotlib, Scikit-learn
-                      </p>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 border border-orange-200">
-                      <h4 className="font-semibold text-orange-900 mb-2">
-                        📈 Business Analytics
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        SQL, Excel, Tableau, Power BI
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
+                )}
+              </div>
 
               {/* Key Highlights */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

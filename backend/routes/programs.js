@@ -183,4 +183,47 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Get courses by program
+router.get('/:id/courses', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(`
+      SELECT 
+        c.id,
+        c.title,
+        c.description,
+        c.duration_weeks,
+        c.difficulty_level,
+        c.learning_outcomes,
+        c.logo,
+        c.created_at
+      FROM courses c
+      WHERE c.internship_program_id = $1 AND c.is_active = true
+      ORDER BY c.created_at DESC
+    `, [id]);
+      console.log("FFFFFF result:", result.rows);
+    res.json({
+      success: true,
+      data: {
+        courses: result.rows.map(course => ({
+          id: course.id,
+          title: course.title,
+          description: course.description,
+          durationWeeks: course.duration_weeks,
+          difficultyLevel: course.difficulty_level,
+          learningOutcomes: course.learning_outcomes,
+          imageUrl: course.logo,
+          createdAt: course.created_at
+        }))
+      }
+    });
+  } catch (error) {
+    console.error('Courses fetch error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch courses'
+    });
+  }
+});
+
 module.exports = router;

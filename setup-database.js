@@ -48,6 +48,8 @@ async function setupDatabase() {
     // Create database and user
     console.log("📊 Creating database and user...");
     try {
+      // Terminate all connections to the target database before dropping
+      await client.query(`SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '${TARGET_DB.name}' AND pid <> pg_backend_pid();`);
       await client.query(`DROP DATABASE IF EXISTS ${TARGET_DB.name}`);
       await client.query(`DROP USER IF EXISTS ${TARGET_DB.user}`);
     } catch (error) {
@@ -430,6 +432,27 @@ async function createCompleteSchema(client) {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`,
+
+    // Course table
+    `CREATE TABLE courses (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      internship_program_id UUID NOT NULL REFERENCES internship_programs(id) ON DELETE CASCADE,
+      title VARCHAR(255) NOT NULL,
+      description TEXT,
+      logo VARCHAR(500),
+      duration_weeks INTEGER,
+      prerequisites TEXT,
+      learning_outcomes TEXT,
+      technologies JSONB,
+      difficulty_level VARCHAR(20) CHECK (difficulty_level IN ('beginner', 'intermediate', 'advanced')) DEFAULT 'beginner',
+      max_students INTEGER DEFAULT 30,
+      is_active BOOLEAN DEFAULT true,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )`,
+    `CREATE INDEX idx_courses_internship_program_id ON courses(internship_program_id)`,
+    `CREATE INDEX idx_courses_title ON courses(title)`,
+    `CREATE INDEX idx_courses_is_active ON courses(is_active)`,
 
     // Create indexes
     `CREATE INDEX idx_users_email ON users(email)`,
@@ -989,6 +1012,23 @@ async function insertComprehensiveDummyData(client) {
         ELSE 'assessment_pending'
       END
     FROM student_internship si
+  `);
+
+  // Insert sample courses for Full Stack Development Track
+  await client.query(`
+    INSERT INTO courses (internship_program_id, title, description, logo, duration_weeks, prerequisites, learning_outcomes, technologies, difficulty_level, max_students) VALUES
+    ('${programIds["Full Stack MERN Development"]}', 'MERN Stack Development', 'Complete full-stack development using MongoDB, Express.js, React.js, and Node.js. Build modern web applications with this powerful JavaScript stack.', 'https://example.com/logos/mern.png', 12, 'Basic JavaScript knowledge, HTML/CSS fundamentals', 'Build complete web applications, Master React components, Implement REST APIs, Database design with MongoDB', '["MongoDB", "Express.js", "React.js", "Node.js", "JavaScript", "HTML", "CSS"]', 'intermediate', 25),
+    ('${programIds["Full Stack MERN Development"]}', 'MEAN Stack Development', 'Full-stack development using MongoDB, Express.js, Angular, and Node.js. Create dynamic web applications with TypeScript and Angular framework.', 'https://example.com/logos/mean.png', 12, 'Basic JavaScript/TypeScript knowledge, HTML/CSS fundamentals', 'Master Angular framework, Build RESTful APIs, Database management, TypeScript proficiency', '["MongoDB", "Express.js", "Angular", "Node.js", "TypeScript", "HTML", "CSS"]', 'intermediate', 25),
+    ('${programIds["Full Stack MERN Development"]}', 'React + .NET Development', 'Modern web development combining React frontend with .NET backend. Learn to build enterprise-level applications with Microsoft technologies.', 'https://example.com/logos/react-dotnet.png', 14, 'C# basics, JavaScript fundamentals, HTML/CSS', 'React component development, .NET API creation, Entity Framework, Authentication & Authorization', '["React.js", "C#", ".NET Core", "Entity Framework", "SQL Server", "JavaScript", "HTML", "CSS"]', 'advanced', 20),
+    ('${programIds["Full Stack MERN Development"]}', 'Vue.js + Laravel', 'Full-stack development using Vue.js frontend with Laravel PHP backend. Build elegant and powerful web applications.', 'https://example.com/logos/vue-laravel.png', 12, 'PHP basics, JavaScript fundamentals, HTML/CSS', 'Vue.js mastery, Laravel framework, Eloquent ORM, API development', '["Vue.js", "Laravel", "PHP", "MySQL", "JavaScript", "HTML", "CSS", "Blade Templates"]', 'intermediate', 25)
+  `);
+
+  // Insert sample courses for Data Science Track
+  await client.query(`
+    INSERT INTO courses (internship_program_id, title, description, logo, duration_weeks, prerequisites, learning_outcomes, technologies, difficulty_level, max_students) VALUES
+    ('${programIds["Data Science with Python"]}', 'Python Data Analysis', 'Master data analysis using Python with pandas, numpy, and matplotlib. Learn to extract insights from complex datasets.', 'https://example.com/logos/python-data.png', 10, 'Basic Python programming, Statistics fundamentals', 'Data manipulation with pandas, Statistical analysis, Data visualization, Report generation', '["Python", "Pandas", "NumPy", "Matplotlib", "Seaborn", "Jupyter"]', 'beginner', 30),
+    ('${programIds["Data Science with Python"]}', 'Machine Learning Fundamentals', 'Introduction to machine learning algorithms and implementations. Build predictive models and understand ML concepts.', 'https://example.com/logos/ml.png', 14, 'Python programming, Statistics, Linear Algebra basics', 'Supervised/Unsupervised learning, Model evaluation, Feature engineering, ML pipelines', '["Python", "Scikit-learn", "TensorFlow", "Pandas", "NumPy", "Matplotlib"]', 'intermediate', 25),
+    ('${programIds["Data Science with Python"]}', 'Deep Learning with TensorFlow', 'Advanced deep learning concepts using TensorFlow. Build neural networks for complex problems like image recognition and NLP.', 'https://example.com/logos/tensorflow.png', 16, 'Machine Learning basics, Python proficiency, Mathematics', 'Neural networks, CNN, RNN, Transfer learning, Model deployment', '["TensorFlow", "Keras", "Python", "NumPy", "OpenCV", "NLTK"]', 'advanced', 20)
   `);
 }
 
