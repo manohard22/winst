@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import {
   User,
@@ -16,6 +17,15 @@ import {
   Bell,
   Globe,
   Trash2,
+  ArrowLeft,
+  CheckCircle,
+  AlertCircle,
+  Settings,
+  Key,
+  UserCircle,
+  School,
+  Link as LinkIcon,
+  Building,
 } from "lucide-react";
 import api from "../services/api";
 
@@ -203,8 +213,10 @@ const ProfileSettings = () => {
   };
 
   const tabs = [
-    { id: "profile", label: "Profile Information", icon: User },
-    { id: "security", label: "Security", icon: Shield },
+    { id: "profile", label: "Profile Information", icon: UserCircle },
+    { id: "academic", label: "Academic Details", icon: School },
+    { id: "links", label: "Social Links", icon: LinkIcon },
+    { id: "security", label: "Security", icon: Key },
     { id: "notifications", label: "Notifications", icon: Bell },
     { id: "privacy", label: "Privacy", icon: Lock },
   ];
@@ -214,12 +226,23 @@ const ProfileSettings = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-            Profile Settings
-          </h1>
-          <p className="mt-2 text-sm sm:text-base text-gray-600">
-            Manage your account settings and preferences
-          </p>
+          <div className="flex items-center space-x-4 mb-4">
+            <Link
+              to="/dashboard"
+              className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Link>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center">
+                <Settings className="h-8 w-8 mr-3 text-blue-600" />
+                Profile Settings
+              </h1>
+              <p className="mt-2 text-sm sm:text-base text-gray-600">
+                Manage your account settings and preferences
+              </p>
+            </div>
+          </div>
         </div>
 
         {message && (
@@ -234,33 +257,13 @@ const ProfileSettings = () => {
               <div className="flex-shrink-0">
                 {message.includes("successfully") ||
                 message.includes("updated") ? (
-                  <svg
-                    className="h-5 w-5 text-green-400"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                  <CheckCircle className="h-5 w-5 text-green-400" />
                 ) : (
-                  <svg
-                    className="h-5 w-5 text-red-400"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                  <AlertCircle className="h-5 w-5 text-red-400" />
                 )}
               </div>
               <div className="ml-3">
-                <p className="text-sm">{message}</p>
+                <p className="text-sm font-medium">{message}</p>
               </div>
             </div>
           </div>
@@ -773,6 +776,300 @@ const ProfileSettings = () => {
                   >
                     <Save className="h-4 w-4" />
                     <span>{loading ? "Saving..." : "Save Changes"}</span>
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* Academic Details Tab */}
+            {activeTab === "academic" && (
+              <form onSubmit={handleProfileUpdate} className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                    <School className="h-5 w-5 mr-2 text-blue-600" />
+                    Academic Information
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-6">
+                    Provide your educational background and current academic
+                    status.
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label
+                        htmlFor="college_name"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        College/University Name
+                      </label>
+                      <div className="relative">
+                        <Building className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <input
+                          type="text"
+                          id="college_name"
+                          value={profileData.college_name}
+                          onChange={(e) =>
+                            setProfileData({
+                              ...profileData,
+                              college_name: e.target.value,
+                            })
+                          }
+                          className="input-field pl-10"
+                          placeholder="Enter your college name"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="degree"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Degree
+                      </label>
+                      <select
+                        id="degree"
+                        value={profileData.degree}
+                        onChange={(e) =>
+                          setProfileData({
+                            ...profileData,
+                            degree: e.target.value,
+                          })
+                        }
+                        className="input-field"
+                      >
+                        <option value="">Select Degree</option>
+                        <option value="B.Tech">B.Tech</option>
+                        <option value="B.E">B.E</option>
+                        <option value="B.Sc">B.Sc</option>
+                        <option value="BCA">BCA</option>
+                        <option value="M.Tech">M.Tech</option>
+                        <option value="M.E">M.E</option>
+                        <option value="M.Sc">M.Sc</option>
+                        <option value="MCA">MCA</option>
+                        <option value="MBA">MBA</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="branch"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Branch/Specialization
+                      </label>
+                      <input
+                        type="text"
+                        id="branch"
+                        value={profileData.branch}
+                        onChange={(e) =>
+                          setProfileData({
+                            ...profileData,
+                            branch: e.target.value,
+                          })
+                        }
+                        className="input-field"
+                        placeholder="e.g., Computer Science, Information Technology"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="year_of_study"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Year of Study
+                      </label>
+                      <select
+                        id="year_of_study"
+                        value={profileData.year_of_study}
+                        onChange={(e) =>
+                          setProfileData({
+                            ...profileData,
+                            year_of_study: e.target.value,
+                          })
+                        }
+                        className="input-field"
+                      >
+                        <option value="">Select Year</option>
+                        <option value="1st Year">1st Year</option>
+                        <option value="2nd Year">2nd Year</option>
+                        <option value="3rd Year">3rd Year</option>
+                        <option value="4th Year">4th Year</option>
+                        <option value="Final Year">Final Year</option>
+                        <option value="Graduate">Graduate</option>
+                        <option value="Post Graduate">Post Graduate</option>
+                      </select>
+                    </div>
+
+                    <div className="md:col-span-1">
+                      <label
+                        htmlFor="cgpa"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        CGPA/Percentage
+                      </label>
+                      <input
+                        type="text"
+                        id="cgpa"
+                        value={profileData.cgpa}
+                        onChange={(e) =>
+                          setProfileData({
+                            ...profileData,
+                            cgpa: e.target.value,
+                          })
+                        }
+                        className="input-field"
+                        placeholder="e.g., 8.5 CGPA or 85%"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="btn-primary flex items-center space-x-2"
+                  >
+                    <Save className="h-4 w-4" />
+                    <span>
+                      {loading ? "Saving..." : "Save Academic Details"}
+                    </span>
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* Social Links Tab */}
+            {activeTab === "links" && (
+              <form onSubmit={handleProfileUpdate} className="space-y-6">
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
+                    <LinkIcon className="h-5 w-5 mr-2 text-blue-600" />
+                    Social & Professional Links
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-6">
+                    Connect your professional profiles to showcase your work and
+                    experience.
+                  </p>
+
+                  <div className="space-y-6">
+                    <div>
+                      <label
+                        htmlFor="linkedin_url"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        LinkedIn Profile
+                      </label>
+                      <div className="relative">
+                        <LinkIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <input
+                          type="url"
+                          id="linkedin_url"
+                          value={profileData.linkedin_url}
+                          onChange={(e) =>
+                            setProfileData({
+                              ...profileData,
+                              linkedin_url: e.target.value,
+                            })
+                          }
+                          className="input-field pl-10"
+                          placeholder="https://linkedin.com/in/yourprofile"
+                        />
+                      </div>
+                      <p className="mt-1 text-xs text-gray-500">
+                        Share your professional network and experience
+                      </p>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="github_url"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        GitHub Profile
+                      </label>
+                      <div className="relative">
+                        <LinkIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <input
+                          type="url"
+                          id="github_url"
+                          value={profileData.github_url}
+                          onChange={(e) =>
+                            setProfileData({
+                              ...profileData,
+                              github_url: e.target.value,
+                            })
+                          }
+                          className="input-field pl-10"
+                          placeholder="https://github.com/yourusername"
+                        />
+                      </div>
+                      <p className="mt-1 text-xs text-gray-500">
+                        Showcase your coding projects and contributions
+                      </p>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="portfolio_url"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                      >
+                        Portfolio Website
+                      </label>
+                      <div className="relative">
+                        <Globe className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                        <input
+                          type="url"
+                          id="portfolio_url"
+                          value={profileData.portfolio_url}
+                          onChange={(e) =>
+                            setProfileData({
+                              ...profileData,
+                              portfolio_url: e.target.value,
+                            })
+                          }
+                          className="input-field pl-10"
+                          placeholder="https://yourportfolio.com"
+                        />
+                      </div>
+                      <p className="mt-1 text-xs text-gray-500">
+                        Display your work, projects, and achievements
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 className="text-sm font-medium text-blue-900 mb-2">
+                      Why add social links?
+                    </h4>
+                    <ul className="text-xs text-blue-700 space-y-1">
+                      <li>
+                        • Helps employers and mentors understand your background
+                      </li>
+                      <li>
+                        • Increases visibility for internship and job
+                        opportunities
+                      </li>
+                      <li>
+                        • Enables networking with other students and
+                        professionals
+                      </li>
+                      <li>• Showcases your projects and technical skills</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="btn-primary flex items-center space-x-2"
+                  >
+                    <Save className="h-4 w-4" />
+                    <span>{loading ? "Saving..." : "Save Links"}</span>
                   </button>
                 </div>
               </form>

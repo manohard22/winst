@@ -11,8 +11,10 @@ import {
   Eye,
   Receipt,
   Filter,
+  FileText,
 } from "lucide-react";
 import api from "../services/api";
+import jsPDF from "jspdf";
 
 const PaymentHistory = () => {
   const { user } = useAuth();
@@ -290,40 +292,187 @@ const PaymentHistory = () => {
       }
     });
 
-  const downloadReceipt = async (paymentId) => {
+  const downloadInvoice = async (paymentId) => {
     try {
-      // For demo purposes, create a mock receipt
+      // Find the payment data
       const payment = payments.find((p) => p.id === paymentId);
       if (!payment) return;
 
-      // Create mock receipt content
-      const receiptContent = `
-        LUCRO LEARNING PLATFORM
-        Payment Receipt
+      // Show loading notification
+      const originalText = "Generating invoice PDF...";
+      
+      // Create PDF
+      const pdf = new jsPDF();
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      
+      // Colors
+      const primaryColor = [59, 130, 246]; // Blue
+      const textColor = [31, 41, 55]; // Gray-800
+      const lightGray = [156, 163, 175]; // Gray-400
+      
+      // Header with logo and company info
+      pdf.setFillColor(...primaryColor);
+      pdf.rect(0, 0, pageWidth, 40, 'F');
+      
+      // Company name
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(24);
+      pdf.setFont(undefined, 'bold');
+      pdf.text('LUCRO', 20, 25);
+      
+      // Invoice title
+      pdf.setFontSize(14);
+      pdf.setFont(undefined, 'normal');
+      pdf.text('PAYMENT INVOICE', pageWidth - 20, 20, { align: 'right' });
+      pdf.text('Learning Platform', pageWidth - 20, 30, { align: 'right' });
+      
+      // Invoice details section
+      pdf.setTextColor(...textColor);
+      pdf.setFontSize(16);
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Invoice Details', 20, 60);
+      
+      // Draw line under heading
+      pdf.setDrawColor(...lightGray);
+      pdf.line(20, 65, pageWidth - 20, 65);
+      
+      // Invoice information
+      pdf.setFontSize(10);
+      pdf.setFont(undefined, 'normal');
+      
+      let yPosition = 80;
+      const lineHeight = 6;
+      
+      // Left column
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Invoice Number:', 20, yPosition);
+      pdf.setFont(undefined, 'normal');
+      pdf.text(payment.order.order_number, 80, yPosition);
+      
+      yPosition += lineHeight;
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Transaction ID:', 20, yPosition);
+      pdf.setFont(undefined, 'normal');
+      pdf.text(payment.gateway_transaction_id, 80, yPosition);
+      
+      yPosition += lineHeight;
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Date:', 20, yPosition);
+      pdf.setFont(undefined, 'normal');
+      pdf.text(new Date(payment.created_at).toLocaleDateString("en-IN"), 80, yPosition);
+      
+      yPosition += lineHeight;
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Payment Method:', 20, yPosition);
+      pdf.setFont(undefined, 'normal');
+      pdf.text(payment.payment_method, 80, yPosition);
+      
+      yPosition += lineHeight;
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Gateway:', 20, yPosition);
+      pdf.setFont(undefined, 'normal');
+      pdf.text(payment.payment_gateway, 80, yPosition);
+      
+      yPosition += lineHeight;
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Status:', 20, yPosition);
+      pdf.setFont(undefined, 'normal');
+      pdf.setTextColor(34, 197, 94); // Green for paid status
+      pdf.text(payment.status.toUpperCase(), 80, yPosition);
+      pdf.setTextColor(...textColor);
+      
+      // Program details section
+      yPosition += 20;
+      pdf.setFontSize(16);
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Program Details', 20, yPosition);
+      
+      // Draw line
+      pdf.setDrawColor(...lightGray);
+      pdf.line(20, yPosition + 5, pageWidth - 20, yPosition + 5);
+      
+      yPosition += 15;
+      pdf.setFontSize(10);
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Program Name:', 20, yPosition);
+      pdf.setFont(undefined, 'normal');
+      
+      // Handle long program titles with text wrapping
+      const programTitle = payment.order.program.title;
+      const maxWidth = pageWidth - 100;
+      const lines = pdf.splitTextToSize(programTitle, maxWidth);
+      pdf.text(lines, 80, yPosition);
+      
+      yPosition += lineHeight * lines.length;
+      if (payment.order.program.description) {
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Description:', 20, yPosition);
+        pdf.setFont(undefined, 'normal');
+        const descLines = pdf.splitTextToSize(payment.order.program.description, maxWidth);
+        pdf.text(descLines, 80, yPosition);
+        yPosition += lineHeight * descLines.length;
+      }
+      
+      // Payment summary section
+      yPosition += 20;
+      pdf.setFillColor(248, 250, 252); // Light gray background
+      pdf.rect(20, yPosition - 5, pageWidth - 40, 30, 'F');
+      
+      pdf.setFontSize(16);
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Payment Summary', 25, yPosition + 5);
+      
+      // Amount details
+      yPosition += 15;
+      pdf.setFontSize(12);
+      pdf.setFont(undefined, 'bold');
+      pdf.text('Total Amount:', 25, yPosition);
+      pdf.setFontSize(14);
+      pdf.setTextColor(...primaryColor);
+      pdf.text(`₹${payment.amount.toLocaleString("en-IN")}`, pageWidth - 25, yPosition, { align: 'right' });
+      pdf.setTextColor(...textColor);
+      
+      // Customer information (if available)
+      if (user) {
+        yPosition += 30;
+        pdf.setFontSize(16);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Customer Information', 20, yPosition);
         
-        Transaction ID: ${payment.gateway_transaction_id}
-        Order Number: ${payment.order.order_number}
-        Program: ${payment.order.program.title}
-        Amount: ₹${payment.amount.toLocaleString("en-IN")}
-        Payment Method: ${payment.payment_method}
-        Gateway: ${payment.payment_gateway}
-        Date: ${new Date(payment.created_at).toLocaleDateString("en-IN")}
-        Status: ${payment.status.toUpperCase()}
+        pdf.setDrawColor(...lightGray);
+        pdf.line(20, yPosition + 5, pageWidth - 20, yPosition + 5);
         
-        Thank you for your payment!
-        For support, contact: support@lucro.com
-      `;
+        yPosition += 15;
+        pdf.setFontSize(10);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Name:', 20, yPosition);
+        pdf.setFont(undefined, 'normal');
+        pdf.text(`${user.first_name || ''} ${user.last_name || ''}`.trim() || 'N/A', 80, yPosition);
+        
+        yPosition += lineHeight;
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Email:', 20, yPosition);
+        pdf.setFont(undefined, 'normal');
+        pdf.text(user.email || 'N/A', 80, yPosition);
+      }
+      
+      // Footer
+      const footerY = pageHeight - 30;
+      pdf.setFillColor(...primaryColor);
+      pdf.rect(0, footerY, pageWidth, 30, 'F');
+      
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(8);
+      pdf.text('Thank you for choosing Lucro Learning Platform!', pageWidth / 2, footerY + 10, { align: 'center' });
+      pdf.text('For support, contact: support@lucro.com | Visit: www.lucro.com', pageWidth / 2, footerY + 20, { align: 'center' });
+      
+      // Download PDF
+      const fileName = `lucro-invoice-${payment.order.order_number}.pdf`;
+      pdf.save(fileName);
 
-      // Create and download blob
-      const blob = new Blob([receiptContent], { type: "text/plain" });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `receipt-${paymentId}.txt`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      // Show success message
+      alert(`Invoice PDF downloaded successfully: ${fileName}`);
 
       // Uncomment this for real API integration
       // const response = await api.get(`/student/payments/${paymentId}/receipt`, {
@@ -332,13 +481,14 @@ const PaymentHistory = () => {
       // const url = window.URL.createObjectURL(new Blob([response.data]));
       // const link = document.createElement("a");
       // link.href = url;
-      // link.setAttribute("download", `receipt-${paymentId}.pdf`);
+      // link.setAttribute("download", `invoice-${payment.order.order_number}.pdf`);
       // document.body.appendChild(link);
       // link.click();
       // link.remove();
+      
     } catch (error) {
-      console.error("Failed to download receipt:", error);
-      alert("Failed to download receipt. Please try again.");
+      console.error("Failed to download invoice:", error);
+      alert("Failed to download invoice. Please try again.");
     }
   };
 
@@ -612,10 +762,11 @@ const PaymentHistory = () => {
                         {(payment.status === "success" ||
                           payment.status === "paid") && (
                           <button
-                            onClick={() => downloadReceipt(payment.id)}
+                            onClick={() => downloadInvoice(payment.id)}
                             className="text-blue-600 hover:text-blue-800 transition-colors"
+                            title="Download Invoice PDF"
                           >
-                            <Download className="h-4 w-4" />
+                            <FileText className="h-4 w-4" />
                           </button>
                         )}
                         <button className="text-gray-600 hover:text-gray-800 transition-colors">
@@ -707,11 +858,11 @@ const PaymentHistory = () => {
                           {(payment.status === "success" ||
                             payment.status === "paid") && (
                             <button
-                              onClick={() => downloadReceipt(payment.id)}
+                              onClick={() => downloadInvoice(payment.id)}
                               className="text-blue-600 hover:text-blue-800 transition-colors"
-                              title="Download Receipt"
+                              title="Download Invoice PDF"
                             >
-                              <Download className="h-4 w-4" />
+                              <FileText className="h-4 w-4" />
                             </button>
                           )}
                           <button
