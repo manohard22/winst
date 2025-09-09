@@ -1,5 +1,5 @@
 {
-  "name": "lucro-backend",
+  "name": "winst-backend",
   "version": "1.0.0",
   "description": "Backend API for Winst Internship Portal",
   "main": "server.js",

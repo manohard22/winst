@@ -127,7 +127,7 @@ const Login = () => {
             </h3>
             <div className="text-xs text-blue-700">
               <p>
-                <strong>Admin:</strong> admin@lucro.com / admin123
+                <strong>Admin:</strong> admin@winst.com / admin123
               </p>
             </div>
           </div>

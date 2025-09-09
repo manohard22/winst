@@ -13,9 +13,9 @@ const DB_CONFIG = {
 };
 
 const TARGET_DB = {
-  name: "lucro_portal_fresh_db",
-  user: "lucro_fresh_user",
-  password: "lucro_secure_2025",
+  name: "winst_portal_fresh_db",
+  user: "winst_fresh_user",
+  password: "winst_secure_2025",
 };
 
 // Simple password hashing using crypto
@@ -184,9 +184,9 @@ async function setupFreshDatabase() {
     );
 
     console.log("\n👥 Sample Login Credentials:");
-    console.log("   🔑 Admin: admin@lucro.com / admin123");
+    console.log("   🔑 Admin: admin@winst.com / admin123");
     console.log("   🎓 Student: john.doe@college.edu / student123");
-    console.log("   👨‍🏫 Mentor: dr.smith@lucro.com / mentor123");
+    console.log("   👨‍🏫 Mentor: dr.smith@winst.com / mentor123");
     console.log("   💼 Affiliate: alex.marketer@agency.com / affiliate123");
 
     console.log("\n🎯 Feature Test Data Available:");
@@ -223,10 +223,10 @@ async function createCompleteDummyData(client) {
     INSERT INTO users (email, password_hash, first_name, last_name, role, college_name, degree, branch, year_of_study, cgpa, linkedin_url, github_url, is_active, email_verified) VALUES
     
     -- Admin Users
-    ('admin@lucro.com', '${adminHash}', 'Admin', 'Winst', 'admin', NULL, NULL, NULL, NULL, NULL, 'https://linkedin.com/in/admin-lucro', NULL, true, true),
+    ('admin@winst.com', '${adminHash}', 'Admin', 'Winst', 'admin', NULL, NULL, NULL, NULL, NULL, 'https://linkedin.com/in/admin-winst', NULL, true, true),
     
     -- Mentor Users
-    ('dr.smith@lucro.com', '${mentorHash}', 'Dr. Robert', 'Smith', 'mentor', 'Stanford University', 'PhD', 'Computer Science', NULL, NULL, 'https://linkedin.com/in/dr-smith', 'https://github.com/drsmith', true, true),
+    ('dr.smith@winst.com', '${mentorHash}', 'Dr. Robert', 'Smith', 'mentor', 'Stanford University', 'PhD', 'Computer Science', NULL, NULL, 'https://linkedin.com/in/dr-smith', 'https://github.com/drsmith', true, true),
     
     -- Student Users (9 students)
     ('john.doe@college.edu', '${studentHash}', 'John', 'Doe', 'student', 'IIT Delhi', 'B.Tech', 'Computer Science', 3, 8.5, 'https://linkedin.com/in/johndoe', 'https://github.com/johndoe', true, true),
@@ -744,7 +744,7 @@ async function createCompleteDummyData(client) {
         enrollment.program_id,
         enrollment.id,
         certificateNumber,
-        `https://certificates.lucro.com/${certificateNumber}.pdf`,
+        `https://certificates.winst.com/${certificateNumber}.pdf`,
         "completion",
         enrollment.assessment_score,
         enrollment.average_task_score,

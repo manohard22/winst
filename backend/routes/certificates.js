@@ -100,7 +100,7 @@ const generateCertificate = async (
       // Footer
       doc.fontSize(14).fillColor("#1f2937");
       doc.text(
-        "Winst Technologies Pvt. Ltd. | HITEC City, Hyderabad | www.lucro.in",
+        "Winst Technologies Pvt. Ltd. | HITEC City, Hyderabad | www.winst.in",
         0,
         570,
         { align: "center" }
@@ -240,7 +240,7 @@ router.post(
       // Send certificate via email
       try {
         await transporter.sendMail({
-          from: process.env.SMTP_USER || "noreply@lucro.com",
+          from: process.env.SMTP_USER || "noreply@winst.com",
           to: enrollment.email,
           subject: `🎉 Certificate of Completion - ${enrollment.program_title}`,
           html: `
@@ -301,7 +301,7 @@ router.post(
               <p style="margin: 0;">
                 <strong>Winst Technologies Pvt. Ltd.</strong><br>
                 HITEC City, Hyderabad<br>
-                <a href="https://www.lucro.in" style="color: #2563eb;">www.lucro.in</a>
+                <a href="https://www.winst.in" style="color: #2563eb;">www.winst.in</a>
               </p>
               <p style="margin: 10px 0 0 0; font-size: 12px;">
                 This is an automated message. Please do not reply to this email.

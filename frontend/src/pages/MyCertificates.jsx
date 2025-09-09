@@ -36,7 +36,7 @@ const MyCertificates = () => {
       status: "issued",
       grade: "A+",
       finalScore: 96,
-      credentialUrl: "https://verify.lucro.com/cert_001",
+      credentialUrl: "https://verify.winst.com/cert_001",
       imageUrl: "/api/placeholder/600/400",
       mentor: {
         firstName: "Dr. Priya",
@@ -62,7 +62,7 @@ const MyCertificates = () => {
       status: "issued",
       grade: "A",
       finalScore: 89,
-      credentialUrl: "https://verify.lucro.com/cert_002",
+      credentialUrl: "https://verify.winst.com/cert_002",
       imageUrl: "/api/placeholder/600/400",
       mentor: {
         firstName: "Dr. Rajesh",
@@ -88,7 +88,7 @@ const MyCertificates = () => {
       status: "issued",
       grade: "A+",
       finalScore: 94,
-      credentialUrl: "https://verify.lucro.com/cert_003",
+      credentialUrl: "https://verify.winst.com/cert_003",
       imageUrl: "/api/placeholder/600/400",
       mentor: {
         firstName: "Sneha",

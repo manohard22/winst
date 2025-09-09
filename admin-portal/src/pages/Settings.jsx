@@ -5,8 +5,8 @@ const Settings = () => {
   const [settings, setSettings] = useState({
     siteName: "Winst Internship Portal",
     siteDescription: "Comprehensive internship management system",
-    adminEmail: "admin@lucro.com",
-    supportEmail: "support@lucro.com",
+    adminEmail: "admin@winst.com",
+    supportEmail: "support@winst.com",
     maxFileSize: "5",
     allowRegistration: true,
     requireEmailVerification: true,

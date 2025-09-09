@@ -151,7 +151,7 @@ const Login = () => {
             <div className="space-y-2 text-xs text-blue-700">
               <div className="flex justify-between">
                 <span>
-                  <strong>Admin:</strong> admin@lucro.com
+                  <strong>Admin:</strong> admin@winst.com
                 </span>
                 <span>
                   <strong>Password:</strong> admin123

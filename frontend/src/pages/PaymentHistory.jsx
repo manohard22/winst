@@ -487,14 +487,14 @@ const PaymentHistory = () => {
         { align: "center" }
       );
       pdf.text(
-        "For support, contact: support@lucro.com | Visit: www.lucro.com",
+        "For support, contact: support@winst.com | Visit: www.winst.com",
         pageWidth / 2,
         footerY + 20,
         { align: "center" }
       );
 
       // Download PDF
-      const fileName = `lucro-invoice-${payment.order.order_number}.pdf`;
+      const fileName = `winst-invoice-${payment.order.order_number}.pdf`;
       pdf.save(fileName);
 
       // Show success message

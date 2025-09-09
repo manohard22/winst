@@ -1,5 +1,5 @@
 {
-  "name": "lucro-internship-portal",
+  "name": "winst-internship-portal",
   "version": "1.0.0",
   "description": "Full-stack internship management portal with React, Node.js, and PostgreSQL - Complete with Assessments, Referrals, Affiliates, and Task Submissions",
   "main": "index.js",
@@ -44,18 +44,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/manohard22/lucro.git"
+    "url": "https://github.com/manohard22/winst.git"
   },
   "bugs": {
-    "url": "https://github.com/manohard22/lucro/issues"
+    "url": "https://github.com/manohard22/winst/issues"
   },
-  "homepage": "https://github.com/manohard22/lucro#readme",
+  "homepage": "https://github.com/manohard22/winst#readme",
   "config": {
     "database": {
       "host": "localhost",
       "port": 5432,
-      "name": "lucro_portal_db",
-      "user": "lucro_db_user",
+      "name": "winst_portal_db",
+      "user": "winst_db_user",
       "password": "root"
     }
   },
@@ -116,7 +116,7 @@
     ],
     "login_credentials": {
       "admin": {
-        "email": "admin@lucro.com",
+        "email": "admin@winst.com",
         "password": "admin123"
       },
       "students": [

@@ -136,13 +136,13 @@ const Referrals = () => {
     const shareData = {
       title: "Join Winst and Save ₹499!",
       text: `I'm inviting you to join Winst with my referral code ${referral.referralCode} and get ₹499 off on any internship program!`,
-      url: `https://lucro.com/signup?ref=${referral.referralCode}`,
+      url: `https://winst.com/signup?ref=${referral.referralCode}`,
     };
 
     if (navigator.share) {
       navigator.share(shareData);
     } else {
-      copyReferralCode(`https://lucro.com/signup?ref=${referral.referralCode}`);
+      copyReferralCode(`https://winst.com/signup?ref=${referral.referralCode}`);
     }
   };
 
@@ -487,7 +487,7 @@ const Referrals = () => {
                           <Share2 className="h-4 w-4" />
                         </button>
                         <a
-                          href={`https://lucro.com/signup?ref=${referral.referralCode}`}
+                          href={`https://winst.com/signup?ref=${referral.referralCode}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-2 text-purple-500 hover:text-purple-700 hover:bg-purple-50 rounded-md transition-colors"

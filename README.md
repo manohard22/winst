@@ -17,7 +17,7 @@ This single command will:
 ## 🏗️ Project Structure
 
 ```
-lucro-internship-portal/
+winst-internship-portal/
 ├── frontend/          # React + TailwindCSS frontend
 ├── backend/           # Node.js + Express backend
 ├── admin-portal/      # React admin dashboard
@@ -36,7 +36,7 @@ lucro-internship-portal/
 
 ```bash
 git clone <repository-url>
-cd lucro-internship-portal
+cd winst-internship-portal
 npm start
 ```
 
@@ -44,8 +44,8 @@ npm start
 
 The `npm start` command automatically:
 
-- Creates PostgreSQL database: `lucro_portal_db`
-- Creates user: `lucro_db_user`
+- Creates PostgreSQL database: `winst_portal_db`
+- Creates user: `winst_db_user`
 - Sets up all tables and relationships
 - Inserts sample data
 
@@ -56,8 +56,8 @@ The `npm start` command automatically:
 ```env
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=lucro_portal_db
-DB_USER=lucro_db_user
+DB_NAME=winst_portal_db
+DB_USER=winst_db_user
 DB_PASSWORD=root
 JWT_SECRET=your-super-secret-jwt-key-change-in-production
 ```
@@ -78,7 +78,7 @@ VITE_RAZORPAY_KEY_ID=your-razorpay-key-id
 
 ## 👥 Demo Credentials
 
-- **Admin:** admin@lucro.com / admin123
+- **Admin:** admin@winst.com / admin123
 - **Student:** student1@example.com / student123
 
 ## 🛠️ Technologies
