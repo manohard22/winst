@@ -87,7 +87,7 @@ const ProgramDetail = () => {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_1234567890",
         amount: order.finalAmount * 100, // Convert to paise
         currency: "INR",
-        name: "Lucro Internship Portal",
+        name: "Winst Internship Portal",
         description: `Enrollment for ${program.title}`,
         order_id: order.orderNumber,
         handler: async function (response) {

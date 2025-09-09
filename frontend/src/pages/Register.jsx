@@ -52,7 +52,7 @@ const Register = () => {
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-extrabold text-gray-900">
-            Join Lucro Internship Portal
+            Join Winst Internship Portal
           </h2>
           <p className="mt-2 text-sm text-gray-600">
             Create your student account to get started

@@ -394,7 +394,7 @@ const generateCertificate = (studentName, programTitle, completionDate) => {
       doc.fontSize(36).font("Helvetica-Bold").fillColor("#2563eb");
       doc.text("CERTIFICATE OF COMPLETION", 0, 120, { align: "center" });
 
-      // Lucro branding
+      // Winst branding
       doc.fontSize(24).fillColor("#6366f1");
       doc.text("LUCRO", 0, 180, { align: "center" });
       doc.fontSize(14).fillColor("#64748b");
@@ -422,7 +422,7 @@ const generateCertificate = (studentName, programTitle, completionDate) => {
       // Footer
       doc.fontSize(12).fillColor("#64748b");
       doc.text(
-        "This certificate is digitally verified and issued by Lucro",
+        "This certificate is digitally verified and issued by Winst",
         0,
         550,
         { align: "center" }
@@ -513,7 +513,7 @@ router.post("/programs/:id/send-certificates", async (req, res) => {
                 
                 <p style="font-size: 16px; line-height: 1.6; color: #374151;">
                   We are thrilled to inform you that you have successfully completed the 
-                  <strong>${program.title}</strong> program at Lucro!
+                  <strong>${program.title}</strong> program at Winst!
                 </p>
                 
                 <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981;">
@@ -522,7 +522,7 @@ router.post("/programs/:id/send-certificates", async (req, res) => {
                     <li>Add this certificate to your LinkedIn profile</li>
                     <li>Include it in your resume and portfolio</li>
                     <li>Share your achievement with your network</li>
-                    <li>Apply for advanced programs at Lucro</li>
+                    <li>Apply for advanced programs at Winst</li>
                   </ul>
                 </div>
                 
@@ -539,7 +539,7 @@ router.post("/programs/:id/send-certificates", async (req, res) => {
                 <div style="border-top: 1px solid #e5e7eb; padding-top: 20px; margin-top: 30px; text-align: center;">
                   <p style="color: #6b7280; font-size: 14px; margin: 0;">
                     Best regards,<br>
-                    <strong>The Lucro Team</strong><br>
+                    <strong>The Winst Team</strong><br>
                     Empowering Careers
                   </p>
                 </div>

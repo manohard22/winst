@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Lucro Internship Portal Database Setup Script
+# Winst Internship Portal Database Setup Script
 # This script sets up the PostgreSQL database with schema and dummy data
 
-echo "🚀 Setting up Lucro Internship Portal Database..."
+echo "🚀 Setting up Winst Internship Portal Database..."
 
 # Database configuration
 DB_NAME="lucro_portal"

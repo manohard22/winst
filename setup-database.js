@@ -31,7 +31,7 @@ function generateRandomCode(prefix, length = 8) {
 
 async function setupDatabase() {
   console.log(
-    "🚀 Setting up Lucro Internship Portal Database with ALL Requirements..."
+    "🚀 Setting up Winst Internship Portal Database with ALL Requirements..."
   );
   console.log("   ✅ 1. Assessments System");
   console.log("   ✅ 2. Referral Friend System");
@@ -49,7 +49,9 @@ async function setupDatabase() {
     console.log("📊 Creating database and user...");
     try {
       // Terminate all connections to the target database before dropping
-      await client.query(`SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '${TARGET_DB.name}' AND pid <> pg_backend_pid();`);
+      await client.query(
+        `SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '${TARGET_DB.name}' AND pid <> pg_backend_pid();`
+      );
       await client.query(`DROP DATABASE IF EXISTS ${TARGET_DB.name}`);
       await client.query(`DROP USER IF EXISTS ${TARGET_DB.user}`);
     } catch (error) {

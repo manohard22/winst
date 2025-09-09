@@ -44,7 +44,7 @@ const Help = () => {
   const faqs = {
     "getting-started": [
       {
-        question: "How do I get started with Lucro?",
+        question: "How do I get started with Winst?",
         answer:
           "Getting started is easy! First, create your account by clicking 'Sign Up' on our homepage. Once registered, browse our available programs, choose one that interests you, and enroll. You'll immediately get access to course materials and can start learning right away.",
       },

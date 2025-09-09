@@ -49,7 +49,7 @@ const Payment = () => {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: amount * 100, // Convert to paise
         currency: currency,
-        name: "Lucro Internships",
+        name: "Winst Internships",
         description: `Application fee for ${internship.title}`,
         order_id: order_id,
         handler: async function (response) {

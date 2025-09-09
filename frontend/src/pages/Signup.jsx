@@ -1,96 +1,100 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
-import { Eye, EyeOff, BookOpen, CheckCircle, Gift } from 'lucide-react'
-import toast from 'react-hot-toast'
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { Eye, EyeOff, BookOpen, CheckCircle, Gift } from "lucide-react";
+import toast from "react-hot-toast";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    referralCode: '',
-    affiliateCode: ''
-  })
-  const [discountInfo, setDiscountInfo] = useState(null)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    referralCode: "",
+    affiliateCode: "",
+  });
+  const [discountInfo, setDiscountInfo] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const { register } = useAuth()
-  const navigate = useNavigate()
+  const { register } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match')
-      return
+      toast.error("Passwords do not match");
+      return;
     }
 
     if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters')
-      return
+      toast.error("Password must be at least 6 characters");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
-    const result = await register(formData)
-    
+    const result = await register(formData);
+
     if (result.success) {
-      toast.success('Account created successfully!')
-      navigate('/dashboard')
+      toast.success("Account created successfully!");
+      navigate("/dashboard");
     } else {
-      toast.error(result.message)
+      toast.error(result.message);
     }
-    
-    setLoading(false)
-  }
+
+    setLoading(false);
+  };
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const validateReferralCode = async (code) => {
-    if (!code) return
+    if (!code) return;
     try {
-      const response = await api.post('/referrals/validate', { referralCode: code })
+      const response = await api.post("/referrals/validate", {
+        referralCode: code,
+      });
       setDiscountInfo({
-        type: 'referral',
+        type: "referral",
         amount: response.data.data.discountAmount,
-        referrerName: response.data.data.referrerName
-      })
+        referrerName: response.data.data.referrerName,
+      });
     } catch (error) {
-      setDiscountInfo(null)
+      setDiscountInfo(null);
     }
-  }
+  };
 
   const validateAffiliateCode = async (code) => {
-    if (!code) return
+    if (!code) return;
     try {
-      const response = await api.post('/affiliates/validate', { affiliateCode: code })
+      const response = await api.post("/affiliates/validate", {
+        affiliateCode: code,
+      });
       setDiscountInfo({
-        type: 'affiliate',
+        type: "affiliate",
         amount: response.data.data.discountAmount,
-        affiliateName: response.data.data.affiliateName
-      })
+        affiliateName: response.data.data.affiliateName,
+      });
     } catch (error) {
-      setDiscountInfo(null)
+      setDiscountInfo(null);
     }
-  }
+  };
 
   const benefits = [
-    'Access to 500+ internship opportunities',
-    'Direct connection with top companies',
-    'Skill development and certification',
-    'Career guidance and mentorship',
-    'Free to join and use'
-  ]
+    "Access to 500+ internship opportunities",
+    "Direct connection with top companies",
+    "Skill development and certification",
+    "Career guidance and mentorship",
+    "Free to join and use",
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -103,9 +107,10 @@ const Signup = () => {
                 Start Your Career Journey Today
               </h1>
               <p className="text-xl text-gray-600 mb-8">
-                Join thousands of students who have found their dream internships through Lucro
+                Join thousands of students who have found their dream
+                internships through Winst
               </p>
-              
+
               <div className="space-y-4">
                 {benefits.map((benefit, index) => (
                   <div key={index} className="flex items-center space-x-3">
@@ -119,14 +124,18 @@ const Signup = () => {
 
               <div className="mt-8 p-6 bg-blue-50 rounded-2xl">
                 <div className="flex items-center space-x-4">
-                  <img 
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60" 
-                    alt="Student" 
+                  <img
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60"
+                    alt="Student"
                     className="w-12 h-12 rounded-full object-cover"
                   />
                   <div>
-                    <p className="text-gray-700 italic">"Lucro helped me land my dream internship at Google!"</p>
-                    <p className="text-sm text-gray-600 mt-1">- Rahul K., Software Engineer</p>
+                    <p className="text-gray-700 italic">
+                      "Winst helped me land my dream internship at Google!"
+                    </p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      - Rahul K., Software Engineer
+                    </p>
                   </div>
                 </div>
               </div>
@@ -143,10 +152,14 @@ const Signup = () => {
                     <BookOpen className="h-8 w-8 text-white" />
                   </div>
                 </div>
-                <h2 className="text-3xl font-bold text-gray-900">Create Account</h2>
-                <p className="text-gray-600 mt-2">Join Lucro and start your journey</p>
+                <h2 className="text-3xl font-bold text-gray-900">
+                  Create Account
+                </h2>
+                <p className="text-gray-600 mt-2">
+                  Join Winst and start your journey
+                </p>
               </div>
-              
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -193,14 +206,14 @@ const Signup = () => {
                     onChange={handleChange}
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Password
                   </label>
                   <div className="relative">
                     <input
-                      type={showPassword ? 'text' : 'password'}
+                      type={showPassword ? "text" : "password"}
                       name="password"
                       required
                       className="input-field pr-12"
@@ -220,7 +233,9 @@ const Signup = () => {
                       )}
                     </button>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">Must be at least 6 characters</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Must be at least 6 characters
+                  </p>
                 </div>
 
                 <div>
@@ -229,7 +244,7 @@ const Signup = () => {
                   </label>
                   <div className="relative">
                     <input
-                      type={showConfirmPassword ? 'text' : 'password'}
+                      type={showConfirmPassword ? "text" : "password"}
                       name="confirmPassword"
                       required
                       className="input-field pr-12"
@@ -240,7 +255,9 @@ const Signup = () => {
                     <button
                       type="button"
                       className="absolute inset-y-0 right-0 pr-4 flex items-center"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                     >
                       {showConfirmPassword ? (
                         <EyeOff className="h-5 w-5 text-gray-400" />
@@ -293,10 +310,9 @@ const Signup = () => {
                           Great! You'll get ₹{discountInfo.amount} discount
                         </p>
                         <p className="text-xs text-green-600">
-                          {discountInfo.type === 'referral' 
+                          {discountInfo.type === "referral"
                             ? `Referred by ${discountInfo.referrerName}`
-                            : `Affiliate: ${discountInfo.affiliateName}`
-                          }
+                            : `Affiliate: ${discountInfo.affiliateName}`}
                         </p>
                       </div>
                     </div>
@@ -311,30 +327,42 @@ const Signup = () => {
                     required
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
-                    I agree to the{' '}
-                    <Link to="/terms" className="text-blue-600 hover:text-blue-500">
+                  <label
+                    htmlFor="terms"
+                    className="ml-2 block text-sm text-gray-700"
+                  >
+                    I agree to the{" "}
+                    <Link
+                      to="/terms"
+                      className="text-blue-600 hover:text-blue-500"
+                    >
                       Terms of Service
-                    </Link>{' '}
-                    and{' '}
-                    <Link to="/privacy" className="text-blue-600 hover:text-blue-500">
+                    </Link>{" "}
+                    and{" "}
+                    <Link
+                      to="/privacy"
+                      className="text-blue-600 hover:text-blue-500"
+                    >
                       Privacy Policy
                     </Link>
                   </label>
                 </div>
 
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={loading}
                   className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Creating Account...' : 'Create Account'}
+                  {loading ? "Creating Account..." : "Create Account"}
                 </button>
 
                 <div className="text-center">
                   <p className="text-sm text-gray-600">
-                    Already have an account?{' '}
-                    <Link to="/login" className="font-medium text-blue-600 hover:text-blue-500">
+                    Already have an account?{" "}
+                    <Link
+                      to="/login"
+                      className="font-medium text-blue-600 hover:text-blue-500"
+                    >
                       Sign in here
                     </Link>
                   </p>
@@ -345,7 +373,7 @@ const Signup = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Signup
+export default Signup;

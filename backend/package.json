@@ -1,7 +1,7 @@
 {
   "name": "lucro-backend",
   "version": "1.0.0",
-  "description": "Backend API for Lucro Internship Portal",
+  "description": "Backend API for Winst Internship Portal",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -33,6 +33,6 @@
     "nodejs",
     "postgresql"
   ],
-  "author": "Lucro Team",
+  "author": "Winst Team",
   "license": "MIT"
 }

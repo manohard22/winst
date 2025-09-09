@@ -3,7 +3,7 @@ import { Save, Bell, Shield, Database, Mail } from "lucide-react";
 
 const Settings = () => {
   const [settings, setSettings] = useState({
-    siteName: "Lucro Internship Portal",
+    siteName: "Winst Internship Portal",
     siteDescription: "Comprehensive internship management system",
     adminEmail: "admin@lucro.com",
     supportEmail: "support@lucro.com",
