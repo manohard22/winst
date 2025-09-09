@@ -30,7 +30,7 @@
     "education",
     "learning-management"
   ],
-  "author": "Lucro Team",
+  "author": "Winst Team",
   "license": "MIT",
   "dependencies": {
     "pg": "^8.11.3"

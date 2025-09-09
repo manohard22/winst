@@ -1,4 +1,4 @@
--- Enhanced Lucro Internship Portal Database Schema
+-- Enhanced Winst Internship Portal Database Schema
 -- Additional tables for referral, assessment, and project submission
 
 -- Referral system table

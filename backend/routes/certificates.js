@@ -50,7 +50,7 @@ const generateCertificate = async (
       doc.fontSize(42).font("Helvetica-Bold").fillColor("#2563eb");
       doc.text("CERTIFICATE OF COMPLETION", 0, 80, { align: "center" });
 
-      // Lucro branding
+      // Winst branding
       doc.fontSize(28).fillColor("#6366f1");
       doc.text("LUCRO", 0, 140, { align: "center" });
       doc.fontSize(16).fillColor("#64748b");
@@ -91,7 +91,7 @@ const generateCertificate = async (
         align: "center",
       });
       doc.text(
-        "This certificate is digitally verified and issued by Lucro Technologies Pvt. Ltd.",
+        "This certificate is digitally verified and issued by Winst Technologies Pvt. Ltd.",
         0,
         540,
         { align: "center" }
@@ -100,7 +100,7 @@ const generateCertificate = async (
       // Footer
       doc.fontSize(14).fillColor("#1f2937");
       doc.text(
-        "Lucro Technologies Pvt. Ltd. | HITEC City, Hyderabad | www.lucro.in",
+        "Winst Technologies Pvt. Ltd. | HITEC City, Hyderabad | www.lucro.in",
         0,
         570,
         { align: "center" }
@@ -255,7 +255,7 @@ router.post(
               
               <p style="color: #374151; line-height: 1.6; margin: 0 0 15px 0;">
                 We're thrilled to inform you that you have successfully completed the 
-                <strong>${enrollment.program_title}</strong> program at Lucro!
+                <strong>${enrollment.program_title}</strong> program at Winst!
               </p>
               
               <div style="background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #059669; margin: 20px 0;">
@@ -299,7 +299,7 @@ router.post(
             
             <div style="text-align: center; padding: 20px; color: #64748b; font-size: 14px;">
               <p style="margin: 0;">
-                <strong>Lucro Technologies Pvt. Ltd.</strong><br>
+                <strong>Winst Technologies Pvt. Ltd.</strong><br>
                 HITEC City, Hyderabad<br>
                 <a href="https://www.lucro.in" style="color: #2563eb;">www.lucro.in</a>
               </p>

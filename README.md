@@ -1,4 +1,4 @@
-# Lucro Internship Management Portal
+# Winst Internship Management Portal
 
 A comprehensive full-stack internship management system built with React, Node.js, and PostgreSQL.
 

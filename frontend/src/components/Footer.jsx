@@ -71,7 +71,7 @@ const Footer = () => {
               </div>
               <div className="flex flex-col">
                 <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                  Lucro
+                  Winst
                 </span>
                 <span className="text-xs text-gray-400 font-medium -mt-1">
                   Empowering Careers
@@ -79,7 +79,7 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-gray-300 mb-6 leading-relaxed">
-              Lucro is India's leading internship platform connecting talented
+              Winst is India's leading internship platform connecting talented
               students with top companies. We provide comprehensive training
               programs and real-world experience to launch successful careers.
             </p>
@@ -206,7 +206,7 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             {/* Copyright */}
             <div className="text-gray-400 text-sm">
-              © {currentYear} Lucro Technologies Pvt. Ltd. All rights reserved.
+              © {currentYear} Winst Technologies Pvt. Ltd. All rights reserved.
             </div>
 
             {/* Social Links */}
@@ -228,7 +228,7 @@ const Footer = () => {
 
             {/* Additional Info */}
             <div className="text-gray-400 text-sm">
-              Lucro Technologies Pvt. Ltd.
+              Winst Technologies Pvt. Ltd.
             </div>
           </div>
         </div>

@@ -134,8 +134,8 @@ const Referrals = () => {
 
   const shareReferral = (referral) => {
     const shareData = {
-      title: "Join Lucro and Save ₹499!",
-      text: `I'm inviting you to join Lucro with my referral code ${referral.referralCode} and get ₹499 off on any internship program!`,
+      title: "Join Winst and Save ₹499!",
+      text: `I'm inviting you to join Winst with my referral code ${referral.referralCode} and get ₹499 off on any internship program!`,
       url: `https://lucro.com/signup?ref=${referral.referralCode}`,
     };
 

@@ -41,7 +41,7 @@ function generateOrderNumber() {
 }
 
 async function setupFreshDatabase() {
-  console.log("🎯 Setting up Lucro Internship Portal - FRESH DATABASE");
+  console.log("🎯 Setting up Winst Internship Portal - FRESH DATABASE");
   console.log("🔧 Core Infrastructure with 4 Major Features Implementation");
   console.log(
     "📊 Assessment System | 🤝 Referral Friend System | 💰 Affiliate Program | 📝 Task Submissions"
@@ -223,7 +223,7 @@ async function createCompleteDummyData(client) {
     INSERT INTO users (email, password_hash, first_name, last_name, role, college_name, degree, branch, year_of_study, cgpa, linkedin_url, github_url, is_active, email_verified) VALUES
     
     -- Admin Users
-    ('admin@lucro.com', '${adminHash}', 'Admin', 'Lucro', 'admin', NULL, NULL, NULL, NULL, NULL, 'https://linkedin.com/in/admin-lucro', NULL, true, true),
+    ('admin@lucro.com', '${adminHash}', 'Admin', 'Winst', 'admin', NULL, NULL, NULL, NULL, NULL, 'https://linkedin.com/in/admin-lucro', NULL, true, true),
     
     -- Mentor Users
     ('dr.smith@lucro.com', '${mentorHash}', 'Dr. Robert', 'Smith', 'mentor', 'Stanford University', 'PhD', 'Computer Science', NULL, NULL, 'https://linkedin.com/in/dr-smith', 'https://github.com/drsmith', true, true),

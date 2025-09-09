@@ -1,4 +1,4 @@
--- Lucro Internship Portal Dummy Data
+-- Winst Internship Portal Dummy Data
 -- Insert sample data for testing and development
 
 -- Clear existing data first

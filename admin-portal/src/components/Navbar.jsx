@@ -12,7 +12,7 @@ const Navbar = () => {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <h1 className="text-2xl font-bold text-primary-600">
-                Lucro Admin
+                Winst Admin
               </h1>
             </div>
           </div>

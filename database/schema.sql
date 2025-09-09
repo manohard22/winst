@@ -1,4 +1,4 @@
--- Lucro Internship Portal Database Schema
+-- Winst Internship Portal Database Schema
 -- PostgreSQL Database Schema
 
 -- Enable UUID extension
