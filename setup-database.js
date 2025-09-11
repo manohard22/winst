@@ -1,19 +1,20 @@
 import { Client } from "pg";
 import { randomBytes, pbkdf2Sync } from "crypto";
+import dbConfig from "./config/database.js";
 
 // Database configuration
 const DB_CONFIG = {
-  host: "localhost",
-  port: 5432,
+  host: dbConfig.host,
+  port: dbConfig.port,
   database: "postgres", // Connect to default database first
   user: "postgres",
-  password: "root",
+  password: dbConfig.password,
 };
 
 const TARGET_DB = {
-  name: "winstdb",
-  user: "winst_db_user",
-  password: "root",
+  name: dbConfig.database,
+  user: dbConfig.user,
+  password: dbConfig.password,
 };
 
 // Helper functions
@@ -58,15 +59,23 @@ async function setupDatabase() {
       console.log("ℹ️ No existing database/user to clean up");
     }
 
-    await client.query(`CREATE DATABASE ${TARGET_DB.name}`);
-    await client.query(
-      `CREATE USER ${TARGET_DB.user} WITH PASSWORD '${TARGET_DB.password}'`
-    );
-    await client.query(
-      `GRANT ALL PRIVILEGES ON DATABASE ${TARGET_DB.name} TO ${TARGET_DB.user}`
-    );
-    await client.query(`ALTER USER ${TARGET_DB.user} CREATEDB SUPERUSER`);
-    console.log("✅ Database and user created successfully!");
+    try {
+      await client.query(`CREATE DATABASE ${TARGET_DB.name}`);
+      await client.query(
+        `CREATE USER ${TARGET_DB.user} WITH PASSWORD '${TARGET_DB.password}'`
+      );
+      await client.query(
+        `GRANT ALL PRIVILEGES ON DATABASE ${TARGET_DB.name} TO ${TARGET_DB.user}`
+      );
+      await client.query(`ALTER USER ${TARGET_DB.user} CREATEDB SUPERUSER`);
+      console.log("✅ Database and user created successfully!");
+    } catch (error) {
+      if (error.message.includes("already exists")) {
+        console.log(`⚠️ Role or database already exists, continuing setup...`);
+      } else {
+        throw error;
+      }
+    }
 
     // Close connection to default database
     await client.end();
