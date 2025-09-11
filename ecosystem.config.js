@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: 'winst-backend',
-  script: './server.js',
-  cwd: './backend',
+      script: './server.js',
+      cwd: './backend',
       env: {
         NODE_ENV: 'production',
         PORT: 3001,
@@ -12,34 +12,23 @@ module.exports = {
       instances: 1,
       autorestart: true,
       watch: false,
-      max_memory_restart: '1G',
-      log_file: './logs/backend.log',
-      error_file: './logs/backend-error.log',
-      out_file: './logs/backend-out.log'
+      max_memory_restart: '1G'
     },
     {
       name: 'winst-frontend',
-  script: 'npx',
-  args: ['serve', '-s', './frontend/dist', '-p', '5173'],
-      exec_mode: 'fork',
+      script: './static-server.js',
+      args: ['5173', './frontend/dist'],
       instances: 1,
       autorestart: true,
-      watch: false,
-      log_file: './logs/frontend.log',
-      error_file: './logs/frontend-error.log',
-      out_file: './logs/frontend-out.log'
+      watch: false
     },
     {
       name: 'winst-admin',
-  script: 'npx',
-  args: ['serve', '-s', './admin-portal/dist', '-p', '5174'],
-      exec_mode: 'fork',
+      script: './static-server.js',
+      args: ['5174', './admin-portal/dist'],
       instances: 1,
       autorestart: true,
-      watch: false,
-      log_file: './logs/admin.log',
-      error_file: './logs/admin-error.log',
-      out_file: './logs/admin-out.log'
+      watch: false
     }
   ]
 };
