@@ -19,21 +19,27 @@ module.exports = {
     },
     {
       name: 'winst-frontend',
-      script: 'serve',
-  args: ['-s', './frontend/dist', '-l', '5173', '', ''],
-  exec_mode: 'fork',
-  instances: 1,
-  autorestart: true,
-  watch: false
+  script: '/usr/local/bin/serve',
+  args: ['-s', './frontend/dist', '-p', '5173', '-h', '0.0.0.0'],
+      exec_mode: 'fork',
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      log_file: './logs/frontend.log',
+      error_file: './logs/frontend-error.log',
+      out_file: './logs/frontend-out.log'
     },
     {
       name: 'winst-admin',
-      script: 'serve',
-  args: ['-s', './admin-portal/dist', '-l', '5174', '', ''],
-  exec_mode: 'fork',
-  instances: 1,
-  autorestart: true,
-  watch: false
+  script: '/usr/local/bin/serve',
+  args: ['-s', './admin-portal/dist', '-p', '5174', '-h', '0.0.0.0'],
+      exec_mode: 'fork',
+      instances: 1,
+      autorestart: true,
+      watch: false,
+      log_file: './logs/admin.log',
+      error_file: './logs/admin-error.log',
+      out_file: './logs/admin-out.log'
     }
   ]
 };
