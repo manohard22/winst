@@ -1,17 +1,18 @@
+
 const { Pool } = require("pg");
+const dbConfig = require("../../config/database.js");
 
 const pool = new Pool({
-  host: process.env.DB_HOST || "localhost",
-  port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || "winst_portal_db",
-  user: process.env.DB_USER || "winst_db_user",
-  password: process.env.DB_PASSWORD || "root",
+  host: dbConfig.host,
+  port: dbConfig.port,
+  database: dbConfig.database,
+  user: dbConfig.user,
+  password: dbConfig.password,
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
 });
 
-// Test database connection
 pool.on("connect", () => {
   console.log("✅ Connected to PostgreSQL database");
 });

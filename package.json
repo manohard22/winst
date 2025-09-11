@@ -55,7 +55,7 @@
     "database": {
       "host": "localhost",
       "port": 5432,
-      "name": "winst_portal_db",
+      "name": "winstdb",
       "user": "winst_db_user",
       "password": "root"
     }
