@@ -498,7 +498,7 @@ router.post("/programs/:id/send-certificates", async (req, res) => {
 
         // Send email with certificate
         await transporter.sendMail({
-          from: process.env.SMTP_USER || "noreply@lucro.com",
+          from: process.env.SMTP_USER || "noreply@winst.com",
           to: student.email,
           subject: `🎉 Certificate of Completion - ${program.title}`,
           html: `
@@ -531,7 +531,7 @@ router.post("/programs/:id/send-certificates", async (req, res) => {
                 </p>
                 
                 <div style="text-align: center; margin: 30px 0;">
-                  <a href="https://lucro.com" style="background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+                  <a href="https://winst.com" style="background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
                     Explore More Programs
                   </a>
                 </div>

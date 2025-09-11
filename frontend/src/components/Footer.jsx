@@ -47,15 +47,15 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { name: "Facebook", icon: Facebook, href: "https://facebook.com/lucro" },
-    { name: "Twitter", icon: Twitter, href: "https://twitter.com/lucro" },
+    { name: "Facebook", icon: Facebook, href: "https://facebook.com/winst" },
+    { name: "Twitter", icon: Twitter, href: "https://twitter.com/winst" },
     {
       name: "LinkedIn",
       icon: Linkedin,
-      href: "https://linkedin.com/company/lucro",
+      href: "https://linkedin.com/company/winst",
     },
-    { name: "Instagram", icon: Instagram, href: "https://instagram.com/lucro" },
-    { name: "YouTube", icon: Youtube, href: "https://youtube.com/lucro" },
+    { name: "Instagram", icon: Instagram, href: "https://instagram.com/winst" },
+    { name: "YouTube", icon: Youtube, href: "https://youtube.com/winst" },
   ];
 
   return (
@@ -88,7 +88,7 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center text-gray-300">
                 <Mail className="h-4 w-4 mr-3 text-blue-400" />
-                <span className="text-sm">hello@lucro.in</span>
+                <span className="text-sm">hello@winst.in</span>
               </div>
               <div className="flex items-center text-gray-300">
                 <Phone className="h-4 w-4 mr-3 text-blue-400" />

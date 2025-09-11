@@ -11,14 +11,14 @@ admin-portal/dist/
 backend/dist/
 
 # Environment variables
-.env
+#.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
-frontend/.env
-admin-portal/.env
-backend/.env
+#frontend/.env
+#admin-portal/.env
+#backend/.env
 
 # Database
 *.db

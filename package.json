@@ -1,11 +1,11 @@
 {
-  "name": "lucro-internship-portal",
+  "name": "winst-internship-portal",
   "version": "1.0.0",
   "description": "Full-stack internship management portal with React, Node.js, and PostgreSQL - Complete with Assessments, Referrals, Affiliates, and Task Submissions",
   "main": "index.js",
   "scripts": {
-    "clean": "rm -rf frontend/node_modules admin-portal/node_modules backend/node_modules frontend/package-lock.json admin-portal/package-lock.json backend/package-lock.json",
-    "install-all": "cd frontend && npm install && cd ../admin-portal && npm install && cd ../backend && npm install",
+    "clean": "rimraf frontend/node_modules admin-portal/node_modules backend/node_modules frontend/package-lock.json admin-portal/package-lock.json backend/package-lock.json",
+    "install-all": "concurrently \"cd frontend && npm install\" \"cd admin-portal && npm install\" \"cd backend && npm install\"",
     "setup-db": "node setup-database.js",
     "setup-db-fresh": "node setup-database.js --fresh",
     "dev": "concurrently \"cd backend && npm run dev\" \"cd frontend && npm run dev\" \"cd admin-portal && npm run dev\"",
@@ -36,7 +36,8 @@
     "pg": "^8.11.3"
   },
   "devDependencies": {
-    "concurrently": "^7.6.0"
+    "concurrently": "^7.6.0",
+    "rimraf": "^5.0.10"
   },
   "engines": {
     "node": ">=16.0.0",
@@ -44,18 +45,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/manohard22/lucro.git"
+    "url": "https://github.com/manohard22/winst.git"
   },
   "bugs": {
-    "url": "https://github.com/manohard22/lucro/issues"
+    "url": "https://github.com/manohard22/winst/issues"
   },
-  "homepage": "https://github.com/manohard22/lucro#readme",
+  "homepage": "https://github.com/manohard22/winst#readme",
   "config": {
     "database": {
       "host": "localhost",
       "port": 5432,
-      "name": "lucro_portal_db",
-      "user": "lucro_db_user",
+      "name": "winst_portal_db",
+      "user": "winst_db_user",
       "password": "root"
     }
   },
@@ -116,7 +117,7 @@
     ],
     "login_credentials": {
       "admin": {
-        "email": "admin@lucro.com",
+        "email": "admin@winst.com",
         "password": "admin123"
       },
       "students": [

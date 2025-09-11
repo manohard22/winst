@@ -6,9 +6,9 @@
 echo "🚀 Setting up Winst Internship Portal Database..."
 
 # Database configuration
-DB_NAME="lucro_portal"
-DB_USER="lucro_admin"
-DB_PASSWORD="lucro_secure_2024"
+DB_NAME="winst_portal"
+DB_USER="winst_admin"
+DB_PASSWORD="winst_secure_2024"
 DB_HOST="localhost"
 DB_PORT="5432"
 
@@ -101,7 +101,7 @@ echo "🔗 Connection String:"
 echo "   postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME"
 echo ""
 echo "👥 Sample Login Credentials:"
-echo "   Admin: admin@lucro.com / admin123"
+echo "   Admin: admin@winst.com / admin123"
 echo "   Student: rahul@example.com / student123"
 echo ""
 echo "💡 Next Steps:"

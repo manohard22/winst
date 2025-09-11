@@ -4,8 +4,8 @@ const { Client } = require("pg");
 const DB_CONFIG = {
   host: "localhost",
   port: 5432,
-  database: "lucro_portal_db",
-  user: "lucro_db_user",
+  database: "winst_portal_db",
+  user: "winst_db_user",
   password: "root",
 };
 
@@ -40,8 +40,8 @@ async function verifyRequirements() {
     if (error.code === "ECONNREFUSED") {
       console.log("\n💡 Database connection failed. Please ensure:");
       console.log("   1. PostgreSQL is running");
-      console.log("   2. Database 'lucro_portal_db' exists");
-      console.log("   3. User 'lucro_db_user' has proper permissions");
+      console.log("   2. Database 'winst_portal_db' exists");
+      console.log("   3. User 'winst_db_user' has proper permissions");
       console.log("   4. Run 'npm run setup-db-fresh' to create the database");
     }
     process.exit(1);
@@ -446,7 +446,7 @@ async function generateVerificationSummary(client) {
     console.log(`   User: ${DB_CONFIG.user}`);
 
     console.log("\n👥 Login Credentials:");
-    console.log("   Admin: admin@lucro.com / admin123");
+    console.log("   Admin: admin@winst.com / admin123");
     console.log("   Student: student1@example.com / student123");
     console.log("   Student: student2@example.com / student123");
 

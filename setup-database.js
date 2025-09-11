@@ -11,8 +11,8 @@ const DB_CONFIG = {
 };
 
 const TARGET_DB = {
-  name: "lucro_portal_db",
-  user: "lucro_db_user",
+  name: "winst_portal_db",
+  user: "winst_db_user",
   password: "root",
 };
 
@@ -110,9 +110,9 @@ async function setupDatabase() {
     );
 
     console.log("\n👥 Sample Login Credentials:");
-    console.log("   Admin: admin@lucro.com / admin123");
+    console.log("   Admin: admin@winst.com / admin123");
     console.log("   Student: student1@example.com / student123");
-    console.log("   Mentor: mentor1@lucro.com / mentor123");
+    console.log("   Mentor: mentor1@winst.com / mentor123");
     console.log("   Affiliate: affiliate1@example.com / affiliate123");
 
     console.log("\n✅ ALL 4 REQUIREMENTS IMPLEMENTED:");
@@ -507,9 +507,9 @@ async function insertComprehensiveDummyData(client) {
   // Insert users
   await client.query(`
     INSERT INTO users (email, password_hash, first_name, last_name, phone, role, college_name, degree, branch, year_of_study, cgpa, is_active, email_verified) VALUES
-    ('admin@lucro.com', '${adminHash}', 'Admin', 'User', '+919876543216', 'admin', NULL, NULL, NULL, NULL, NULL, true, true),
-    ('mentor1@lucro.com', '${mentorHash}', 'John', 'Mentor', '+919876543217', 'mentor', 'Stanford University', 'M.S.', 'Computer Science', NULL, NULL, true, true),
-    ('mentor2@lucro.com', '${mentorHash}', 'Sarah', 'Advisor', '+919876543218', 'mentor', 'MIT', 'Ph.D.', 'Software Engineering', NULL, NULL, true, true),
+    ('admin@winst.com', '${adminHash}', 'Admin', 'User', '+919876543216', 'admin', NULL, NULL, NULL, NULL, NULL, true, true),
+    ('mentor1@winst.com', '${mentorHash}', 'John', 'Mentor', '+919876543217', 'mentor', 'Stanford University', 'M.S.', 'Computer Science', NULL, NULL, true, true),
+    ('mentor2@winst.com', '${mentorHash}', 'Sarah', 'Advisor', '+919876543218', 'mentor', 'MIT', 'Ph.D.', 'Software Engineering', NULL, NULL, true, true),
     ('affiliate1@example.com', '${affiliateHash}', 'Alex', 'Marketer', '+919876543219', 'affiliate', 'IIM Bangalore', 'MBA', 'Marketing', NULL, NULL, true, true),
     ('affiliate2@example.com', '${affiliateHash}', 'Maria', 'Influencer', '+919876543220', 'affiliate', 'Delhi University', 'BA', 'Communications', NULL, NULL, true, true),
     ('student1@example.com', '${studentHash}', 'Rahul', 'Sharma', '+919876543210', 'student', 'IIT Delhi', 'B.Tech', 'Computer Science', 3, 8.5, true, true),
@@ -569,12 +569,12 @@ async function insertComprehensiveDummyData(client) {
   // Enroll students in programs
   await client.query(`
     INSERT INTO student_internship (student_id, program_id, status, start_date, mentor_id, progress_percentage) VALUES
-    ((SELECT id FROM users WHERE email = 'student1@example.com'), '${programIds["Full Stack MERN Development"]}', 'in_progress', CURRENT_DATE - INTERVAL '15 days', (SELECT id FROM users WHERE email = 'mentor1@lucro.com'), 45),
-    ((SELECT id FROM users WHERE email = 'student2@example.com'), '${programIds["Frontend Development with React"]}', 'in_progress', CURRENT_DATE - INTERVAL '20 days', (SELECT id FROM users WHERE email = 'mentor2@lucro.com'), 60),
-    ((SELECT id FROM users WHERE email = 'student3@example.com'), '${programIds["Backend Development with Python Django"]}', 'enrolled', CURRENT_DATE - INTERVAL '5 days', (SELECT id FROM users WHERE email = 'mentor1@lucro.com'), 10),
-    ((SELECT id FROM users WHERE email = 'student4@example.com'), '${programIds["Full Stack MERN Development"]}', 'completed', CURRENT_DATE - INTERVAL '90 days', (SELECT id FROM users WHERE email = 'mentor2@lucro.com'), 100),
-    ((SELECT id FROM users WHERE email = 'student5@example.com'), '${programIds["UI/UX Design Mastery"]}', 'in_progress', CURRENT_DATE - INTERVAL '10 days', (SELECT id FROM users WHERE email = 'mentor1@lucro.com'), 30),
-    ((SELECT id FROM users WHERE email = 'student6@example.com'), '${programIds["Data Science with Python"]}', 'enrolled', CURRENT_DATE - INTERVAL '3 days', (SELECT id FROM users WHERE email = 'mentor2@lucro.com'), 5)
+    ((SELECT id FROM users WHERE email = 'student1@example.com'), '${programIds["Full Stack MERN Development"]}', 'in_progress', CURRENT_DATE - INTERVAL '15 days', (SELECT id FROM users WHERE email = 'mentor1@winst.com'), 45),
+    ((SELECT id FROM users WHERE email = 'student2@example.com'), '${programIds["Frontend Development with React"]}', 'in_progress', CURRENT_DATE - INTERVAL '20 days', (SELECT id FROM users WHERE email = 'mentor2@winst.com'), 60),
+    ((SELECT id FROM users WHERE email = 'student3@example.com'), '${programIds["Backend Development with Python Django"]}', 'enrolled', CURRENT_DATE - INTERVAL '5 days', (SELECT id FROM users WHERE email = 'mentor1@winst.com'), 10),
+    ((SELECT id FROM users WHERE email = 'student4@example.com'), '${programIds["Full Stack MERN Development"]}', 'completed', CURRENT_DATE - INTERVAL '90 days', (SELECT id FROM users WHERE email = 'mentor2@winst.com'), 100),
+    ((SELECT id FROM users WHERE email = 'student5@example.com'), '${programIds["UI/UX Design Mastery"]}', 'in_progress', CURRENT_DATE - INTERVAL '10 days', (SELECT id FROM users WHERE email = 'mentor1@winst.com'), 30),
+    ((SELECT id FROM users WHERE email = 'student6@example.com'), '${programIds["Data Science with Python"]}', 'enrolled', CURRENT_DATE - INTERVAL '3 days', (SELECT id FROM users WHERE email = 'mentor2@winst.com'), 5)
   `);
 
   // Create orders for enrolled students
@@ -979,7 +979,7 @@ async function insertComprehensiveDummyData(client) {
       si.program_id,
       si.id,
       'CERT-' || LPAD((ROW_NUMBER() OVER())::TEXT, 4, '0'),
-      'https://certificates.lucro.com/CERT-' || LPAD((ROW_NUMBER() OVER())::TEXT, 4, '0') || '.pdf',
+      'https://certificates.winst.com/CERT-' || LPAD((ROW_NUMBER() OVER())::TEXT, 4, '0') || '.pdf',
       aa.score_percentage,
       85,
       'A',
