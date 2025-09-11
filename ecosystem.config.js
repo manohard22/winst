@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: 'winst-backend',
-      script: './backend/server.js',
-      cwd: './backend',
+  script: './server.js',
+  cwd: './backend',
       env: {
         NODE_ENV: 'production',
         PORT: 3001,

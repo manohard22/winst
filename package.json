@@ -4,6 +4,7 @@
   "description": "Full-stack internship management portal with React, Node.js, and PostgreSQL - Complete with Assessments, Referrals, Affiliates, and Task Submissions",
   "main": "index.js",
   "scripts": {
+  "predeploy": "npm run build:frontend && npm run build:admin",
     "clean": "rimraf frontend/node_modules admin-portal/node_modules backend/node_modules frontend/package-lock.json admin-portal/package-lock.json backend/package-lock.json",
     "install-all": "concurrently \"cd frontend && npm install\" \"cd admin-portal && npm install\" \"cd backend && npm install\"",
     "setup-db": "node setup-database.js",
