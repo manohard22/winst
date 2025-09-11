@@ -44,7 +44,7 @@ npm start
 
 The `npm start` command automatically:
 
-- Creates PostgreSQL database: `winst_portal_db`
+- Creates PostgreSQL database: `winstdb`
 - Creates user: `winst_db_user`
 - Sets up all tables and relationships
 - Inserts sample data
@@ -56,7 +56,7 @@ The `npm start` command automatically:
 ```env
 DB_HOST=localhost
 DB_PORT=5432
-DB_NAME=winst_portal_db
+DB_NAME=winstdb
 DB_USER=winst_db_user
 DB_PASSWORD=root
 JWT_SECRET=your-super-secret-jwt-key-change-in-production

@@ -11,7 +11,7 @@ const DB_CONFIG = {
 };
 
 const TARGET_DB = {
-  name: "winst_portal_db",
+  name: "winstdb",
   user: "winst_db_user",
   password: "root",
 };

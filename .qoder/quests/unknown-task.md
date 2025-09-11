@@ -227,7 +227,7 @@ To connect to the Winst Internship Management Portal database using DBeaver:
 
    - **Host**: localhost
    - **Port**: 5432
-   - **Database**: winst_portal_db
+   - **Database**: winstdb
    - **Username**: winst_db_user
    - **Password**: root
 
@@ -250,7 +250,7 @@ The database configuration is defined in the root `package.json` file:
   "database": {
     "host": "localhost",
     "port": 5432,
-    "name": "winst_portal_db",
+    "name": "winstdb",
     "user": "winst_db_user",
     "password": "root"
   }
@@ -266,7 +266,7 @@ To create a `script.sql` file in the database folder for exploring the database:
 -- Connection Details:
 -- Host: localhost
 -- Port: 5432
--- Database: winst_portal_db
+-- Database: winstdb
 -- Username: winst_db_user
 -- Password: root
 
@@ -324,13 +324,13 @@ For database backup and restoration, you can create additional scripts in the da
 
    ```bash
    #!/bin/bash
-   pg_dump -h localhost -p 5432 -U winst_db_user -d winst_portal_db > winst_backup_$(date +%Y%m%d).sql
+   pg_dump -h localhost -p 5432 -U winst_db_user -d winstdb > winst_backup_$(date +%Y%m%d).sql
    ```
 
 2. **Restore Script** (`restore.sh`):
    ```bash
    #!/bin/bash
-   psql -h localhost -p 5432 -U winst_db_user -d winst_portal_db < winst_backup.sql
+   psql -h localhost -p 5432 -U winst_db_user -d winstdb < winst_backup.sql
    ```
 
 ### Database Monitoring and Maintenance
@@ -417,7 +417,7 @@ For production deployments, consider these security enhancements:
    ```sql
    -- Create read-only role for reporting
    CREATE ROLE reporting_user;
-   GRANT CONNECT ON DATABASE winst_portal_db TO reporting_user;
+   GRANT CONNECT ON DATABASE winstdb TO reporting_user;
    GRANT USAGE ON SCHEMA public TO reporting_user;
    GRANT SELECT ON ALL TABLES IN SCHEMA public TO reporting_user;
    ```

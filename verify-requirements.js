@@ -4,7 +4,7 @@ const { Client } = require("pg");
 const DB_CONFIG = {
   host: "localhost",
   port: 5432,
-  database: "winst_portal_db",
+  database: "winstdb",
   user: "winst_db_user",
   password: "root",
 };
@@ -40,7 +40,7 @@ async function verifyRequirements() {
     if (error.code === "ECONNREFUSED") {
       console.log("\n💡 Database connection failed. Please ensure:");
       console.log("   1. PostgreSQL is running");
-      console.log("   2. Database 'winst_portal_db' exists");
+      console.log("   2. Database 'winstdb' exists");
       console.log("   3. User 'winst_db_user' has proper permissions");
       console.log("   4. Run 'npm run setup-db-fresh' to create the database");
     }

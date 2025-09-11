@@ -3,7 +3,7 @@ const { Pool } = require("pg");
 const pool = new Pool({
   host: process.env.DB_HOST || "localhost",
   port: process.env.DB_PORT || 5432,
-  database: process.env.DB_NAME || "winst_portal_db",
+  database: process.env.DB_NAME || "winstdb",
   user: process.env.DB_USER || "winst_db_user",
   password: process.env.DB_PASSWORD || "root",
   max: 20,
