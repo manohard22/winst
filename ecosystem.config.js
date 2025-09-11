@@ -19,8 +19,8 @@ module.exports = {
     },
     {
       name: 'winst-frontend',
-  script: '/usr/local/bin/serve',
-  args: ['-s', './frontend/dist', '-p', '5173'],
+  script: 'npx',
+  args: ['serve', '-s', './frontend/dist', '-p', '5173'],
       exec_mode: 'fork',
       instances: 1,
       autorestart: true,
@@ -31,8 +31,8 @@ module.exports = {
     },
     {
       name: 'winst-admin',
-  script: '/usr/local/bin/serve',
-  args: ['-s', './admin-portal/dist', '-p', '5174'],
+  script: 'npx',
+  args: ['serve', '-s', './admin-portal/dist', '-p', '5174'],
       exec_mode: 'fork',
       instances: 1,
       autorestart: true,
