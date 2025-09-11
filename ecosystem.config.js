@@ -20,7 +20,7 @@ module.exports = {
     {
       name: 'winst-frontend',
   script: '/usr/local/bin/serve',
-  args: ['-s', './frontend/dist', '-p', '5173', '-h', '0.0.0.0'],
+  args: ['-s', './frontend/dist', '-p', '5173'],
       exec_mode: 'fork',
       instances: 1,
       autorestart: true,
@@ -32,7 +32,7 @@ module.exports = {
     {
       name: 'winst-admin',
   script: '/usr/local/bin/serve',
-  args: ['-s', './admin-portal/dist', '-p', '5174', '-h', '0.0.0.0'],
+  args: ['-s', './admin-portal/dist', '-p', '5174'],
       exec_mode: 'fork',
       instances: 1,
       autorestart: true,
