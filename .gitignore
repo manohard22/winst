@@ -1,3 +1,16 @@
+# Ignore environment files
+# .env
+# .env.local
+# .env.development
+# .env.production
+# frontend/.env
+# frontend/.env.local
+# frontend/.env.development
+# frontend/.env.production
+# admin-portal/.env
+# admin-portal/.env.local
+# admin-portal/.env.development
+# admin-portal/.env.production
 # Dependencies
 node_modules/
 */node_modules/
@@ -12,10 +25,10 @@ backend/dist/
 
 # Environment variables
 #.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+#.env.local
+#.env.development.local
+#.env.test.local
+#.env.production.local
 #frontend/.env
 #admin-portal/.env
 #backend/.env
@@ -57,7 +70,7 @@ jspm_packages/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+#.env
 
 # next.js build output
 .next
