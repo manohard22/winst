@@ -4,7 +4,22 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const compression = require("compression");
 const rateLimit = require("express-rate-limit");
-require("dotenv").config();
+const path = require("path");
+const fs = require("fs");
+const dotenv = require("dotenv");
+
+// Load environment variables with overrides: .env -> .env.<NODE_ENV> -> .env.local
+dotenv.config();
+if (process.env.NODE_ENV) {
+  const envPath = path.join(__dirname, `.env.${process.env.NODE_ENV}`);
+  if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath, override: true });
+  }
+}
+const localEnvPath = path.join(__dirname, ".env.local");
+if (fs.existsSync(localEnvPath)) {
+  dotenv.config({ path: localEnvPath, override: true });
+}
 
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/users");
@@ -36,12 +51,31 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // CORS configuration
+const parseOrigins = (value) =>
+  (value || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+const defaultOrigins = ["http://localhost:5173", "http://localhost:5174"];
+const envOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.ADMIN_URL,
+  ...parseOrigins(process.env.ALLOWED_ORIGINS),
+].filter(Boolean);
+
+const allowedOrigins = envOrigins.length ? envOrigins : defaultOrigins;
+
 app.use(
   cors({
-    origin: [
-      process.env.FRONTEND_URL || "http://localhost:5173",
-      process.env.ADMIN_URL || "http://localhost:5174",
-    ],
+    origin: function (origin, callback) {
+      // Allow requests with no origin like mobile apps or curl
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );

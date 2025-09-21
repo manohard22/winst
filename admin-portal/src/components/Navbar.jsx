@@ -1,6 +1,7 @@
 import React from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { Bell, User, LogOut, Shield } from "lucide-react";
+import logo from "../../assets/images/winst_logo.jpg";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -10,10 +11,9 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-primary-600">
-                Winst Admin
-              </h1>
+            <div className="flex-shrink-0 flex items-center space-x-3">
+              <img src={logo} alt="Winst Admin" className="h-10 w-auto object-contain" />
+              <h1 className="text-xl font-bold text-primary-600 hidden sm:block">Admin</h1>
             </div>
           </div>
 
