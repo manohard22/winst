@@ -552,7 +552,7 @@ router.post("/programs/:id/send-certificates", async (req, res) => {
           completionDate
         );
 
-        console.log("process.env.SMTP_USER :", process.env.SMTP_USER );
+  // SMTP sender will be derived from configured transport/user
 
         // Send email with certificate
         await transporter.sendMail({
