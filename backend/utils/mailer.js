@@ -11,7 +11,6 @@ function getTransporter() {
   const secure = port === 465; // true for 465
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
-  console.log("user", user, pass);
 
   if (!host || !port || !user || !pass) {
     console.warn('SMTP not fully configured. Emails will be skipped.');
@@ -31,20 +30,29 @@ function getTransporter() {
 async function sendMail({ to, subject, text, html, from }) {
   const t = getTransporter();
   if (!t) {
-    console.log('sendMail skipped (no SMTP config):', { to, subject });
+    console.warn('Email not sent: SMTP is not configured. Set SMTP_HOST/SMTP_PORT/SMTP_USER/SMTP_PASS. Target:', { to, subject });
     return { skipped: true };
   }
   const defaultFrom = process.env.SMTP_FROM || (process.env.SMTP_USER ? `Winst <${process.env.SMTP_USER}>` : 'Winst <no-reply@winst.com>');
 
-  const info = await t.sendMail({
-    from: from || defaultFrom,
-    to,
-    subject,
-    text,
-    html,
-  });
+  try {
+    const info = await t.sendMail({
+      from: from || defaultFrom,
+      to,
+      subject,
+      text,
+      html,
+    });
 
-  return { messageId: info.messageId };
+    return { messageId: info.messageId };
+  } catch (err) {
+    console.error('Email transport failed:', err?.code || err?.name || 'Error', err?.message);
+    throw err;
+  }
 }
 
-module.exports = { getTransporter, sendMail };
+function isSmtpConfigured() {
+  return Boolean(process.env.SMTP_HOST && process.env.SMTP_PORT && process.env.SMTP_USER && process.env.SMTP_PASS);
+}
+
+module.exports = { getTransporter, sendMail, isSmtpConfigured };

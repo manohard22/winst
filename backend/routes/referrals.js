@@ -2,7 +2,7 @@ const express = require('express');
 const pool = require('../config/database');
 const { authenticateToken } = require('../middleware/auth');
 const crypto = require('crypto');
-const { sendMail } = require('../utils/mailer');
+const { sendMail, isSmtpConfigured } = require('../utils/mailer');
 
 // Use a single app base URL for building signup links
 const APP_BASE_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
@@ -216,21 +216,29 @@ router.post('/resend', authenticateToken, async (req, res) => {
       return res.status(400).json({ success: false, message: 'Only pending referrals can be resent' });
     }
     const signupUrl = `${APP_BASE_URL}/signup?ref=${r.referral_code}`;
+    let sent = false;
+    let reason = 'sent';
     try {
-      await sendMail({
-        to: r.referred_email,
-        subject: `Reminder: Join Winst with your referral code ${r.referral_code}`,
-        html: `<p>Hi,</p>
-               <p>This is a reminder to join Winst using your referral code <strong>${r.referral_code}</strong> to claim your discount.</p>
-               <p>Sign up here: <a href="${signupUrl}">${signupUrl}</a></p>
-               <p>Thanks,<br/>Winst Team</p>`,
-      });
+      if (!isSmtpConfigured()) {
+        reason = 'smtp_not_configured';
+      } else {
+        const result = await sendMail({
+          to: r.referred_email,
+          subject: `Reminder: Join Winst with your referral code ${r.referral_code}`,
+          html: `<p>Hi,</p>
+                 <p>This is a reminder to join Winst using your referral code <strong>${r.referral_code}</strong> to claim your discount.</p>
+                 <p>Sign up here: <a href="${signupUrl}">${signupUrl}</a></p>
+                 <p>Thanks,<br/>Winst Team</p>`,
+        });
+        sent = !result?.skipped;
+        if (!sent) reason = 'send_skipped';
+      }
     } catch (mailErr) {
       console.error('Resend referral email send error:', mailErr.message);
-      // Do not fail the API because of email transport errors
+      reason = 'transport_error';
     }
 
-    res.json({ success: true, message: 'Referral invite resent' });
+    res.json({ success: true, message: 'Referral invite resent', data: { sent, reason } });
   } catch (error) {
     console.error('Resend referral invite error:', error);
     res.status(500).json({ success: false, message: 'Failed to resend invite' });
