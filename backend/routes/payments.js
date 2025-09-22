@@ -2,7 +2,6 @@ const express = require('express');
 const pool = require('../config/database');
 const { authenticateToken } = require('../middleware/auth');
 const { sendMail } = require('../utils/mailer');
-const { sendMail } = require('../utils/mailer');
 
 const router = express.Router();
 

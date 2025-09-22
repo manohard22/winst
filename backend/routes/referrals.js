@@ -4,6 +4,9 @@ const { authenticateToken } = require('../middleware/auth');
 const crypto = require('crypto');
 const { sendMail } = require('../utils/mailer');
 
+// Use a single app base URL for building signup links
+const APP_BASE_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+
 const router = express.Router();
 
 // Generate referral code
@@ -40,13 +43,12 @@ router.post('/generate', authenticateToken, async (req, res) => {
       VALUES ($1, $2, $3, $4)
       RETURNING *
     `, [req.user.id, email, referralCode, new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)]);
-        console.log("process.env.SMTP_USER :", process.env.SMTP_USER );
-        console.log("process.env.FRONTEND_URL :", process.env.FRONTEND_URL );
+        
 
     // Fire-and-forget emails (do not block response)
     (async () => {
       try {
-        const signupUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/signup?ref=${referralCode}`;
+  const signupUrl = `${APP_BASE_URL}/signup?ref=${referralCode}`;
         // Invitation to referred person
         await sendMail({
           to: email,
@@ -213,16 +215,20 @@ router.post('/resend', authenticateToken, async (req, res) => {
     if (r.status !== 'pending') {
       return res.status(400).json({ success: false, message: 'Only pending referrals can be resent' });
     }
-
-    const signupUrl = `${process.env.PUBLIC_APP_URL || 'http://localhost:5173'}/signup?ref=${r.referral_code}`;
-    await sendMail({
-      to: r.referred_email,
-      subject: `Reminder: Join Winst with your referral code ${r.referral_code}`,
-      html: `<p>Hi,</p>
-             <p>This is a reminder to join Winst using your referral code <strong>${r.referral_code}</strong> to claim your discount.</p>
-             <p>Sign up here: <a href="${signupUrl}">${signupUrl}</a></p>
-             <p>Thanks,<br/>Winst Team</p>`,
-    });
+    const signupUrl = `${APP_BASE_URL}/signup?ref=${r.referral_code}`;
+    try {
+      await sendMail({
+        to: r.referred_email,
+        subject: `Reminder: Join Winst with your referral code ${r.referral_code}`,
+        html: `<p>Hi,</p>
+               <p>This is a reminder to join Winst using your referral code <strong>${r.referral_code}</strong> to claim your discount.</p>
+               <p>Sign up here: <a href="${signupUrl}">${signupUrl}</a></p>
+               <p>Thanks,<br/>Winst Team</p>`,
+      });
+    } catch (mailErr) {
+      console.error('Resend referral email send error:', mailErr.message);
+      // Do not fail the API because of email transport errors
+    }
 
     res.json({ success: true, message: 'Referral invite resent' });
   } catch (error) {
