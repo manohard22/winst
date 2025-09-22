@@ -8,6 +8,7 @@ import {
   CheckSquare,
   BarChart3,
   Settings,
+  Gift,
 } from "lucide-react";
 
 const navigation = [
@@ -17,6 +18,7 @@ const navigation = [
   { name: "Enrollments", href: "/enrollments", icon: GraduationCap },
   { name: "Tasks", href: "/tasks", icon: CheckSquare },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
+  { name: "Referrals", href: "/referrals", icon: Gift },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 

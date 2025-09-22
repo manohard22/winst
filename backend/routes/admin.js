@@ -198,6 +198,62 @@ router.get("/programs", async (req, res) => {
   }
 });
 
+// Referrals overview for admin
+router.get("/referrals", async (req, res) => {
+  try {
+    const { status, search, limit = 50, offset = 0 } = req.query;
+
+    let query = `
+      SELECT r.*, 
+             ref.first_name AS referrer_first_name,
+             ref.last_name  AS referrer_last_name,
+             ref.email      AS referrer_email,
+             ru.first_name  AS referred_first_name,
+             ru.last_name   AS referred_last_name
+      FROM referrals r
+      JOIN users ref ON r.referrer_id = ref.id
+      LEFT JOIN users ru ON r.referred_user_id = ru.id
+      WHERE 1=1`;
+
+    const params = [];
+    let i = 0;
+    if (status) {
+      i++; params.push(status);
+      query += ` AND r.status = $${i}`;
+    }
+    if (search) {
+      i++; params.push(`%${search}%`);
+      query += ` AND (r.referred_email ILIKE $${i} OR r.referral_code ILIKE $${i} OR ref.email ILIKE $${i})`;
+    }
+    i++; params.push(parseInt(limit));
+    i++; params.push(parseInt(offset));
+    query += ` ORDER BY r.created_at DESC LIMIT $${i-1} OFFSET $${i}`;
+
+    const result = await pool.query(query, params);
+
+    res.json({
+      success: true,
+      data: {
+        referrals: result.rows.map(r => ({
+          id: r.id,
+          referralCode: r.referral_code,
+          referredEmail: r.referred_email,
+          status: r.status,
+          discountAmount: parseFloat(r.discount_amount),
+          usedAt: r.used_at,
+          expiresAt: r.expires_at,
+          createdAt: r.created_at,
+          referrer: { firstName: r.referrer_first_name, lastName: r.referrer_last_name, email: r.referrer_email },
+          referredUser: r.referred_user_id ? { firstName: r.referred_first_name, lastName: r.referred_last_name } : null
+        }))
+      }
+    });
+  } catch (error) {
+    console.error("Admin referrals fetch error:", error);
+    res.status(500).json({ success: false, message: "Failed to fetch referrals" });
+  }
+});
+
 // Create new program
 router.post("/programs", async (req, res) => {
   try {

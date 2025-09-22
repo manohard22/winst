@@ -26,48 +26,11 @@ const Referrals = () => {
   const [newReferralEmail, setNewReferralEmail] = useState("");
   const [copied, setCopied] = useState(false);
 
-  // Mock data for demonstration
-  const mockReferrals = [
-    {
-      id: "ref_001",
-      referredEmail: "priya.sharma@email.com",
-      referralCode: "RAHUL499A",
-      status: "completed",
-      discountAmount: 499,
-      createdAt: "2024-12-10T10:00:00Z",
-      usedAt: "2024-12-15T14:30:00Z",
-      referredUser: {
-        firstName: "Priya",
-        lastName: "Sharma",
-      },
-      earnedAmount: 499,
-    },
-    {
-      id: "ref_002",
-      referredEmail: "amit.kumar@email.com",
-      referralCode: "RAHUL499B",
-      status: "pending",
-      discountAmount: 499,
-      createdAt: "2024-12-20T16:45:00Z",
-      usedAt: null,
-      referredUser: null,
-      earnedAmount: 0,
-    },
-    {
-      id: "ref_003",
-      referredEmail: "sneha.patel@email.com",
-      referralCode: "RAHUL499C",
-      status: "completed",
-      discountAmount: 499,
-      createdAt: "2024-11-25T09:15:00Z",
-      usedAt: "2024-11-30T11:20:00Z",
-      referredUser: {
-        firstName: "Sneha",
-        lastName: "Patel",
-      },
-      earnedAmount: 499,
-    },
-  ];
+  // Earnings are 499 for each completed referral in this model
+  const mapEarnings = (referrals) => referrals.map(r => ({
+    ...r,
+    earnedAmount: r.status === 'completed' ? (r.discountAmount || 499) : 0
+  }));
 
   useEffect(() => {
     fetchReferrals();
@@ -76,15 +39,9 @@ const Referrals = () => {
   const fetchReferrals = async () => {
     try {
       setLoading(true);
-      // Simulate API call with mock data
-      setTimeout(() => {
-        setReferrals(mockReferrals);
-        setLoading(false);
-      }, 800);
-
-      // Uncomment this for real API integration
-      // const response = await api.get('/referrals/my-referrals');
-      // setReferrals(response.data.data.referrals);
+      const response = await api.get('/referrals/my-referrals');
+      setReferrals(mapEarnings(response.data.data.referrals));
+      setLoading(false);
     } catch (error) {
       console.error("Failed to fetch referrals:", error);
       setLoading(false);
@@ -97,29 +54,9 @@ const Referrals = () => {
 
     setGenerating(true);
     try {
-      // Simulate API call
-      const newReferral = {
-        id: `ref_${Date.now()}`,
-        referredEmail: newReferralEmail,
-        referralCode: `RAHUL499${String.fromCharCode(65 + referrals.length)}`,
-        status: "pending",
-        discountAmount: 499,
-        createdAt: new Date().toISOString(),
-        usedAt: null,
-        referredUser: null,
-        earnedAmount: 0,
-      };
-
-      setTimeout(() => {
-        setReferrals([newReferral, ...referrals]);
-        setNewReferralEmail("");
-        setGenerating(false);
-      }, 1000);
-
-      // Uncomment this for real API integration
-      // await api.post('/referrals/generate', { email: newReferralEmail });
-      // setNewReferralEmail('');
-      // fetchReferrals();
+      await api.post('/referrals/generate', { email: newReferralEmail });
+      setNewReferralEmail('');
+      fetchReferrals();
     } catch (error) {
       console.error("Failed to generate referral:", error);
       setGenerating(false);
@@ -136,13 +73,13 @@ const Referrals = () => {
     const shareData = {
       title: "Join Winst and Save ₹499!",
       text: `I'm inviting you to join Winst with my referral code ${referral.referralCode} and get ₹499 off on any internship program!`,
-      url: `https://winst.com/signup?ref=${referral.referralCode}`,
+      url: `${window.location.origin}/signup?ref=${referral.referralCode}`,
     };
 
     if (navigator.share) {
       navigator.share(shareData);
     } else {
-      copyReferralCode(`https://winst.com/signup?ref=${referral.referralCode}`);
+  copyReferralCode(`${window.location.origin}/signup?ref=${referral.referralCode}`);
     }
   };
 

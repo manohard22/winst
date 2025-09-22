@@ -56,7 +56,7 @@ router.get('/orders', authenticateToken, async (req, res) => {
 // Create order for program enrollment
 router.post('/orders', authenticateToken, async (req, res) => {
   try {
-    const { programId } = req.body;
+    const { programId, referralCode } = req.body;
 
     if (!programId) {
       return res.status(400).json({
@@ -98,17 +98,36 @@ router.post('/orders', authenticateToken, async (req, res) => {
 
     // Calculate amounts
     const amount = parseFloat(program.price);
-    const discountAmount = amount * (program.discount_percentage / 100);
-    const finalAmount = parseFloat(program.final_price);
+    let discountAmount = amount * (program.discount_percentage / 100);
+    let finalAmount = parseFloat(program.final_price);
+
+    // Apply referral discount if provided and valid
+    let appliedReferralCode = null;
+    let discountType = null;
+    if (referralCode) {
+      const refResult = await pool.query(
+        `SELECT discount_amount FROM referrals 
+         WHERE referral_code = $1 AND status = 'pending' AND expires_at > CURRENT_TIMESTAMP`,
+        [referralCode]
+      );
+      if (refResult.rows.length > 0) {
+        const refDiscount = parseFloat(refResult.rows[0].discount_amount || 0);
+        // Prefer higher of program discount vs referral flat discount
+        discountAmount = Math.max(discountAmount, refDiscount);
+        finalAmount = Math.max(amount - discountAmount, 0);
+        appliedReferralCode = referralCode;
+        discountType = 'referral';
+      }
+    }
 
     // Create order
     const orderResult = await pool.query(`
       INSERT INTO orders (
-        student_id, program_id, order_number, amount, 
-        discount_amount, final_amount, status
-      ) VALUES ($1, $2, $3, $4, $5, $6, 'pending')
+        student_id, program_id, order_number, amount,
+        discount_amount, final_amount, status, referral_code, discount_type
+      ) VALUES ($1, $2, $3, $4, $5, $6, 'pending', $7, $8)
       RETURNING id, order_number, amount, discount_amount, final_amount, status, created_at
-    `, [req.user.id, programId, orderNumber, amount, discountAmount, finalAmount]);
+    `, [req.user.id, programId, orderNumber, amount, discountAmount, finalAmount, appliedReferralCode, discountType]);
 
     const order = orderResult.rows[0];
 
@@ -172,6 +191,16 @@ router.post('/verify', authenticateToken, async (req, res) => {
       'UPDATE orders SET status = $1, payment_method = $2, transaction_id = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4',
       ['paid', 'razorpay', paymentId, order.id]
     );
+
+    // If referral applied, mark it completed and link to this user
+    if (order.referral_code) {
+      await pool.query(
+        `UPDATE referrals 
+         SET status = 'completed', used_at = CURRENT_TIMESTAMP, referred_user_id = $1
+         WHERE referral_code = $2 AND status = 'pending'`,
+        [req.user.id, order.referral_code]
+      );
+    }
 
     // Create payment record
     await pool.query(`

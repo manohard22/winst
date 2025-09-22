@@ -11,6 +11,7 @@ import Tasks from './pages/Tasks'
 import Analytics from './pages/Analytics'
 import Settings from './pages/Settings'
 import LoadingSpinner from './components/LoadingSpinner'
+import Referrals from './pages/Referrals'
 
 function App() {
   const { user, loading } = useAuth()
@@ -34,6 +35,7 @@ function App() {
           <Route path="enrollments" element={<Enrollments />} />
           <Route path="tasks" element={<Tasks />} />
           <Route path="analytics" element={<Analytics />} />
+          <Route path="referrals" element={<Referrals />} />
           <Route path="settings" element={<Settings />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

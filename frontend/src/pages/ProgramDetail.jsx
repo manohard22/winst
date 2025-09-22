@@ -77,10 +77,12 @@ const ProgramDetail = () => {
 
     try {
       // Create order first
+      const referralCode = localStorage.getItem('referralCode') || undefined;
       const orderResponse = await api.post("/payments/orders", {
         programId: id,
+        referralCode,
       });
-      const order = orderResponse.data.data.order;
+  const order = orderResponse.data.data.order;
 
       // Razorpay options
       const options = {
@@ -92,13 +94,15 @@ const ProgramDetail = () => {
         order_id: order.orderNumber,
         handler: async function (response) {
           try {
-            // Verify payment and enroll
-            await api.post("/enrollments", {
-              programId: id,
+            // 1) Verify payment with backend
+            await api.post("/payments/verify", {
+              orderId: order.orderNumber,
               paymentId: response.razorpay_payment_id,
-              orderId: response.razorpay_order_id,
               signature: response.razorpay_signature,
             });
+
+            // 2) Enroll into the program
+            await api.post("/enrollments", { programId: id });
 
             setIsEnrolled(true);
             toast.success("Successfully enrolled! Welcome to the program!");

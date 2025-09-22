@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { Eye, EyeOff, BookOpen, CheckCircle, Gift } from "lucide-react";
 import toast from "react-hot-toast";
+import api from "../services/api";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -21,6 +22,16 @@ const Signup = () => {
 
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  // Prefill referral from URL (?ref=CODE) and validate
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get("ref");
+    if (ref) {
+      setFormData((prev) => ({ ...prev, referralCode: ref }));
+      validateReferralCode(ref);
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,8 +78,11 @@ const Signup = () => {
         amount: response.data.data.discountAmount,
         referrerName: response.data.data.referrerName,
       });
+      // Persist for checkout so ProgramDetail can apply it to order
+      localStorage.setItem("referralCode", code);
     } catch (error) {
       setDiscountInfo(null);
+      localStorage.removeItem("referralCode");
     }
   };
 
