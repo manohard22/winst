@@ -2,6 +2,7 @@ const express = require('express');
 const pool = require('../config/database');
 const { authenticateToken } = require('../middleware/auth');
 const crypto = require('crypto');
+const { sendMail } = require('../utils/mailer');
 
 const router = express.Router();
 
@@ -39,6 +40,48 @@ router.post('/generate', authenticateToken, async (req, res) => {
       VALUES ($1, $2, $3, $4)
       RETURNING *
     `, [req.user.id, email, referralCode, new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)]);
+        console.log("process.env.SMTP_USER :", process.env.SMTP_USER );
+        console.log("process.env.FRONTEND_URL :", process.env.FRONTEND_URL );
+
+    // Fire-and-forget emails (do not block response)
+    (async () => {
+      try {
+        const signupUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/signup?ref=${referralCode}`;
+        // Invitation to referred person
+        await sendMail({
+          to: email,
+          subject: 'You have been invited to join Winst! 🎓',
+          html: `
+            <div style="font-family:Arial,sans-serif;line-height:1.6">
+              <h2>Join Winst and get ₹499 off!</h2>
+              <p>Your friend invited you to Winst. Use their referral link to sign up and claim your discount:</p>
+              <p><a href="${signupUrl}" style="background:#2563eb;color:#fff;padding:10px 16px;border-radius:6px;text-decoration:none">Claim your discount</a></p>
+              <p>Or copy this code: <b>${referralCode}</b></p>
+            </div>
+          `,
+          text: `Join Winst with referral ${referralCode}. Sign up: ${signupUrl}`,
+        });
+
+        // Confirmation to referrer (if we can fetch their email)
+        const refUser = await pool.query('SELECT email, first_name FROM users WHERE id = $1', [req.user.id]);
+        const refEmail = refUser.rows[0]?.email;
+        if (refEmail) {
+          await sendMail({
+            to: refEmail,
+            subject: 'Your referral invite was sent ✅',
+            html: `
+              <div style="font-family:Arial,sans-serif;line-height:1.6">
+                <p>We sent your invite to <b>${email}</b>.</p>
+                <p>Referral code: <b>${referralCode}</b></p>
+              </div>
+            `,
+            text: `We sent your invite to ${email}. Referral code: ${referralCode}`,
+          });
+        }
+      } catch (e) {
+        console.error('Referral email send error:', e.message);
+      }
+    })();
 
     res.status(201).json({
       success: true,
@@ -147,4 +190,44 @@ router.post('/validate', async (req, res) => {
   }
 });
 
+// Resend referral invite email
+router.post('/resend', authenticateToken, async (req, res) => {
+  try {
+    const { referralId } = req.body;
+    if (!referralId) {
+      return res.status(400).json({ success: false, message: 'referralId is required' });
+    }
+
+    const result = await pool.query(
+      `SELECT r.referral_code, r.referred_email, r.status, u.first_name, u.last_name
+       FROM referrals r JOIN users u ON r.referrer_id = u.id
+       WHERE r.id = $1 AND r.referrer_id = $2`,
+      [referralId, req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Referral not found' });
+    }
+
+    const r = result.rows[0];
+    if (r.status !== 'pending') {
+      return res.status(400).json({ success: false, message: 'Only pending referrals can be resent' });
+    }
+
+    const signupUrl = `${process.env.PUBLIC_APP_URL || 'http://localhost:5173'}/signup?ref=${r.referral_code}`;
+    await sendMail({
+      to: r.referred_email,
+      subject: `Reminder: Join Winst with your referral code ${r.referral_code}`,
+      html: `<p>Hi,</p>
+             <p>This is a reminder to join Winst using your referral code <strong>${r.referral_code}</strong> to claim your discount.</p>
+             <p>Sign up here: <a href="${signupUrl}">${signupUrl}</a></p>
+             <p>Thanks,<br/>Winst Team</p>`,
+    });
+
+    res.json({ success: true, message: 'Referral invite resent' });
+  } catch (error) {
+    console.error('Resend referral invite error:', error);
+    res.status(500).json({ success: false, message: 'Failed to resend invite' });
+  }
+});
 module.exports = router;

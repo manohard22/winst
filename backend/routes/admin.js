@@ -552,6 +552,8 @@ router.post("/programs/:id/send-certificates", async (req, res) => {
           completionDate
         );
 
+        console.log("process.env.SMTP_USER :", process.env.SMTP_USER );
+
         // Send email with certificate
         await transporter.sendMail({
           from: process.env.SMTP_USER || "noreply@winst.com",

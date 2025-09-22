@@ -1,6 +1,8 @@
 const express = require('express');
 const pool = require('../config/database');
 const { authenticateToken } = require('../middleware/auth');
+const { sendMail } = require('../utils/mailer');
+const { sendMail } = require('../utils/mailer');
 
 const router = express.Router();
 
@@ -192,14 +194,41 @@ router.post('/verify', authenticateToken, async (req, res) => {
       ['paid', 'razorpay', paymentId, order.id]
     );
 
-    // If referral applied, mark it completed and link to this user
+    // If referral applied, mark it completed and link to this user, then notify referrer
     if (order.referral_code) {
-      await pool.query(
+      const refUpdate = await pool.query(
         `UPDATE referrals 
          SET status = 'completed', used_at = CURRENT_TIMESTAMP, referred_user_id = $1
-         WHERE referral_code = $2 AND status = 'pending'`,
+         WHERE referral_code = $2 AND status = 'pending'
+         RETURNING referrer_id, referred_email, discount_amount`,
         [req.user.id, order.referral_code]
       );
+
+      if (refUpdate.rows.length > 0) {
+        (async () => {
+          try {
+            const refRow = refUpdate.rows[0];
+            const refUser = await pool.query('SELECT email, first_name FROM users WHERE id = $1', [refRow.referrer_id]);
+            const refEmail = refUser.rows[0]?.email;
+            if (refEmail) {
+              await sendMail({
+                to: refEmail,
+                subject: 'Your referral just completed! 🎉',
+                html: `
+                  <div style="font-family:Arial,sans-serif;line-height:1.6">
+                    <h3>Great news!</h3>
+                    <p>Your referred friend (${refRow.referred_email}) completed signup and payment.</p>
+                    <p>You earned: <b>₹${parseFloat(refRow.discount_amount || 499)}</b>.</p>
+                  </div>
+                `,
+                text: `Your referral (${refRow.referred_email}) completed. You earned ₹${parseFloat(refRow.discount_amount || 499)}.`,
+              });
+            }
+          } catch (e) {
+            console.error('Referral completion email error:', e.message);
+          }
+        })();
+      }
     }
 
     // Create payment record

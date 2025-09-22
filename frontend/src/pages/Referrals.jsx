@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import api from "../services/api";
+import toast from "react-hot-toast";
 import {
   Users,
   Gift,
@@ -25,6 +26,7 @@ const Referrals = () => {
   const [generating, setGenerating] = useState(false);
   const [newReferralEmail, setNewReferralEmail] = useState("");
   const [copied, setCopied] = useState(false);
+  const [resendingId, setResendingId] = useState(null);
 
   // Earnings are 499 for each completed referral in this model
   const mapEarnings = (referrals) => referrals.map(r => ({
@@ -80,6 +82,18 @@ const Referrals = () => {
       navigator.share(shareData);
     } else {
   copyReferralCode(`${window.location.origin}/signup?ref=${referral.referralCode}`);
+    }
+  };
+
+  const resendInvite = async (referralId) => {
+    try {
+      setResendingId(referralId);
+      await api.post('/referrals/resend', { referralId });
+      toast.success('Invitation resent');
+    } catch (e) {
+      toast.error('Failed to resend');
+    } finally {
+      setResendingId(null);
     }
   };
 
@@ -424,7 +438,7 @@ const Referrals = () => {
                           <Share2 className="h-4 w-4" />
                         </button>
                         <a
-                          href={`https://winst.com/signup?ref=${referral.referralCode}`}
+                          href={`${window.location.origin}/signup?ref=${referral.referralCode}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="p-2 text-purple-500 hover:text-purple-700 hover:bg-purple-50 rounded-md transition-colors"
@@ -432,6 +446,16 @@ const Referrals = () => {
                         >
                           <ExternalLink className="h-4 w-4" />
                         </a>
+                        {referral.status === 'pending' && (
+                          <button
+                            onClick={() => resendInvite(referral.id)}
+                            className={`p-2 rounded-md transition-colors ${resendingId === referral.id ? 'text-gray-400 cursor-wait' : 'text-orange-600 hover:text-orange-700 hover:bg-orange-50'}`}
+                            title="Resend invite email"
+                            disabled={resendingId === referral.id}
+                          >
+                            {resendingId === referral.id ? 'Resending...' : 'Resend'}
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
