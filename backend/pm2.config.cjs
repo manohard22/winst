@@ -12,6 +12,11 @@ module.exports = {
         PORT: process.env.PORT || 3001,
         HOST: process.env.HOST || '0.0.0.0'
       },
+      env_development: {
+        NODE_ENV: 'development',
+        PORT: process.env.PORT || 3001,
+        HOST: process.env.HOST || '0.0.0.0'
+      },
       error_file: '../logs/backend-error.log',
       out_file: '../logs/backend-out.log',
       log_file: '../logs/backend-combined.log',
