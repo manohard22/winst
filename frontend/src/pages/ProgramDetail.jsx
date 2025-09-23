@@ -24,12 +24,34 @@ const ProgramDetail = () => {
   const [enrolling, setEnrolling] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [courses, setCourses] = useState([]);
+  const BASE_PRICE = 2000;
+  const [referralDiscount, setReferralDiscount] = useState(0);
+  const [referrerName, setReferrerName] = useState(null);
+  const [referralChecked, setReferralChecked] = useState(false);
 
   useEffect(() => {
     fetchProgram();
     fetchCourses();
     if (user) {
       checkEnrollment();
+    }
+    // Validate referral code (if present) to show discount preview
+    const code = localStorage.getItem('referralCode');
+    if (code) {
+      api.post('/referrals/validate', { referralCode: code })
+        .then(res => {
+          const data = res?.data?.data;
+          if (data?.discountAmount) {
+            setReferralDiscount(Number(data.discountAmount) || 0);
+            setReferrerName(data.referrerName || null);
+          } else {
+            setReferralDiscount(0);
+          }
+        })
+        .catch(() => setReferralDiscount(0))
+        .finally(() => setReferralChecked(true));
+    } else {
+      setReferralChecked(true);
     }
   }, [id, user]);
 
@@ -352,17 +374,33 @@ const ProgramDetail = () => {
             {/* Pricing Card */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-6">
               <div className="text-center mb-6">
-                <div className="mb-2">
-                  <span className="text-3xl font-bold text-primary-600">
-                    ₹2,000
-                  </span>
-                </div>
-                <div className="text-sm text-gray-600">
-                  One-time payment • Lifetime access
-                </div>
-                <div className="text-xs text-green-600 font-medium mt-1">
-                  🎯 Fixed price for all internships
-                </div>
+                {referralDiscount > 0 ? (
+                  <>
+                    <div className="mb-1">
+                      <span className="text-3xl font-bold text-primary-600">
+                        ₹{Math.max(0, BASE_PRICE - referralDiscount)}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-500 line-through">₹{BASE_PRICE.toLocaleString('en-IN')}</div>
+                    <div className="text-sm text-green-700 font-semibold mt-1">
+                      Referral discount applied: -₹{referralDiscount}
+                      {referrerName ? (
+                        <span className="text-green-600 font-normal"> (from {referrerName})</span>
+                      ) : null}
+                    </div>
+                    <div className="text-xs text-gray-600 mt-1">
+                      One-time payment • Lifetime access
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="mb-2">
+                      <span className="text-3xl font-bold text-primary-600">₹{BASE_PRICE.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="text-sm text-gray-600">One-time payment • Lifetime access</div>
+                    <div className="text-xs text-green-600 font-medium mt-1">🎯 Fixed price for all internships</div>
+                  </>
+                )}
               </div>
 
               {isEnrolled ? (
@@ -380,12 +418,17 @@ const ProgramDetail = () => {
                 </div>
               ) : (
                 <div className="space-y-3 mb-6">
+                  {referralChecked && referralDiscount > 0 && (
+                    <div className="bg-green-50 border border-green-200 rounded-md p-3 text-sm text-green-800 text-center">
+                      You save <span className="font-semibold">₹{referralDiscount}</span> with your referral.
+                    </div>
+                  )}
                   <button
                     onClick={handlePayment}
                     disabled={enrolling}
                     className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {enrolling ? "Processing..." : "Enroll Now"}
+                    {enrolling ? "Processing..." : referralDiscount > 0 ? `Enroll Now – ₹${Math.max(0, BASE_PRICE - referralDiscount)}` : "Enroll Now"}
                   </button>
                   <button className="w-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 rounded-lg transition-colors duration-200">
                     Add to Wishlist
