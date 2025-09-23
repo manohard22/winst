@@ -88,8 +88,22 @@ const Referrals = () => {
   const resendInvite = async (referralId) => {
     try {
       setResendingId(referralId);
-      await api.post('/referrals/resend', { referralId });
-      toast.success('Invitation resent');
+      const res = await api.post('/referrals/resend', { referralId });
+      const sent = res?.data?.data?.sent;
+      const reason = res?.data?.data?.reason;
+      if (sent) {
+        toast.success('Invitation email sent');
+      } else {
+        const msg =
+          reason === 'smtp_not_configured'
+            ? 'SMTP not configured'
+            : reason === 'transport_error'
+            ? 'SMTP transport error'
+            : reason === 'send_skipped'
+            ? 'Send skipped by server'
+            : 'Unknown reason';
+        toast.error(`Email not sent: ${msg}`);
+      }
     } catch (e) {
       toast.error('Failed to resend');
     } finally {
