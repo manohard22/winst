@@ -653,6 +653,180 @@ router.post("/programs/:id/send-certificates", async (req, res) => {
   }
 });
 
+// Project Requirements Management
+
+// Create project requirements
+router.post('/projects/requirements', async (req, res) => {
+  try {
+    const {
+      programId,
+      title,
+      description,
+      requirements,
+      deliverables,
+      evaluationCriteria,
+      estimatedDurationWeeks,
+      maxScore,
+      isMandatory,
+      orderIndex
+    } = req.body;
+
+    // Validate required fields
+    if (!programId || !title || !description || !requirements || !deliverables) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing required fields'
+      });
+    }
+
+    // Check if program exists
+    const programCheck = await pool.query(
+      'SELECT id FROM internship_programs WHERE id = $1',
+      [programId]
+    );
+
+    if (programCheck.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Program not found'
+      });
+    }
+
+    // Create project requirements
+    const result = await pool.query(`
+      INSERT INTO project_requirements (
+        program_id, title, description, requirements, deliverables,
+        evaluation_criteria, estimated_duration_weeks, max_score,
+        is_mandatory, order_index
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING id, created_at
+    `, [
+      programId, title, description, requirements, deliverables,
+      evaluationCriteria, estimatedDurationWeeks, maxScore,
+      isMandatory !== undefined ? isMandatory : true,
+      orderIndex || 0
+    ]);
+
+    res.status(201).json({
+      success: true,
+      message: 'Project requirements created successfully',
+      data: {
+        id: result.rows[0].id,
+        createdAt: result.rows[0].created_at
+      }
+    });
+  } catch (error) {
+    console.error('Create project requirements error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create project requirements'
+    });
+  }
+});
+
+// Update project requirements
+router.put('/projects/requirements/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      title,
+      description,
+      requirements,
+      deliverables,
+      evaluationCriteria,
+      estimatedDurationWeeks,
+      maxScore,
+      isMandatory,
+      orderIndex
+    } = req.body;
+
+    // Check if project requirements exist
+    const existing = await pool.query(
+      'SELECT id FROM project_requirements WHERE id = $1',
+      [id]
+    );
+
+    if (existing.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Project requirements not found'
+      });
+    }
+
+    // Update project requirements
+    const result = await pool.query(`
+      UPDATE project_requirements SET
+        title = COALESCE($1, title),
+        description = COALESCE($2, description),
+        requirements = COALESCE($3, requirements),
+        deliverables = COALESCE($4, deliverables),
+        evaluation_criteria = COALESCE($5, evaluation_criteria),
+        estimated_duration_weeks = COALESCE($6, estimated_duration_weeks),
+        max_score = COALESCE($7, max_score),
+        is_mandatory = COALESCE($8, is_mandatory),
+        order_index = COALESCE($9, order_index),
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = $10
+      RETURNING updated_at
+    `, [
+      title, description, requirements, deliverables,
+      evaluationCriteria, estimatedDurationWeeks, maxScore,
+      isMandatory, orderIndex, id
+    ]);
+
+    res.json({
+      success: true,
+      message: 'Project requirements updated successfully',
+      data: {
+        updatedAt: result.rows[0].updated_at
+      }
+    });
+  } catch (error) {
+    console.error('Update project requirements error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update project requirements'
+    });
+  }
+});
+
+// Delete project requirements
+router.delete('/projects/requirements/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Check if project requirements exist
+    const existing = await pool.query(
+      'SELECT id FROM project_requirements WHERE id = $1',
+      [id]
+    );
+
+    if (existing.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Project requirements not found'
+      });
+    }
+
+    // Delete project requirements
+    await pool.query(
+      'DELETE FROM project_requirements WHERE id = $1',
+      [id]
+    );
+
+    res.json({
+      success: true,
+      message: 'Project requirements deleted successfully'
+    });
+  } catch (error) {
+    console.error('Delete project requirements error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete project requirements'
+    });
+  }
+});
+
 // Get analytics data
 router.get("/analytics", async (req, res) => {
   try {
