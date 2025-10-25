@@ -19,127 +19,6 @@ const MyEnrollments = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Mock enrollment data for demonstration
-  const mockEnrollments = [
-    {
-      id: "enr_001",
-      programId: "prog_001",
-      programTitle: "Full Stack Web Development Bootcamp",
-      imageUrl: "/api/placeholder/400/300",
-      status: "in_progress",
-      progressPercentage: 75,
-      enrollmentDate: "2024-11-15T10:00:00Z",
-      durationWeeks: 16,
-      assessmentCompleted: true,
-      assessmentScore: 87,
-      projectSubmitted: false,
-      certificateIssued: false,
-      mentor: {
-        firstName: "Raj",
-        lastName: "Kumar",
-      },
-      feedback: "Great progress! Keep up the excellent work on your projects.",
-    },
-    {
-      id: "enr_002",
-      programId: "prog_002",
-      programTitle: "React Native Mobile Development",
-      imageUrl: "/api/placeholder/400/300",
-      status: "completed",
-      progressPercentage: 100,
-      enrollmentDate: "2024-09-01T09:30:00Z",
-      durationWeeks: 12,
-      assessmentCompleted: true,
-      assessmentScore: 92,
-      projectSubmitted: true,
-      certificateIssued: true,
-      mentor: {
-        firstName: "Priya",
-        lastName: "Sharma",
-      },
-      feedback:
-        "Excellent completion! Your mobile app project was outstanding.",
-    },
-    {
-      id: "enr_003",
-      programId: "prog_003",
-      programTitle: "Data Science with Python",
-      imageUrl: "/api/placeholder/400/300",
-      status: "in_progress",
-      progressPercentage: 45,
-      enrollmentDate: "2024-12-01T11:15:00Z",
-      durationWeeks: 20,
-      assessmentCompleted: false,
-      assessmentScore: null,
-      projectSubmitted: false,
-      certificateIssued: false,
-      mentor: {
-        firstName: "Dr. Amit",
-        lastName: "Patel",
-      },
-      feedback: null,
-    },
-    {
-      id: "enr_004",
-      programId: "prog_004",
-      programTitle: "Digital Marketing & SEO Specialist",
-      imageUrl: "/api/placeholder/400/300",
-      status: "completed",
-      progressPercentage: 100,
-      enrollmentDate: "2024-07-10T14:20:00Z",
-      durationWeeks: 8,
-      assessmentCompleted: true,
-      assessmentScore: 89,
-      projectSubmitted: true,
-      certificateIssued: true,
-      mentor: {
-        firstName: "Neha",
-        lastName: "Gupta",
-      },
-      feedback:
-        "Fantastic understanding of SEO concepts and practical implementation.",
-    },
-    {
-      id: "enr_005",
-      programId: "prog_005",
-      programTitle: "UI/UX Design Masterclass",
-      imageUrl: "/api/placeholder/400/300",
-      status: "enrolled",
-      progressPercentage: 15,
-      enrollmentDate: "2024-12-20T16:45:00Z",
-      durationWeeks: 14,
-      assessmentCompleted: false,
-      assessmentScore: null,
-      projectSubmitted: false,
-      certificateIssued: false,
-      mentor: {
-        firstName: "Arjun",
-        lastName: "Mehta",
-      },
-      feedback: null,
-    },
-    {
-      id: "enr_006",
-      programId: "prog_006",
-      programTitle: "Cybersecurity Professional Course",
-      imageUrl: "/api/placeholder/400/300",
-      status: "in_progress",
-      progressPercentage: 60,
-      enrollmentDate: "2024-10-05T12:30:00Z",
-      durationWeeks: 18,
-      assessmentCompleted: true,
-      assessmentScore: 94,
-      projectSubmitted: false,
-      certificateIssued: false,
-      mentor: {
-        firstName: "Col. Vikram",
-        lastName: "Singh",
-      },
-      feedback:
-        "Strong grasp of security fundamentals. Ready for advanced modules.",
-    },
-  ];
-
   useEffect(() => {
     fetchEnrollments();
   }, []);
@@ -147,15 +26,8 @@ const MyEnrollments = () => {
   const fetchEnrollments = async () => {
     try {
       setLoading(true);
-      // Simulate API call with mock data
-      setTimeout(() => {
-        setEnrollments(mockEnrollments);
-        setLoading(false);
-      }, 800);
-
-      // Uncomment this for real API integration
-      // const response = await api.get("/student/enrollments");
-      // setEnrollments(response.data.data?.enrollments || []);
+      const response = await api.get("/enrollments/my-enrollments");
+      setEnrollments(response.data.data || []);
     } catch (error) {
       setError("Failed to fetch enrollments");
       console.error("Failed to fetch enrollments:", error);
@@ -380,40 +252,16 @@ const MyEnrollments = () => {
 
                 {/* Actions */}
                 <div className="space-y-2 sm:space-y-3">
-                  {/* Assessment */}
-                  {!enrollment.assessmentCompleted ? (
-                    <Link
-                      to={`/assessment/${enrollment.programId}`}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center text-sm sm:text-base"
-                    >
-                      <BookOpen className="h-4 w-4 mr-2" />
-                      Take Assessment
-                    </Link>
-                  ) : (
-                    <div className="w-full bg-green-50 text-green-800 font-medium py-2 px-4 rounded-lg flex items-center justify-center text-sm sm:text-base">
-                      <CheckSquare className="h-4 w-4 mr-2" />
-                      <span className="truncate">
-                        Assessment: {enrollment.assessmentScore}%
-                      </span>
-                    </div>
-                  )}
-
                   {/* Project Submission */}
-                  {enrollment.assessmentCompleted &&
-                  !enrollment.projectSubmitted ? (
+                  {enrollment.status !== 'completed' && (
                     <Link
-                      to={`/project-submission/${enrollment.programId}`}
+                      to={`/programs/${enrollment.program_id}/project`}
                       className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center text-sm sm:text-base"
                     >
                       <Upload className="h-4 w-4 mr-2" />
                       Submit Project
                     </Link>
-                  ) : enrollment.projectSubmitted ? (
-                    <div className="w-full bg-yellow-50 text-yellow-800 font-medium py-2 px-4 rounded-lg flex items-center justify-center text-sm sm:text-base">
-                      <Upload className="h-4 w-4 mr-2" />
-                      <span className="truncate">Project Under Review</span>
-                    </div>
-                  ) : null}
+                  )}
 
                   {/* Other Actions */}
                   <div className="flex space-x-2 sm:space-x-3">

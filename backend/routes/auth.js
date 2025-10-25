@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const pool = require('../config/database');
 const { authenticateToken } = require('../middleware/auth');
+const { sendMail } = require('../utils/mailer');
 
 const router = express.Router();
 
@@ -266,6 +267,135 @@ router.post('/logout', authenticateToken, (req, res) => {
     success: true,
     message: 'Logged out successfully'
   });
+});
+
+// Forgot Password
+router.post('/forgot-password', [
+  body('email').isEmail().normalizeEmail(),
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const { email } = req.body;
+
+    const result = await pool.query('SELECT id, email, first_name FROM users WHERE email = $1', [email]);
+
+    if (result.rows.length > 0) {
+      const user = result.rows[0];
+      const token = crypto.randomBytes(32).toString('hex');
+      const expiresAt = new Date(Date.now() + 3600000); // 1 hour
+
+      await pool.query(
+        'INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES ($1, $2, $3)',
+        [user.id, token, expiresAt]
+      );
+
+      const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+      
+      await sendMail({
+        to: user.email,
+        subject: 'Password Reset Request',
+        html: `
+          <p>Hi ${user.first_name},</p>
+          <p>You requested a password reset. Click the link below to reset your password:</p>
+          <a href="${resetLink}">${resetLink}</a>
+          <p>This link will expire in 1 hour.</p>
+        `
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'If an account with that email exists, a password reset link has been sent.'
+    });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'An error occurred'
+    });
+  }
+});
+
+// Reset Password
+router.post('/reset-password', [
+  body('token').isHexadecimal().isLength({ min: 64, max: 64 }),
+  body('password').isLength({ min: 6 }),
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const { token, password } = req.body;
+
+    const result = await pool.query(
+      'SELECT user_id, expires_at FROM password_reset_tokens WHERE token = $1',
+      [token]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired token' });
+    }
+
+    const tokenData = result.rows[0];
+
+    if (new Date() > new Date(tokenData.expires_at)) {
+      return res.status(400).json({ success: false, message: 'Invalid or expired token' });
+    }
+
+    const passwordHash = hashPassword(password);
+
+    await pool.query(
+      'UPDATE users SET password_hash = $1 WHERE id = $2',
+      [passwordHash, tokenData.user_id]
+    );
+
+    await pool.query('DELETE FROM password_reset_tokens WHERE token = $1', [token]);
+
+    res.json({ success: true, message: 'Password has been reset successfully' });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({ success: false, message: 'An error occurred' });
+  }
+});
+
+// Refresh token endpoint
+router.post('/refresh', authenticateToken, async (req, res) => {
+  try {
+    const user = req.user;
+    
+    // Generate new token
+    const token = jwt.sign(
+      { userId: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
+
+    res.json({
+      success: true,
+      data: { token },
+      message: 'Token refreshed successfully'
+    });
+  } catch (error) {
+    console.error('Token refresh error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to refresh token'
+    });
+  }
 });
 
 module.exports = router;

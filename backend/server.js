@@ -34,6 +34,12 @@ const affiliateRoutes = require("./routes/affiliates");
 const assessmentRoutes = require("./routes/assessments");
 const projectRoutes = require("./routes/projects");
 const certificateRoutes = require("./routes/certificates");
+const testimonialRoutes = require("./routes/testimonials");
+const subscribeRoutes = require("./routes/subscribe");
+const contactRoutes = require("./routes/contact");
+// New enhanced routes
+const quizRoutes = require("./routes/quizzes");
+const socialSharingRoutes = require("./routes/social-sharing");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -113,9 +119,16 @@ app.use("/api/affiliates", affiliateRoutes);
 app.use("/api/assessments", assessmentRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/certificates", certificateRoutes);
+app.use("/api/testimonials", testimonialRoutes);
+app.use("/api/subscribe", subscribeRoutes);
+app.use("/api/contact", contactRoutes);
+// New enhanced routes
+app.use("/api/quizzes", quizRoutes);
+app.use("/api/social-sharing", socialSharingRoutes);
 
-// Static file serving for uploads
+// Static file serving for uploads and certificates
 app.use("/uploads", express.static("uploads"));
+app.use("/certificates", express.static("certificates"));
 
 // 404 handler
 app.use("*", (req, res) => {

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Mail, Phone, MapPin, Send, Clock, MessageCircle } from "lucide-react";
 import toast from "react-hot-toast";
+import api from "../services/api";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -16,8 +17,7 @@ const Contact = () => {
     setLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await api.post("/contact", formData);
       toast.success(
         "Thank you for reaching out! We'll get back to you within 24 hours."
       );

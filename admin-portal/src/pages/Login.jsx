@@ -64,7 +64,7 @@ const Login = () => {
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700"
               >
-                Email Address
+                Email Address <span className="text-red-500">*</span>
               </label>
               <input
                 id="email"
@@ -83,7 +83,7 @@ const Login = () => {
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700"
               >
-                Password
+                Password <span className="text-red-500">*</span>
               </label>
               <div className="relative mt-1">
                 <input
@@ -121,16 +121,6 @@ const Login = () => {
             </button>
           </div>
 
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <h3 className="text-sm font-medium text-blue-800 mb-2">
-              Demo Credentials:
-            </h3>
-            <div className="text-xs text-blue-700">
-              <p>
-                <strong>Admin:</strong> admin@winst.com / admin123
-              </p>
-            </div>
-          </div>
         </form>
       </div>
     </div>

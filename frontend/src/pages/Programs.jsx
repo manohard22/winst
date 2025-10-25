@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import api from '../services/api'
-import { Clock, Users, Star, Filter, MapPin, Award, BookOpen, TrendingUp, Search } from 'lucide-react'
+import { Clock, Users, Star, Filter, MapPin, Award, BookOpen, TrendingUp, Search, ChevronDown } from 'lucide-react'
 
 const Programs = () => {
   const [programs, setPrograms] = useState([])
   const [technologies, setTechnologies] = useState([])
   const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
   const [searchParams, setSearchParams] = useSearchParams()
   const [filters, setFilters] = useState({
     search: searchParams.get('search') || '',
@@ -16,7 +18,10 @@ const Programs = () => {
   })
 
   useEffect(() => {
-    fetchPrograms()
+    setPrograms([])
+    setPage(1)
+    setHasMore(true)
+    fetchPrograms(1, true)
     fetchTechnologies()
   }, [filters])
 
@@ -29,15 +34,21 @@ const Programs = () => {
     setSearchParams(params)
   }, [filters, setSearchParams])
 
-  const fetchPrograms = async () => {
+  const fetchPrograms = async (pageNum = 1, newList = false) => {
+    setLoading(true)
     try {
       const params = new URLSearchParams()
       if (filters.search) params.append('search', filters.search)
       if (filters.difficulty) params.append('difficulty', filters.difficulty)
       if (filters.technology) params.append('technology', filters.technology)
+      params.append('page', pageNum)
+      params.append('limit', 9)
       
       const response = await api.get(`/programs?${params.toString()}`)
-      setPrograms(response.data.data.programs)
+      const newPrograms = response.data.data.programs
+      
+      setPrograms(prev => newList ? newPrograms : [...prev, ...newPrograms])
+      setHasMore(newPrograms.length > 0)
     } catch (error) {
       console.error('Failed to fetch programs:', error)
     } finally {
@@ -59,6 +70,12 @@ const Programs = () => {
       ...prev,
       [key]: value
     }))
+  }
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1
+    setPage(nextPage)
+    fetchPrograms(nextPage)
   }
 
   const clearFilters = () => {
@@ -128,9 +145,9 @@ const Programs = () => {
             </div>
 
             {/* Difficulty */}
-            <div>
+            <div className="relative">
               <select
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none bg-white"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none bg-white pr-8"
                 value={filters.difficulty}
                 onChange={(e) => handleFilterChange('difficulty', e.target.value)}
               >
@@ -139,12 +156,13 @@ const Programs = () => {
                 <option value="intermediate">Intermediate</option>
                 <option value="advanced">Advanced</option>
               </select>
+              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none" />
             </div>
 
             {/* Technology */}
-            <div>
+            <div className="relative">
               <select
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none bg-white"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 appearance-none bg-white pr-8"
                 value={filters.technology}
                 onChange={(e) => handleFilterChange('technology', e.target.value)}
               >
@@ -159,6 +177,7 @@ const Programs = () => {
                   </optgroup>
                 ))}
               </select>
+              <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 pointer-events-none" />
             </div>
 
             {/* Clear Filters */}
@@ -337,9 +356,6 @@ const Programs = () => {
                     >
                       View Details & Enroll
                     </Link>
-                    <button className="w-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 rounded-lg transition-colors duration-200">
-                      Add to Wishlist
-                    </button>
                   </div>
                 </div>
               </div>
@@ -364,10 +380,14 @@ const Programs = () => {
         )}
 
         {/* Load More */}
-        {programs.length > 0 && programs.length >= 9 && (
+        {hasMore && programs.length > 0 && (
           <div className="text-center mt-12">
-            <button className="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-8 rounded-lg transition-colors duration-200">
-              Load More Programs
+            <button
+              onClick={handleLoadMore}
+              disabled={loading}
+              className="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-8 rounded-lg transition-colors duration-200 disabled:opacity-50"
+            >
+              {loading ? 'Loading...' : 'Load More Programs'}
             </button>
           </div>
         )}

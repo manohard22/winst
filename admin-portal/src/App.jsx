@@ -12,6 +12,7 @@ import Analytics from './pages/Analytics'
 import Settings from './pages/Settings'
 import LoadingSpinner from './components/LoadingSpinner'
 import Referrals from './pages/Referrals'
+import QuizManagement from './pages/QuizManagement'
 
 function App() {
   const { user, loading } = useAuth()
@@ -34,6 +35,7 @@ function App() {
           <Route path="programs" element={<Programs />} />
           <Route path="enrollments" element={<Enrollments />} />
           <Route path="tasks" element={<Tasks />} />
+          <Route path="quizzes" element={<QuizManagement />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="referrals" element={<Referrals />} />
           <Route path="settings" element={<Settings />} />

@@ -9,6 +9,7 @@ import {
   BarChart3,
   Settings,
   Gift,
+  HelpCircle,
 } from "lucide-react";
 
 const navigation = [
@@ -17,6 +18,7 @@ const navigation = [
   { name: "Programs", href: "/programs", icon: BookOpen },
   { name: "Enrollments", href: "/enrollments", icon: GraduationCap },
   { name: "Tasks", href: "/tasks", icon: CheckSquare },
+  { name: "Quiz Management", href: "/quizzes", icon: HelpCircle },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
   { name: "Referrals", href: "/referrals", icon: Gift },
   { name: "Settings", href: "/settings", icon: Settings },

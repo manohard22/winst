@@ -226,4 +226,40 @@ router.get('/:id/courses', async (req, res) => {
   }
 });
 
+// Get modules by program
+router.get('/:id/modules', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const modulesResult = await pool.query(`
+      SELECT * FROM program_modules
+      WHERE program_id = $1
+      ORDER BY order_index
+    `, [id]);
+
+    const modules = modulesResult.rows;
+
+    for (const module of modules) {
+      const lessonsResult = await pool.query(`
+        SELECT * FROM module_lessons
+        WHERE module_id = $1
+        ORDER BY order_index
+      `, [module.id]);
+      module.lessons = lessonsResult.rows;
+    }
+
+    res.json({
+      success: true,
+      data: {
+        modules
+      }
+    });
+  } catch (error) {
+    console.error('Modules fetch error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch modules'
+    });
+  }
+});
+
 module.exports = router;

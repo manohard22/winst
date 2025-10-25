@@ -4,9 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-  "preview": "vite preview --host 0.0.0.0 --port 5173",
+    "preview": "vite preview --host 0.0.0.0 --port 5173",
     "preview:dev": "vite preview --host 0.0.0.0 --port 5173 --mode development",
-    "dev": "cross-env VITE_API_BASE_URL=http://localhost:3001/api vite --port 5173",
+    "dev": "vite --port 5173",
     "start:local": "cross-env VITE_API_BASE_URL=http://localhost:3001/api vite --port 5173",
     "build": "cross-env VITE_API_BASE_URL=http://62.72.12.199:3001/api vite build",
     "build:server": "cross-env VITE_API_BASE_URL=http://62.72.12.199:3001/api vite build",
@@ -21,6 +21,10 @@
     "pm2:logs": "pm2 logs winst-frontend"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.1.0",
+    "@fortawesome/free-brands-svg-icons": "^7.1.0",
+    "@fortawesome/free-solid-svg-icons": "^7.1.0",
+    "@fortawesome/react-fontawesome": "^3.1.0",
     "axios": "^1.7.7",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",
@@ -35,9 +39,9 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.20",
+    "cross-env": "^7.0.3",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
-    "vite": "^5.4.8",
-    "cross-env": "^7.0.3"
+    "vite": "^5.4.8"
   }
 }

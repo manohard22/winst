@@ -8,19 +8,28 @@ module.exports = {
       exec_mode: 'fork',
       watch: false,
       env: {
-        NODE_ENV: 'production',
-        PORT: process.env.PORT || 3001,
-        HOST: process.env.HOST || '0.0.0.0'
+        NODE_ENV: 'development',
+        PORT: 3001,
+        HOST: 'localhost'
       },
       env_development: {
         NODE_ENV: 'development',
-        PORT: process.env.PORT || 3001,
-        HOST: process.env.HOST || '0.0.0.0'
+        PORT: 3001,
+        HOST: 'localhost'
       },
-      error_file: '../logs/backend-error.log',
-      out_file: '../logs/backend-out.log',
-      log_file: '../logs/backend-combined.log',
-      max_memory_restart: '1G'
+      env_production: {
+        NODE_ENV: 'production',
+        PORT: 3001,
+        HOST: '0.0.0.0'
+      },
+      error_file: './logs/backend-error.log',
+      out_file: './logs/backend-out.log',
+      log_file: './logs/backend-combined.log',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      max_memory_restart: '1G',
+      autorestart: true,
+      max_restarts: 10,
+      min_uptime: '10s'
     }
   ]
 };

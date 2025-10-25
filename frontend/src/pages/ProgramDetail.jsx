@@ -88,7 +88,7 @@ const ProgramDetail = () => {
     }
   };
 
-  const handlePayment = async () => {
+  const handleEnroll = async () => {
     if (!user) {
       toast.error("Please login to enroll");
       navigate("/login");
@@ -98,59 +98,13 @@ const ProgramDetail = () => {
     setEnrolling(true);
 
     try {
-      // Create order first
-      const referralCode = localStorage.getItem('referralCode') || undefined;
-      const orderResponse = await api.post("/payments/orders", {
-        programId: id,
-        referralCode,
-      });
-  const order = orderResponse.data.data.order;
-
-      // Razorpay options
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_1234567890",
-        amount: order.finalAmount * 100, // Convert to paise
-        currency: "INR",
-        name: "Winst Internship Portal",
-        description: `Enrollment for ${program.title}`,
-        order_id: order.orderNumber,
-        handler: async function (response) {
-          try {
-            // 1) Verify payment with backend
-            await api.post("/payments/verify", {
-              orderId: order.orderNumber,
-              paymentId: response.razorpay_payment_id,
-              signature: response.razorpay_signature,
-            });
-
-            // 2) Enroll into the program
-            await api.post("/enrollments", { programId: id });
-
-            setIsEnrolled(true);
-            toast.success("Successfully enrolled! Welcome to the program!");
-          } catch (error) {
-            toast.error("Payment verification failed. Please contact support.");
-          }
-        },
-        prefill: {
-          name: `${user.firstName} ${user.lastName}`,
-          email: user.email,
-          contact: user.phone || "",
-        },
-        theme: {
-          color: "#2563eb",
-        },
-        modal: {
-          ondismiss: function () {
-            setEnrolling(false);
-          },
-        },
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      await api.post("/enrollments", { programId: id });
+      setIsEnrolled(true);
+      toast.success("Successfully enrolled! Welcome to the program!");
+      navigate("/my-enrollments");
     } catch (error) {
-      toast.error("Failed to initiate payment");
+      toast.error("Failed to enroll in the program.");
+    } finally {
       setEnrolling(false);
     }
   };
@@ -423,16 +377,22 @@ const ProgramDetail = () => {
                       You save <span className="font-semibold">₹{referralDiscount}</span> with your referral.
                     </div>
                   )}
-                  <button
-                    onClick={handlePayment}
-                    disabled={enrolling}
-                    className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {enrolling ? "Processing..." : referralDiscount > 0 ? `Enroll Now – ₹${Math.max(0, BASE_PRICE - referralDiscount)}` : "Enroll Now"}
-                  </button>
-                  <button className="w-full border border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-2 px-4 rounded-lg transition-colors duration-200">
-                    Add to Wishlist
-                  </button>
+                  {user ? (
+                    <button
+                      onClick={handleEnroll}
+                      disabled={enrolling}
+                      className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {enrolling ? "Processing..." : "Enroll Now"}
+                    </button>
+                  ) : (
+                    <Link
+                      to="/login"
+                      className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 text-center block"
+                    >
+                      Login to Enroll
+                    </Link>
+                  )}
                 </div>
               )}
 

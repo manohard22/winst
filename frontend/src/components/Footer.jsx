@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import api from "../services/api";
 import {
   GraduationCap,
   Mail,
@@ -13,15 +15,33 @@ import {
 } from "lucide-react";
 
 const Footer = () => {
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const currentYear = new Date().getFullYear();
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email || !emailRegex.test(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+    setLoading(true);
+    try {
+      await api.post("/subscribe", { email });
+      toast.success("Thank you for subscribing!");
+      setEmail("");
+    } catch (error) {
+      toast.error("Failed to subscribe. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const footerLinks = {
     company: [
       { name: "About Us", href: "/about" },
       { name: "Contact", href: "/contact" },
-      { name: "Careers", href: "/careers" },
-      { name: "Press", href: "/press" },
-      { name: "Blog", href: "/blog" },
     ],
     internships: [
       { name: "Full Stack Development", href: "/programs?category=fullstack" },
@@ -31,17 +51,17 @@ const Footer = () => {
       { name: "Digital Marketing", href: "/programs?category=marketing" },
     ],
     support: [
-      { name: "Help Center", href: "/help" },
+      { name: "Help Center", href: "/help-center" },
       { name: "Student Support", href: "/student-support" },
       { name: "Employer Support", href: "/employer-support" },
       { name: "Community", href: "/community" },
       { name: "FAQ", href: "/faq" },
     ],
     legal: [
-      { name: "Privacy Policy", href: "/privacy" },
-      { name: "Terms of Service", href: "/terms" },
-      { name: "Cookie Policy", href: "/cookies" },
-      { name: "Refund Policy", href: "/refund" },
+      { name: "Privacy Policy", href: "/privacy-policy" },
+      { name: "Terms of Service", href: "/terms-of-service" },
+      { name: "Cookie Policy", href: "/cookie-policy" },
+      { name: "Refund Policy", href: "/refund-policy" },
       { name: "Disclaimer", href: "/disclaimer" },
     ],
   };
@@ -186,16 +206,22 @@ const Footer = () => {
                 delivered to your inbox.
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
               <input
                 type="email"
                 placeholder="Enter your email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-              <button className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 whitespace-nowrap">
-                Subscribe
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 whitespace-nowrap disabled:opacity-50"
+              >
+                {loading ? "Subscribing..." : "Subscribe"}
               </button>
-            </div>
+            </form>
           </div>
         </div>
       </div>

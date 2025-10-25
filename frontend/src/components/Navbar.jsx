@@ -241,6 +241,15 @@ const Navbar = () => {
                           <Award className="h-4 w-4" />
                           <span>Certificates</span>
                         </Link>
+
+                        <Link
+                          to="/project-submission"
+                          className="flex items-center space-x-3 px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <BookOpen className="h-4 w-4" />
+                          <span>Project Submission</span>
+                        </Link>
                       </div>
 
                       <div className="border-t border-gray-100"></div>

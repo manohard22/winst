@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import api from "../services/api";
+import { getToken, setToken, removeToken, isAuthenticated } from "../utils/auth";
 
 const AuthContext = createContext();
 
@@ -16,11 +17,12 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
+    const token = getToken();
+    if (token && isAuthenticated()) {
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       fetchProfile();
     } else {
+      removeToken();
       setLoading(false);
     }
   }, []);
@@ -31,7 +33,7 @@ export const AuthProvider = ({ children }) => {
       setUser(response.data.data.user);
     } catch (error) {
       console.error("Failed to fetch profile:", error);
-      localStorage.removeItem("token");
+      removeToken();
       delete api.defaults.headers.common["Authorization"];
     } finally {
       setLoading(false);
@@ -43,7 +45,7 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post("/auth/login", { email, password });
       const { user, token } = response.data.data;
 
-      localStorage.setItem("token", token);
+      setToken(token);
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setUser(user);
 
@@ -61,7 +63,7 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post("/auth/register", userData);
       const { user, token } = response.data.data;
 
-      localStorage.setItem("token", token);
+      setToken(token);
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       setUser(user);
 
@@ -75,7 +77,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    removeToken();
     delete api.defaults.headers.common["Authorization"];
     setUser(null);
   };
@@ -87,6 +89,7 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     fetchProfile,
+    isAuthenticated: () => isAuthenticated() && !!user,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

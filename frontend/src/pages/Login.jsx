@@ -58,7 +58,7 @@ const Login = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
+                Email Address <span className="text-red-500">*</span>
               </label>
               <input
                 type="email"
@@ -73,7 +73,7 @@ const Login = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
+                Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <input
@@ -99,21 +99,7 @@ const Login = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2 block text-sm text-gray-700"
-                >
-                  Remember me
-                </label>
-              </div>
+            <div className="flex items-center justify-end">
               <Link
                 to="/forgot-password"
                 className="text-sm text-blue-600 hover:text-blue-500"
@@ -143,30 +129,6 @@ const Login = () => {
             </div>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="mt-8 p-4 bg-blue-50 rounded-xl border border-blue-200">
-            <h3 className="text-sm font-medium text-blue-800 mb-3">
-              Demo Credentials:
-            </h3>
-            <div className="space-y-2 text-xs text-blue-700">
-              <div className="flex justify-between">
-                <span>
-                  <strong>Admin:</strong> admin@winst.com
-                </span>
-                <span>
-                  <strong>Password:</strong> admin123
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>
-                  <strong>Student:</strong> student1@example.com
-                </span>
-                <span>
-                  <strong>Password:</strong> student123
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

@@ -19,12 +19,25 @@ import {
 
 const Home = () => {
   const [featuredPrograms, setFeaturedPrograms] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
+  const [technologies, setTechnologies] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchFeaturedPrograms();
+    fetchTestimonials();
+    fetchTechnologies();
   }, []);
+
+  const fetchTestimonials = async () => {
+    try {
+      const response = await api.get("/testimonials");
+      setTestimonials(response.data.data || []);
+    } catch (error) {
+      console.error("Failed to fetch testimonials:", error);
+    }
+  };
 
   const fetchFeaturedPrograms = async () => {
     try {
@@ -34,6 +47,15 @@ const Home = () => {
       console.error("Failed to fetch featured programs:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchTechnologies = async () => {
+    try {
+      const response = await api.get("/technologies");
+      setTechnologies(response.data.data.technologies || []);
+    } catch (error) {
+      console.error("Failed to fetch technologies:", error);
     }
   };
 
@@ -83,33 +105,6 @@ const Home = () => {
     { number: "50+", label: "Live Internships" },
     { number: "100+", label: "Partner Companies" },
     { number: "94%", label: "Placement Success" },
-  ];
-
-  const testimonials = [
-    {
-      name: "Arjun Mehta",
-      role: "Software Developer at TCS",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
-      content:
-        "Winst's Full Stack internship gave me the confidence and skills I needed to land my first job. The practical approach made all the difference.",
-    },
-    {
-      name: "Kavya Reddy",
-      role: "UI/UX Designer at Flipkart",
-      image:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150",
-      content:
-        "The UI/UX design internship at Winst was incredibly comprehensive. I learned industry-standard tools and design thinking methodologies.",
-    },
-    {
-      name: "Rohit Sharma",
-      role: "Data Analyst at Accenture",
-      image:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150",
-      content:
-        "The data science program helped me transition from a non-tech background to a successful career in analytics. Highly recommended!",
-    },
   ];
 
   return (
@@ -437,8 +432,41 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Browse by Technology */}
       <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Browse by Technology
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Find internships based on the technologies you want to master
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {technologies.map((tech) => (
+              <Link
+                key={tech.id}
+                to={`/programs?technology=${tech.name}`}
+                className="flex items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+              >
+                {tech.iconUrl && (
+                  <img
+                    src={tech.iconUrl}
+                    alt={tech.name}
+                    className="w-8 h-8 mr-4"
+                  />
+                )}
+                <span className="font-semibold text-gray-800">{tech.name}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
@@ -469,15 +497,15 @@ const Home = () => {
                 </p>
                 <div className="flex items-center">
                   <img
-                    src={testimonial.image}
-                    alt={testimonial.name}
+                    src={testimonial.image_url}
+                    alt={testimonial.student_name}
                     className="w-12 h-12 rounded-full object-cover mr-4"
                   />
                   <div>
                     <h4 className="font-semibold text-gray-900">
-                      {testimonial.name}
+                      {testimonial.student_name}
                     </h4>
-                    <p className="text-gray-600 text-sm">{testimonial.role}</p>
+                    <p className="text-gray-600 text-sm">{testimonial.student_role}</p>
                   </div>
                 </div>
               </div>
