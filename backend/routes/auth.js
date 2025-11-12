@@ -1,5 +1,6 @@
 const express = require('express');
 const crypto = require('crypto');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const pool = require('../config/database');
@@ -8,17 +9,14 @@ const { sendMail } = require('../utils/mailer');
 
 const router = express.Router();
 
-// Simple password hashing using crypto
-function hashPassword(password) {
-  const salt = crypto.randomBytes(16).toString('hex');
-  const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-  return `${salt}:${hash}`;
+// Password hashing using bcrypt
+async function hashPassword(password) {
+  const saltRounds = 10;
+  return await bcrypt.hash(password, saltRounds);
 }
 
-function verifyPassword(password, hashedPassword) {
-  const [salt, hash] = hashedPassword.split(':');
-  const verifyHash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
-  return hash === verifyHash;
+async function verifyPassword(password, hashedPassword) {
+  return await bcrypt.compare(password, hashedPassword);
 }
 
 // Register
@@ -69,8 +67,8 @@ router.post('/register', [
       });
     }
 
-    // Hash password using crypto
-    const passwordHash = hashPassword(password);
+    // Hash password using bcrypt
+    const passwordHash = await hashPassword(password);
 
     // Insert new user
     const result = await pool.query(`
@@ -157,8 +155,8 @@ router.post('/login', [
       });
     }
 
-    // Verify password using crypto
-    const isValidPassword = verifyPassword(password, user.password_hash);
+    // Verify password using bcrypt
+    const isValidPassword = await verifyPassword(password, user.password_hash);
     if (!isValidPassword) {
       return res.status(401).json({
         success: false,
@@ -356,7 +354,7 @@ router.post('/reset-password', [
       return res.status(400).json({ success: false, message: 'Invalid or expired token' });
     }
 
-    const passwordHash = hashPassword(password);
+    const passwordHash = await hashPassword(password);
 
     await pool.query(
       'UPDATE users SET password_hash = $1 WHERE id = $2',
