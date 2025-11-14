@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import api from "../services/api";
-import { Search, Filter, Calendar, Users } from "lucide-react";
+import { Search, Filter, Calendar, Users, X } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 const Enrollments = () => {
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [selectedEnrollment, setSelectedEnrollment] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editFormData, setEditFormData] = useState({});
 
   useEffect(() => {
     fetchEnrollments();
@@ -40,6 +45,33 @@ const Enrollments = () => {
         return "bg-gray-100 text-gray-800";
       default:
         return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const handleViewDetails = (enrollment) => {
+    setSelectedEnrollment(enrollment);
+    setShowDetailsModal(true);
+  };
+
+  const handleEdit = (enrollment) => {
+    setSelectedEnrollment(enrollment);
+    setEditFormData({
+      status: enrollment.status,
+      progressPercentage: enrollment.progressPercentage || 0,
+      finalGrade: enrollment.finalGrade || "",
+    });
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      await api.put(`/admin/enrollments/${selectedEnrollment.id}`, editFormData);
+      toast.success("Enrollment updated successfully!");
+      setShowEditModal(false);
+      fetchEnrollments();
+    } catch (error) {
+      console.error("Failed to update enrollment:", error);
+      toast.error(error.response?.data?.message || "Failed to update enrollment");
     }
   };
 
@@ -207,10 +239,16 @@ const Enrollments = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button className="text-primary-600 hover:text-primary-900 mr-3">
+                      <button
+                        onClick={() => handleViewDetails(enrollment)}
+                        className="text-primary-600 hover:text-primary-900 mr-3 transition-colors"
+                      >
                         View Details
                       </button>
-                      <button className="text-gray-600 hover:text-gray-900">
+                      <button
+                        onClick={() => handleEdit(enrollment)}
+                        className="text-gray-600 hover:text-gray-900 transition-colors"
+                      >
                         Edit
                       </button>
                     </td>
@@ -221,6 +259,172 @@ const Enrollments = () => {
           </table>
         </div>
       </div>
+
+      {/* View Details Modal */}
+      {showDetailsModal && selectedEnrollment && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900">Enrollment Details</h2>
+              <button
+                onClick={() => setShowDetailsModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Student Name</label>
+                  <p className="mt-1 text-gray-900">{selectedEnrollment.studentName}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Email</label>
+                  <p className="mt-1 text-gray-900">{selectedEnrollment.studentEmail}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Program</label>
+                  <p className="mt-1 text-gray-900">{selectedEnrollment.programTitle}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Duration</label>
+                  <p className="mt-1 text-gray-900">{selectedEnrollment.programDuration} weeks</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Enrollment Date</label>
+                  <p className="mt-1 text-gray-900">
+                    {new Date(selectedEnrollment.enrollmentDate).toLocaleDateString()}
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Status</label>
+                  <p className="mt-1">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedEnrollment.status)}`}>
+                      {selectedEnrollment.status?.replace("_", " ").toUpperCase()}
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Progress</label>
+                  <p className="mt-1 text-gray-900">{selectedEnrollment.progressPercentage || 0}%</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Final Grade</label>
+                  <p className="mt-1 text-gray-900">{selectedEnrollment.finalGrade || "N/A"}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 flex justify-end">
+              <button
+                onClick={() => setShowDetailsModal(false)}
+                className="btn-secondary"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {showEditModal && selectedEnrollment && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900">Edit Enrollment</h2>
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Student: {selectedEnrollment.studentName}
+                  </label>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Program: {selectedEnrollment.programTitle}
+                  </label>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Status
+                  </label>
+                  <select
+                    value={editFormData.status || ""}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, status: e.target.value })
+                    }
+                    className="input-field"
+                  >
+                    <option value="enrolled">Enrolled</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="dropped">Dropped</option>
+                    <option value="suspended">Suspended</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Progress (%)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={editFormData.progressPercentage || 0}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        progressPercentage: parseInt(e.target.value),
+                      })
+                    }
+                    className="input-field"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Final Grade
+                  </label>
+                  <input
+                    type="text"
+                    value={editFormData.finalGrade || ""}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, finalGrade: e.target.value })
+                    }
+                    placeholder="e.g., A, B+, 85"
+                    className="input-field"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
+              <button
+                onClick={() => setShowEditModal(false)}
+                className="btn-secondary"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                className="btn-primary"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

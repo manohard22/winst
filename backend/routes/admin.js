@@ -205,6 +205,46 @@ router.get("/enrollments", async (req, res) => {
   }
 });
 
+// Update enrollment
+router.put("/enrollments/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, progressPercentage, finalGrade } = req.body;
+
+    const result = await pool.query(
+      `
+      UPDATE student_internship SET
+        status = $1,
+        progress_percentage = $2,
+        final_grade = $3,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = $4
+      RETURNING *
+    `,
+      [status, progressPercentage, finalGrade, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Enrollment not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Enrollment updated successfully",
+      data: { enrollment: result.rows[0] },
+    });
+  } catch (error) {
+    console.error("Enrollment update error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update enrollment",
+    });
+  }
+});
+
 // Get all programs for admin
 router.get("/programs", async (req, res) => {
   try {
