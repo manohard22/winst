@@ -276,18 +276,35 @@ router.post("/programs", async (req, res) => {
       isActive,
     } = req.body;
 
+    // Validate required fields
+    if (!title || !description || !durationWeeks || !price || !finalPrice) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields: title, description, durationWeeks, price, finalPrice",
+      });
+    }
+
+    // Generate slug from title
+    const slug = title
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+
     const result = await pool.query(
       `
       INSERT INTO internship_programs (
-        title, description, duration_weeks, difficulty_level, price, 
+        title, slug, description, duration_weeks, difficulty_level, price, 
         discount_percentage, final_price, max_participants, requirements, 
         learning_outcomes, image_url, certificate_provided, mentorship_included, 
         project_based, remote_allowed, is_active
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
       RETURNING *
     `,
       [
         title,
+        slug,
         description,
         durationWeeks,
         difficultyLevel,

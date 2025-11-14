@@ -77,7 +77,8 @@ const Programs = () => {
           : "Program created successfully!"
       );
     } catch (error) {
-      alert("Failed to save program");
+      console.error("Program save error:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "Failed to save program");
     }
   };
 
