@@ -813,4 +813,257 @@ router.get("/analytics", async (req, res) => {
   }
 });
 
+// Get all tasks for admin
+router.get("/tasks", async (req, res) => {
+  try {
+    const { programId } = req.query;
+    
+    let query = `
+      SELECT 
+        t.*,
+        p.title as program_title,
+        COUNT(DISTINCT ts.id) as submission_count
+      FROM tasks t
+      JOIN internship_programs p ON t.program_id = p.id
+      LEFT JOIN task_submissions ts ON t.id = ts.task_id
+    `;
+
+    const queryParams = [];
+    
+    if (programId) {
+      query += ` WHERE t.program_id = $1`;
+      queryParams.push(programId);
+    }
+
+    query += ` GROUP BY t.id, p.id ORDER BY t.order_index ASC`;
+
+    const result = await pool.query(query, queryParams);
+
+    res.json({
+      success: true,
+      data: {
+        tasks: result.rows.map((task) => ({
+          id: task.id,
+          programId: task.program_id,
+          programTitle: task.program_title,
+          title: task.title,
+          description: task.description,
+          taskType: task.task_type,
+          difficultyLevel: task.difficulty_level,
+          maxPoints: task.max_points,
+          passingPoints: task.passing_points,
+          dueDate: task.due_date,
+          estimatedHours: task.estimated_hours,
+          instructions: task.instructions,
+          resources: task.resources,
+          submissionFormat: task.submission_format,
+          requirements: task.requirements,
+          evaluationCriteria: task.evaluation_criteria,
+          isMandatory: task.is_mandatory,
+          allowLateSubmission: task.allow_late_submission,
+          orderIndex: task.order_index,
+          submissionCount: parseInt(task.submission_count),
+        })),
+      },
+    });
+  } catch (error) {
+    console.error("Tasks fetch error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch tasks",
+    });
+  }
+});
+
+// Create new task
+router.post("/tasks", async (req, res) => {
+  try {
+    const {
+      programId,
+      title,
+      description,
+      taskType,
+      difficultyLevel,
+      maxPoints,
+      passingPoints,
+      dueDate,
+      estimatedHours,
+      instructions,
+      resources,
+      submissionFormat,
+      requirements,
+      evaluationCriteria,
+      isMandatory,
+      allowLateSubmission,
+      orderIndex,
+    } = req.body;
+
+    // Validate required fields
+    if (!programId || !title || !description || !taskType || !difficultyLevel) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields",
+      });
+    }
+
+    const result = await pool.query(
+      `
+      INSERT INTO tasks (
+        program_id, title, description, task_type, difficulty_level,
+        max_points, passing_points, due_date, estimated_hours,
+        instructions, resources, submission_format, requirements,
+        evaluation_criteria, is_mandatory, allow_late_submission, order_index
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
+      RETURNING *
+    `,
+      [
+        programId,
+        title,
+        description,
+        taskType,
+        difficultyLevel,
+        maxPoints || 100,
+        passingPoints || 70,
+        dueDate,
+        estimatedHours,
+        instructions,
+        resources,
+        submissionFormat || "github_link",
+        requirements,
+        evaluationCriteria,
+        isMandatory !== false,
+        allowLateSubmission !== false,
+        orderIndex || 0,
+      ]
+    );
+
+    res.status(201).json({
+      success: true,
+      message: "Task created successfully",
+      data: { task: result.rows[0] },
+    });
+  } catch (error) {
+    console.error("Task creation error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create task",
+    });
+  }
+});
+
+// Update task
+router.put("/tasks/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      title,
+      description,
+      taskType,
+      difficultyLevel,
+      maxPoints,
+      passingPoints,
+      dueDate,
+      estimatedHours,
+      instructions,
+      resources,
+      submissionFormat,
+      requirements,
+      evaluationCriteria,
+      isMandatory,
+      allowLateSubmission,
+      orderIndex,
+    } = req.body;
+
+    const result = await pool.query(
+      `
+      UPDATE tasks SET
+        title = COALESCE($1, title),
+        description = COALESCE($2, description),
+        task_type = COALESCE($3, task_type),
+        difficulty_level = COALESCE($4, difficulty_level),
+        max_points = COALESCE($5, max_points),
+        passing_points = COALESCE($6, passing_points),
+        due_date = COALESCE($7, due_date),
+        estimated_hours = COALESCE($8, estimated_hours),
+        instructions = COALESCE($9, instructions),
+        resources = COALESCE($10, resources),
+        submission_format = COALESCE($11, submission_format),
+        requirements = COALESCE($12, requirements),
+        evaluation_criteria = COALESCE($13, evaluation_criteria),
+        is_mandatory = COALESCE($14, is_mandatory),
+        allow_late_submission = COALESCE($15, allow_late_submission),
+        order_index = COALESCE($16, order_index),
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = $17
+      RETURNING *
+    `,
+      [
+        title,
+        description,
+        taskType,
+        difficultyLevel,
+        maxPoints,
+        passingPoints,
+        dueDate,
+        estimatedHours,
+        instructions,
+        resources,
+        submissionFormat,
+        requirements,
+        evaluationCriteria,
+        isMandatory,
+        allowLateSubmission,
+        orderIndex,
+        id,
+      ]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Task updated successfully",
+      data: { task: result.rows[0] },
+    });
+  } catch (error) {
+    console.error("Task update error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update task",
+    });
+  }
+});
+
+// Delete task
+router.delete("/tasks/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await pool.query(`DELETE FROM tasks WHERE id = $1 RETURNING id`, [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Task deleted successfully",
+    });
+  } catch (error) {
+    console.error("Task deletion error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete task",
+    });
+  }
+});
+
 module.exports = router;
