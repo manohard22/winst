@@ -3,9 +3,14 @@ const { Pool } = require('pg');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
-const { v4: uuidv4 } = require('uuid');
 const { authenticateToken } = require('../middleware/auth');
 const router = express.Router();
+
+// Dynamic import for uuid ES Module - create helper function
+async function getUuid() {
+    const { v4 } = await import('uuid');
+    return v4();
+}
 
 const pool = new Pool({
     user: process.env.DB_USER || 'postgres',
@@ -225,7 +230,7 @@ router.post('/generate', authenticateToken, async (req, res) => {
             certificate = existingCert.rows[0];
         } else {
             // Create new certificate record
-            const verificationCode = uuidv4();
+            const verificationCode = await getUuid();
             const certResult = await client.query(`
                 INSERT INTO certificates 
                 (enrollment_id, student_id, program_id, verification_code, final_score, specialization, completion_date, issued_date)

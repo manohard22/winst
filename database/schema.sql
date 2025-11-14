@@ -5,6 +5,7 @@
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+
 -- Drop all existing tables in dependency order (for fresh start)
 DROP TABLE IF EXISTS 
     user_sessions,
