@@ -187,9 +187,9 @@ const Programs = () => {
             Manage internship programs and send certificates
           </p>
         </div>
-        <button onClick={() => setShowModal(true)} className="btn-primary">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Program
+        <button onClick={() => setShowModal(true)} className="btn-primary flex items-center gap-2">
+          <Plus className="h-5 w-5" />
+          <span>Add Program</span>
         </button>
       </div>
 

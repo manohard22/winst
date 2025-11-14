@@ -85,9 +85,9 @@ const Tasks = () => {
             Create and manage program tasks and assignments
           </p>
         </div>
-        <button className="btn-primary">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Task
+        <button className="btn-primary flex items-center gap-2">
+          <Plus className="h-5 w-5" />
+          <span>Add Task</span>
         </button>
       </div>
 

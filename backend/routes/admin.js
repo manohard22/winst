@@ -149,6 +149,62 @@ router.get("/students", async (req, res) => {
   }
 });
 
+// Get all enrollments for admin
+router.get("/enrollments", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        si.id,
+        si.student_id,
+        si.program_id,
+        si.enrollment_date,
+        si.status,
+        si.progress_percentage,
+        si.start_date,
+        si.expected_completion_date,
+        si.actual_completion_date,
+        si.final_grade,
+        u.first_name as student_first_name,
+        u.last_name as student_last_name,
+        u.email as student_email,
+        p.title as program_title,
+        p.duration_weeks as program_duration
+      FROM student_internship si
+      JOIN users u ON si.student_id = u.id
+      JOIN internship_programs p ON si.program_id = p.id
+      ORDER BY si.enrollment_date DESC
+    `);
+
+    res.json({
+      success: true,
+      data: {
+        enrollments: result.rows.map((enrollment) => ({
+          id: enrollment.id,
+          studentId: enrollment.student_id,
+          programId: enrollment.program_id,
+          studentName: `${enrollment.student_first_name} ${enrollment.student_last_name}`,
+          studentEmail: enrollment.student_email,
+          programTitle: enrollment.program_title,
+          programDuration: enrollment.program_duration,
+          enrollmentDate: enrollment.enrollment_date,
+          status: enrollment.status,
+          progressPercentage: enrollment.progress_percentage,
+          startDate: enrollment.start_date,
+          expectedCompletionDate: enrollment.expected_completion_date,
+          actualCompletionDate: enrollment.actual_completion_date,
+          finalGrade: enrollment.final_grade,
+        })),
+      },
+    });
+  } catch (error) {
+    console.error("Enrollments fetch error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch enrollments",
+    });
+  }
+});
+
 // Get all programs for admin
 router.get("/programs", async (req, res) => {
   try {
