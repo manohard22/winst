@@ -771,19 +771,6 @@ router.get("/analytics", async (req, res) => {
   try {
     const { range = "6months" } = req.query;
 
-    // Calculate date range
-    let dateFilter = "";
-    switch (range) {
-      case "3months":
-        dateFilter = "AND created_at >= NOW() - INTERVAL '3 months'";
-        break;
-      case "1year":
-        dateFilter = "AND created_at >= NOW() - INTERVAL '1 year'";
-        break;
-      default:
-        dateFilter = "AND created_at >= NOW() - INTERVAL '6 months'";
-    }
-
     // Get basic stats
     const stats = await pool.query(`
       SELECT 
@@ -793,14 +780,63 @@ router.get("/analytics", async (req, res) => {
         (SELECT COALESCE(SUM(final_amount), 0) FROM orders WHERE status = 'paid') as total_revenue
     `);
 
+    // Get enrollment trend data
+    const enrollmentTrendQuery = `
+      SELECT 
+        DATE_TRUNC('month', si.enrollment_date)::date as month,
+        COUNT(*) as enrollments,
+        COALESCE(SUM(o.final_amount), 0) as revenue
+      FROM student_internship si
+      LEFT JOIN orders o ON si.student_id = o.student_id AND o.status = 'paid'
+      WHERE si.enrollment_date >= CURRENT_DATE - INTERVAL '${
+        range === "3months" ? "3" : range === "1year" ? "12" : "6"
+      } months'
+      GROUP BY DATE_TRUNC('month', si.enrollment_date)
+      ORDER BY month ASC
+    `;
+
+    const enrollmentTrend = await pool.query(enrollmentTrendQuery);
+
+    // Get program popularity
+    const programPopularityQuery = `
+      SELECT 
+        p.title as name,
+        COUNT(si.id) as enrollments,
+        COALESCE(SUM(o.final_amount), 0) as revenue
+      FROM internship_programs p
+      LEFT JOIN student_internship si ON p.id = si.program_id
+      LEFT JOIN orders o ON p.id = o.program_id AND o.status = 'paid'
+      GROUP BY p.id, p.title
+      ORDER BY COUNT(si.id) DESC
+      LIMIT 5
+    `;
+
+    const programPopularity = await pool.query(programPopularityQuery);
+
+    // Format enrollment trend for charts
+    const formattedEnrollmentTrend = enrollmentTrend.rows.map((row) => ({
+      month: new Date(row.month).toLocaleDateString("en-US", {
+        month: "short",
+      }),
+      enrollments: parseInt(row.enrollments),
+      revenue: parseFloat(row.revenue),
+    }));
+
+    // Format program popularity
+    const formattedProgramPopularity = programPopularity.rows.map((row) => ({
+      name: row.name,
+      enrollments: parseInt(row.enrollments),
+      revenue: parseFloat(row.revenue),
+    }));
+
     res.json({
       success: true,
       data: {
         stats: stats.rows[0],
         charts: {
-          enrollmentTrend: [],
-          programPopularity: [],
-          revenueByMonth: [],
+          enrollmentTrend: formattedEnrollmentTrend,
+          programPopularity: formattedProgramPopularity,
+          revenueByMonth: formattedEnrollmentTrend,
         },
       },
     });
