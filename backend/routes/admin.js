@@ -1101,130 +1101,724 @@ router.post("/ai-suggestions", async (req, res) => {
 
     const { title: programTitle, description: programDescription } = programResult.rows[0];
 
-    // Generic suggestions based on difficulty level
-    const generateSuggestions = (programTitle, difficulty) => {
-      const templates = {
-        easy: [
-          {
-            title: "Foundation Concepts Assignment",
-            description: `Understand and practice the fundamental concepts of ${programTitle}`,
-            estimatedHours: 5,
-            keyFocus: "Core concepts, basic practice, hands-on learning",
-            taskType: "assignment",
-          },
-          {
-            title: "Practical Application Exercise",
-            description: `Apply what you've learned in ${programTitle} to a real-world scenario`,
-            estimatedHours: 6,
-            keyFocus: "Practical application, real-world relevance, problem solving",
-            taskType: "assignment",
-          },
-          {
-            title: "Code Review and Analysis",
-            description: `Review and analyze existing code to understand best practices in ${programTitle}`,
-            estimatedHours: 4,
-            keyFocus: "Code quality, best practices, analysis skills",
-            taskType: "assignment",
-          },
-          {
-            title: "Documentation and Notes",
-            description: `Create comprehensive documentation for key topics in ${programTitle}`,
-            estimatedHours: 5,
-            keyFocus: "Documentation, knowledge consolidation, writing skills",
-            taskType: "assignment",
-          },
-          {
-            title: "Simple Project",
-            description: `Build a simple project demonstrating basic skills in ${programTitle}`,
-            estimatedHours: 7,
-            keyFocus: "Project building, skill integration, completion",
-            taskType: "project",
-          },
-        ],
-        medium: [
-          {
-            title: "Intermediate Project Development",
-            description: `Build an intermediate-level project applying multiple concepts from ${programTitle}`,
-            estimatedHours: 12,
-            keyFocus: "Project scope, multiple concepts, integration",
-            taskType: "project",
-          },
-          {
-            title: "Advanced Problem Solving",
-            description: `Solve advanced problems and edge cases in ${programTitle}`,
-            estimatedHours: 10,
-            keyFocus: "Problem solving, complexity, optimization",
-            taskType: "assignment",
-          },
-          {
-            title: "Code Refactoring Task",
-            description: `Refactor and improve existing code with focus on ${programTitle}`,
-            estimatedHours: 8,
-            keyFocus: "Code quality, refactoring, improvement",
-            taskType: "assignment",
-          },
-          {
-            title: "Integration Task",
-            description: `Integrate multiple systems or components in ${programTitle}`,
-            estimatedHours: 11,
-            keyFocus: "Integration, system design, connectivity",
-            taskType: "project",
-          },
-          {
-            title: "Performance Optimization",
-            description: `Identify and optimize performance bottlenecks in ${programTitle}`,
-            estimatedHours: 9,
-            keyFocus: "Performance, optimization, efficiency",
-            taskType: "assignment",
-          },
-        ],
-        hard: [
-          {
-            title: "Complex System Design",
-            description: `Design and implement a complex system using advanced concepts from ${programTitle}`,
-            estimatedHours: 20,
-            keyFocus: "System design, architecture, complexity",
-            taskType: "project",
-          },
-          {
-            title: "Advanced Architecture Implementation",
-            description: `Implement advanced architectural patterns in ${programTitle}`,
-            estimatedHours: 18,
-            keyFocus: "Architecture, design patterns, scalability",
-            taskType: "project",
-          },
-          {
-            title: "Research and Innovation",
-            description: `Research cutting-edge techniques and implement innovations in ${programTitle}`,
-            estimatedHours: 16,
-            keyFocus: "Research, innovation, advanced techniques",
-            taskType: "assignment",
-          },
-          {
-            title: "Production-Grade Implementation",
-            description: `Build production-ready applications with all best practices in ${programTitle}`,
-            estimatedHours: 22,
-            keyFocus: "Production quality, reliability, maintainability",
-            taskType: "project",
-          },
-          {
-            title: "Capstone Project",
-            description: `Complete a comprehensive capstone project that showcases all skills in ${programTitle}`,
-            estimatedHours: 25,
-            keyFocus: "Comprehensive, portfolio-worthy, mastery demonstration",
-            taskType: "project",
-          },
-        ],
-      };
+    // Generate program-specific suggestions based on keywords in title and description
+    const generateProgramSpecificSuggestions = (programTitle, difficulty) => {
+      const titleLower = programTitle.toLowerCase();
+      const descLower = programDescription?.toLowerCase() || "";
+      
+      // Detect program type by keywords
+      const isBackend = titleLower.includes('backend') || titleLower.includes('django') || 
+                        titleLower.includes('node') || titleLower.includes('express') || 
+                        titleLower.includes('python') || titleLower.includes('flask');
+      const isFrontend = titleLower.includes('frontend') || titleLower.includes('react') || 
+                         titleLower.includes('vue') || titleLower.includes('angular') ||
+                         titleLower.includes('javascript') || titleLower.includes('html');
+      const isFullStack = titleLower.includes('full') || titleLower.includes('mern') || 
+                          titleLower.includes('mean');
+      const isMobile = titleLower.includes('mobile') || titleLower.includes('react native') || 
+                       titleLower.includes('flutter');
+      const isDevOps = titleLower.includes('devops') || titleLower.includes('cloud') || 
+                       titleLower.includes('docker') || titleLower.includes('kubernetes');
 
-      return (templates[difficulty] || templates.easy).map((template, index) => ({
+      // Program-specific suggestion templates
+      let suggestions = [];
+
+      if (isBackend) {
+        suggestions = {
+          easy: [
+            {
+              title: "Build a RESTful API with Basic CRUD Operations",
+              description: "Create a REST API with endpoints for Create, Read, Update, Delete operations on a simple resource",
+              estimatedHours: 6,
+              keyFocus: "HTTP methods, routing, request/response handling, JSON data",
+              taskType: "assignment",
+            },
+            {
+              title: "Database Connection and Data Retrieval",
+              description: "Connect to a PostgreSQL/MongoDB database and fetch user lists, filter by criteria",
+              estimatedHours: 5,
+              keyFocus: "Database connection, SQL queries, data fetching, filtering",
+              taskType: "assignment",
+            },
+            {
+              title: "Third-Party API Integration",
+              description: "Integrate with a third-party API (payment, weather, email service) and handle responses",
+              estimatedHours: 7,
+              keyFocus: "API calls, authentication tokens, error handling, data mapping",
+              taskType: "project",
+            },
+            {
+              title: "User Authentication Setup",
+              description: "Implement basic user registration and login with password hashing and sessions",
+              estimatedHours: 8,
+              keyFocus: "Authentication, password hashing, sessions, security basics",
+              taskType: "assignment",
+            },
+            {
+              title: "Build a Simple Todo API",
+              description: "Create a complete backend API for a todo application with all CRUD operations",
+              estimatedHours: 6,
+              keyFocus: "API design, database modeling, request validation",
+              taskType: "project",
+            },
+          ],
+          medium: [
+            {
+              title: "Advanced Database Queries and Relationships",
+              description: "Implement complex database queries with joins, aggregations, and optimize query performance",
+              estimatedHours: 10,
+              keyFocus: "SQL optimization, relationships, indexing, query performance",
+              taskType: "assignment",
+            },
+            {
+              title: "Implement JWT Authentication with Refresh Tokens",
+              description: "Build secure authentication system with JWT tokens, refresh tokens, and role-based access",
+              estimatedHours: 12,
+              keyFocus: "JWT, security, authorization, token refresh logic",
+              taskType: "project",
+            },
+            {
+              title: "Build a Payment Gateway Integration",
+              description: "Integrate with Stripe/PayPal for payment processing with webhook handling",
+              estimatedHours: 14,
+              keyFocus: "Payment APIs, webhooks, transaction handling, security",
+              taskType: "project",
+            },
+            {
+              title: "Real-time Data with WebSockets",
+              description: "Implement real-time features using WebSockets for live notifications or chat",
+              estimatedHours: 11,
+              keyFocus: "WebSockets, real-time communication, event handling",
+              taskType: "project",
+            },
+            {
+              title: "Caching and Performance Optimization",
+              description: "Implement Redis caching, database query optimization, and API response caching",
+              estimatedHours: 9,
+              keyFocus: "Redis, caching strategies, performance optimization",
+              taskType: "assignment",
+            },
+          ],
+          hard: [
+            {
+              title: "Microservices Architecture Implementation",
+              description: "Design and implement a microservices-based system with service discovery and communication",
+              estimatedHours: 25,
+              keyFocus: "Microservices, service communication, scalability, architecture",
+              taskType: "project",
+            },
+            {
+              title: "Build a Scalable Multi-Tenant SaaS Backend",
+              description: "Create a multi-tenant system with data isolation, custom domains, and tenant management",
+              estimatedHours: 22,
+              keyFocus: "Multi-tenancy, data isolation, scalability, architecture",
+              taskType: "project",
+            },
+            {
+              title: "Advanced Caching and Message Queue System",
+              description: "Implement distributed caching, message queues for async processing, and job scheduling",
+              estimatedHours: 18,
+              keyFocus: "Message queues, distributed systems, async processing",
+              taskType: "assignment",
+            },
+            {
+              title: "API Gateway with Rate Limiting and Monitoring",
+              description: "Build API gateway with authentication, rate limiting, logging, and performance monitoring",
+              estimatedHours: 20,
+              keyFocus: "API gateway, rate limiting, monitoring, security",
+              taskType: "project",
+            },
+            {
+              title: "Zero-Downtime Deployment Pipeline",
+              description: "Create CI/CD pipeline with database migrations, blue-green deployment, and rollback strategy",
+              estimatedHours: 24,
+              keyFocus: "DevOps, CI/CD, deployment strategies, database migrations",
+              taskType: "project",
+            },
+          ],
+        };
+      } else if (isFrontend) {
+        suggestions = {
+          easy: [
+            {
+              title: "Build a Responsive Navigation Component",
+              description: "Create a responsive navbar with hamburger menu for mobile devices",
+              estimatedHours: 4,
+              keyFocus: "HTML/CSS, responsive design, mobile-first approach",
+              taskType: "assignment",
+            },
+            {
+              title: "Create a Dynamic Form with Validation",
+              description: "Build a form that validates user input in real-time and shows error messages",
+              estimatedHours: 5,
+              keyFocus: "Form handling, validation, event handling, user feedback",
+              taskType: "assignment",
+            },
+            {
+              title: "Fetch and Display Data from an API",
+              description: "Create a component that fetches data from a public API and displays it in a list",
+              estimatedHours: 6,
+              keyFocus: "API calls, async/await, data rendering, loading states",
+              taskType: "project",
+            },
+            {
+              title: "Build a Todo List Application",
+              description: "Create a functional todo app with add, delete, and mark complete features",
+              estimatedHours: 5,
+              keyFocus: "State management, event handling, DOM manipulation",
+              taskType: "project",
+            },
+            {
+              title: "Implement Dark Mode Toggle",
+              description: "Add a theme switcher that toggles between light and dark modes",
+              estimatedHours: 4,
+              keyFocus: "CSS variables, local storage, event handling",
+              taskType: "assignment",
+            },
+          ],
+          medium: [
+            {
+              title: "Build a Dashboard with Charts and Analytics",
+              description: "Create a dashboard displaying data visualization with charts and key metrics",
+              estimatedHours: 12,
+              keyFocus: "Data visualization, component composition, state management",
+              taskType: "project",
+            },
+            {
+              title: "Implement Advanced State Management",
+              description: "Set up Redux/Context API for complex state management across the application",
+              estimatedHours: 11,
+              keyFocus: "State management, Redux/Context, data flow",
+              taskType: "assignment",
+            },
+            {
+              title: "Create a Real-time Chat Interface",
+              description: "Build a chat UI with WebSocket integration for real-time messaging",
+              estimatedHours: 13,
+              keyFocus: "WebSockets, component design, message handling",
+              taskType: "project",
+            },
+            {
+              title: "Build a Multi-step Form/Wizard",
+              description: "Create a complex form with multiple steps, progress indicator, and validation",
+              estimatedHours: 10,
+              keyFocus: "Form handling, state management, UX patterns",
+              taskType: "project",
+            },
+            {
+              title: "Implement Infinite Scroll or Pagination",
+              description: "Add pagination or infinite scroll functionality to a data list",
+              estimatedHours: 8,
+              keyFocus: "Performance optimization, lazy loading, pagination",
+              taskType: "assignment",
+            },
+          ],
+          hard: [
+            {
+              title: "Build a Progressive Web App (PWA)",
+              description: "Convert application to PWA with offline support, push notifications, and installability",
+              estimatedHours: 20,
+              keyFocus: "Service workers, manifest, offline support, caching",
+              taskType: "project",
+            },
+            {
+              title: "Implement Advanced Performance Optimization",
+              description: "Optimize application with code splitting, lazy loading, and performance monitoring",
+              estimatedHours: 18,
+              keyFocus: "Performance, optimization, bundling, monitoring",
+              taskType: "assignment",
+            },
+            {
+              title: "Create a Collaborative Editor Application",
+              description: "Build a real-time collaborative editor with WebSockets and conflict resolution",
+              estimatedHours: 22,
+              keyFocus: "Real-time sync, conflict resolution, WebSockets",
+              taskType: "project",
+            },
+            {
+              title: "Build a Complex Data Visualization Dashboard",
+              description: "Create interactive charts, filters, and drilldown functionality for analytics",
+              estimatedHours: 19,
+              keyFocus: "Data visualization, interactivity, performance",
+              taskType: "project",
+            },
+            {
+              title: "Implement E-commerce Features",
+              description: "Build product catalog, shopping cart, and checkout flow with payment integration",
+              estimatedHours: 25,
+              keyFocus: "Component architecture, state management, payment integration",
+              taskType: "project",
+            },
+          ],
+        };
+      } else if (isFullStack) {
+        suggestions = {
+          easy: [
+            {
+              title: "Build a Simple Blog Application",
+              description: "Create a blog with frontend UI and backend API for posting and viewing articles",
+              estimatedHours: 8,
+              keyFocus: "Full-stack basics, CRUD operations, database design",
+              taskType: "project",
+            },
+            {
+              title: "Create a Weather App",
+              description: "Frontend that displays weather data fetched from backend API integration",
+              estimatedHours: 7,
+              keyFocus: "Frontend-backend integration, API calls, state management",
+              taskType: "project",
+            },
+            {
+              title: "Build a Task Management App",
+              description: "Full-stack todo app with persistent database storage and real-time updates",
+              estimatedHours: 9,
+              keyFocus: "Full-stack architecture, database, API design",
+              taskType: "project",
+            },
+            {
+              title: "Create a User Registration System",
+              description: "Implement signup/login with frontend forms and backend authentication",
+              estimatedHours: 8,
+              keyFocus: "Authentication, form handling, security",
+              taskType: "project",
+            },
+            {
+              title: "Build a Simple E-commerce Store",
+              description: "Product listing, cart management, and basic checkout functionality",
+              estimatedHours: 10,
+              keyFocus: "Component design, state management, API integration",
+              taskType: "project",
+            },
+          ],
+          medium: [
+            {
+              title: "Build a Social Media Feed Application",
+              description: "Full-stack app with user posts, comments, likes, and real-time notifications",
+              estimatedHours: 16,
+              keyFocus: "Complex state management, real-time updates, relational data",
+              taskType: "project",
+            },
+            {
+              title: "Create a Project Management Tool",
+              description: "Full-stack application with projects, tasks, teams, and collaboration features",
+              estimatedHours: 18,
+              keyFocus: "Data relationships, user roles, real-time collaboration",
+              taskType: "project",
+            },
+            {
+              title: "Build a Video Streaming Platform",
+              description: "Create platform for uploading, streaming, and managing videos",
+              estimatedHours: 17,
+              keyFocus: "File handling, streaming, database optimization",
+              taskType: "project",
+            },
+            {
+              title: "Implement a Chat Application",
+              description: "Full-stack messaging app with real-time chat, user presence, and notifications",
+              estimatedHours: 15,
+              keyFocus: "WebSockets, real-time sync, message queuing",
+              taskType: "project",
+            },
+            {
+              title: "Build a Job Portal Application",
+              description: "Job listings, applications, user profiles, and notifications system",
+              estimatedHours: 16,
+              keyFocus: "Complex relationships, search, filtering, notifications",
+              taskType: "project",
+            },
+          ],
+          hard: [
+            {
+              title: "Build a Complete SaaS Platform",
+              description: "Full-featured SaaS with authentication, subscription management, analytics, and admin panel",
+              estimatedHours: 30,
+              keyFocus: "Scalability, payments, multi-tenancy, analytics",
+              taskType: "project",
+            },
+            {
+              title: "Create a Real-time Collaboration Platform",
+              description: "Implement Google Docs-like collaborative editing with conflict resolution",
+              estimatedHours: 28,
+              keyFocus: "Real-time sync, conflict resolution, WebSockets, scalability",
+              taskType: "project",
+            },
+            {
+              title: "Build a Learning Management System (LMS)",
+              description: "Complete LMS with courses, lessons, quizzes, assignments, and progress tracking",
+              estimatedHours: 32,
+              keyFocus: "Complex features, user management, content delivery",
+              taskType: "project",
+            },
+            {
+              title: "Create an AI-Powered Analytics Dashboard",
+              description: "Build dashboard with ML insights, predictions, and automated reporting",
+              estimatedHours: 27,
+              keyFocus: "Data processing, AI integration, visualization",
+              taskType: "project",
+            },
+            {
+              title: "Build a Marketplace Platform",
+              description: "Complete marketplace with sellers, buyers, payments, reviews, and dispute resolution",
+              estimatedHours: 35,
+              keyFocus: "Scalability, payments, complex logic, user management",
+              taskType: "project",
+            },
+          ],
+        };
+      } else if (isMobile) {
+        suggestions = {
+          easy: [
+            {
+              title: "Build a Simple Counter App",
+              description: "Create a mobile app with increment/decrement buttons and state persistence",
+              estimatedHours: 4,
+              keyFocus: "Mobile basics, state management, UI components",
+              taskType: "assignment",
+            },
+            {
+              title: "Create a Notes Application",
+              description: "Simple note-taking app with add, edit, and delete functionality",
+              estimatedHours: 6,
+              keyFocus: "CRUD operations, local storage, navigation",
+              taskType: "project",
+            },
+            {
+              title: "Build a Weather App",
+              description: "Mobile app that displays weather based on location",
+              estimatedHours: 7,
+              keyFocus: "Location services, API calls, data display",
+              taskType: "project",
+            },
+            {
+              title: "Create a Photo Gallery",
+              description: "Image gallery app with categorization and search functionality",
+              estimatedHours: 6,
+              keyFocus: "Image handling, navigation, UI components",
+              taskType: "project",
+            },
+            {
+              title: "Build a Habit Tracker",
+              description: "Simple habit tracking app with daily check-ins and progress visualization",
+              estimatedHours: 7,
+              keyFocus: "State management, data persistence, UI design",
+              taskType: "project",
+            },
+          ],
+          medium: [
+            {
+              title: "Create a Mobile Social App",
+              description: "Social networking app with feed, user profiles, and messaging",
+              estimatedHours: 14,
+              keyFocus: "Navigation, state management, backend integration",
+              taskType: "project",
+            },
+            {
+              title: "Build a Mobile Banking App",
+              description: "Banking app with account balance, transactions, and fund transfers",
+              estimatedHours: 13,
+              keyFocus: "Security, authentication, sensitive data handling",
+              taskType: "project",
+            },
+            {
+              title: "Implement Push Notifications",
+              description: "Add push notifications to mobile app with proper handling",
+              estimatedHours: 9,
+              keyFocus: "Push notifications, background tasks, permissions",
+              taskType: "assignment",
+            },
+            {
+              title: "Build an E-commerce Mobile App",
+              description: "Mobile shopping app with product search, cart, and checkout",
+              estimatedHours: 15,
+              keyFocus: "Commerce logic, payment integration, inventory",
+              taskType: "project",
+            },
+            {
+              title: "Create a Fitness Tracking App",
+              description: "Track workouts, calories, and create fitness plans",
+              estimatedHours: 12,
+              keyFocus: "Data visualization, sensor integration, state management",
+              taskType: "project",
+            },
+          ],
+          hard: [
+            {
+              title: "Build a Multiplayer Gaming App",
+              description: "Real-time multiplayer game with networking and synchronization",
+              estimatedHours: 24,
+              keyFocus: "Real-time networking, performance, game logic",
+              taskType: "project",
+            },
+            {
+              title: "Create a High-Performance AR App",
+              description: "Augmented reality application with real-time object detection",
+              estimatedHours: 22,
+              keyFocus: "AR capabilities, performance optimization, device integration",
+              taskType: "project",
+            },
+            {
+              title: "Build an Offline-First App",
+              description: "Mobile app with full offline support and sync when online",
+              estimatedHours: 20,
+              keyFocus: "Offline storage, sync algorithms, data conflicts",
+              taskType: "project",
+            },
+            {
+              title: "Implement Video Call Feature",
+              description: "Real-time video calling with group chat support",
+              estimatedHours: 21,
+              keyFocus: "WebRTC, real-time communication, media handling",
+              taskType: "project",
+            },
+            {
+              title: "Create a Machine Learning Mobile App",
+              description: "Mobile app using on-device ML models for predictions",
+              estimatedHours: 23,
+              keyFocus: "ML integration, performance, on-device processing",
+              taskType: "project",
+            },
+          ],
+        };
+      } else if (isDevOps) {
+        suggestions = {
+          easy: [
+            {
+              title: "Set Up Docker for an Application",
+              description: "Create Dockerfile and Docker Compose for containerizing an application",
+              estimatedHours: 5,
+              keyFocus: "Docker basics, containerization, image creation",
+              taskType: "assignment",
+            },
+            {
+              title: "Create a CI/CD Pipeline",
+              description: "Build basic CI/CD pipeline with GitHub Actions or GitLab CI",
+              estimatedHours: 6,
+              keyFocus: "CI/CD, automation, testing pipelines",
+              taskType: "project",
+            },
+            {
+              title: "Set Up Infrastructure as Code",
+              description: "Use Terraform to provision basic cloud infrastructure",
+              estimatedHours: 7,
+              keyFocus: "IaC, Terraform, infrastructure provisioning",
+              taskType: "assignment",
+            },
+            {
+              title: "Configure Container Networking",
+              description: "Set up Docker networks and multi-container communication",
+              estimatedHours: 5,
+              keyFocus: "Container networking, Docker networking",
+              taskType: "assignment",
+            },
+            {
+              title: "Build a Monitoring Dashboard",
+              description: "Set up Prometheus and Grafana for monitoring applications",
+              estimatedHours: 6,
+              keyFocus: "Monitoring, metrics, dashboards",
+              taskType: "project",
+            },
+          ],
+          medium: [
+            {
+              title: "Implement Kubernetes Deployment",
+              description: "Deploy containerized app to Kubernetes with auto-scaling",
+              estimatedHours: 14,
+              keyFocus: "Kubernetes, orchestration, deployment",
+              taskType: "project",
+            },
+            {
+              title: "Set Up SSL/TLS Certificates",
+              description: "Configure HTTPS with Let's Encrypt and certificate management",
+              estimatedHours: 8,
+              keyFocus: "Security, SSL/TLS, certificate management",
+              taskType: "assignment",
+            },
+            {
+              title: "Build Infrastructure with Terraform",
+              description: "Create complete infrastructure with VPC, databases, load balancers",
+              estimatedHours: 13,
+              keyFocus: "Terraform, cloud infrastructure, modules",
+              taskType: "project",
+            },
+            {
+              title: "Implement Log Aggregation",
+              description: "Set up ELK stack or similar for centralized logging",
+              estimatedHours: 11,
+              keyFocus: "Logging, aggregation, analysis",
+              taskType: "project",
+            },
+            {
+              title: "Create a Blue-Green Deployment",
+              description: "Implement zero-downtime deployment strategy",
+              estimatedHours: 12,
+              keyFocus: "Deployment strategies, infrastructure",
+              taskType: "assignment",
+            },
+          ],
+          hard: [
+            {
+              title: "Build a Multi-Region Cloud Architecture",
+              description: "Design and implement multi-region deployment with failover",
+              estimatedHours: 24,
+              keyFocus: "High availability, multi-region, disaster recovery",
+              taskType: "project",
+            },
+            {
+              title: "Implement Service Mesh",
+              description: "Set up Istio or similar for microservices communication",
+              estimatedHours: 20,
+              keyFocus: "Service mesh, microservices, traffic management",
+              taskType: "project",
+            },
+            {
+              title: "Create Advanced Monitoring and Alerting",
+              description: "Build comprehensive monitoring with anomaly detection and auto-remediation",
+              estimatedHours: 18,
+              keyFocus: "Monitoring, alerting, automation",
+              taskType: "project",
+            },
+            {
+              title: "Build a Disaster Recovery Plan",
+              description: "Implement backup, recovery procedures, and RTO/RPO targets",
+              estimatedHours: 22,
+              keyFocus: "Disaster recovery, backup, resilience",
+              taskType: "project",
+            },
+            {
+              title: "Implement Network Security Hardening",
+              description: "Configure firewalls, VPCs, security groups, and network policies",
+              estimatedHours: 19,
+              keyFocus: "Security, networking, compliance",
+              taskType: "project",
+            },
+          ],
+        };
+      } else {
+        // Default suggestions for unknown programs
+        suggestions = {
+          easy: [
+            {
+              title: "Foundation Concepts Assignment",
+              description: `Understand and practice the fundamental concepts of ${programTitle}`,
+              estimatedHours: 5,
+              keyFocus: "Core concepts, basic practice, hands-on learning",
+              taskType: "assignment",
+            },
+            {
+              title: "Practical Application Exercise",
+              description: `Apply what you've learned in ${programTitle} to a real-world scenario`,
+              estimatedHours: 6,
+              keyFocus: "Practical application, real-world relevance, problem solving",
+              taskType: "assignment",
+            },
+            {
+              title: "Code Review and Analysis",
+              description: `Review and analyze existing code to understand best practices in ${programTitle}`,
+              estimatedHours: 4,
+              keyFocus: "Code quality, best practices, analysis skills",
+              taskType: "assignment",
+            },
+            {
+              title: "Documentation and Notes",
+              description: `Create comprehensive documentation for key topics in ${programTitle}`,
+              estimatedHours: 5,
+              keyFocus: "Documentation, knowledge consolidation, writing skills",
+              taskType: "assignment",
+            },
+            {
+              title: "Simple Project",
+              description: `Build a simple project demonstrating basic skills in ${programTitle}`,
+              estimatedHours: 7,
+              keyFocus: "Project building, skill integration, completion",
+              taskType: "project",
+            },
+          ],
+          medium: [
+            {
+              title: "Intermediate Project Development",
+              description: `Build an intermediate-level project applying multiple concepts from ${programTitle}`,
+              estimatedHours: 12,
+              keyFocus: "Project scope, multiple concepts, integration",
+              taskType: "project",
+            },
+            {
+              title: "Advanced Problem Solving",
+              description: `Solve advanced problems and edge cases in ${programTitle}`,
+              estimatedHours: 10,
+              keyFocus: "Problem solving, complexity, optimization",
+              taskType: "assignment",
+            },
+            {
+              title: "Code Refactoring Task",
+              description: `Refactor and improve existing code with focus on ${programTitle}`,
+              estimatedHours: 8,
+              keyFocus: "Code quality, refactoring, improvement",
+              taskType: "assignment",
+            },
+            {
+              title: "Integration Task",
+              description: `Integrate multiple systems or components in ${programTitle}`,
+              estimatedHours: 11,
+              keyFocus: "Integration, system design, connectivity",
+              taskType: "project",
+            },
+            {
+              title: "Performance Optimization",
+              description: `Identify and optimize performance bottlenecks in ${programTitle}`,
+              estimatedHours: 9,
+              keyFocus: "Performance, optimization, efficiency",
+              taskType: "assignment",
+            },
+          ],
+          hard: [
+            {
+              title: "Complex System Design",
+              description: `Design and implement a complex system using advanced concepts from ${programTitle}`,
+              estimatedHours: 20,
+              keyFocus: "System design, architecture, complexity",
+              taskType: "project",
+            },
+            {
+              title: "Advanced Architecture Implementation",
+              description: `Implement advanced architectural patterns in ${programTitle}`,
+              estimatedHours: 18,
+              keyFocus: "Architecture, design patterns, scalability",
+              taskType: "project",
+            },
+            {
+              title: "Research and Innovation",
+              description: `Research cutting-edge techniques and implement innovations in ${programTitle}`,
+              estimatedHours: 16,
+              keyFocus: "Research, innovation, advanced techniques",
+              taskType: "assignment",
+            },
+            {
+              title: "Production-Grade Implementation",
+              description: `Build production-ready applications with all best practices in ${programTitle}`,
+              estimatedHours: 22,
+              keyFocus: "Production quality, reliability, maintainability",
+              taskType: "project",
+            },
+            {
+              title: "Capstone Project",
+              description: `Complete a comprehensive capstone project that showcases all skills in ${programTitle}`,
+              estimatedHours: 25,
+              keyFocus: "Comprehensive, portfolio-worthy, mastery demonstration",
+              taskType: "project",
+            },
+          ],
+        };
+      }
+
+      const difficulty_level = difficulty || "easy";
+      return (suggestions[difficulty_level] || suggestions.easy).map((template, index) => ({
         ...template,
-        difficultyLevel: difficulty,
-        id: `${programId}-${difficulty}-${index}`,
+        difficultyLevel: difficulty_level,
+        id: `${programId}-${difficulty_level}-${index}`,
       }));
     };
 
-    const suggestions = generateSuggestions(programTitle, difficultyLevel || "easy");
+    const suggestions = generateProgramSpecificSuggestions(programTitle, difficultyLevel || "easy");
 
     return res.json({
       success: true,
