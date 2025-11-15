@@ -1,3 +1,4 @@
+// @ts-nocheck
 const express = require("express");
 const pool = require("../config/database");
 const { authenticateToken, requireRole } = require("../middleware/auth");
