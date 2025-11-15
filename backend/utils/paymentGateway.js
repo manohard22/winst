@@ -12,18 +12,78 @@
 
 // @ts-nocheck
 const crypto = require('crypto');
+const https = require('https');
 
 class PaymentGateway {
   constructor() {
     // Initialize Razorpay client when credentials are provided
     this.keyId = process.env.RAZORPAY_KEY_ID;
     this.keySecret = process.env.RAZORPAY_KEY_SECRET;
+    this.accountId = process.env.RAZORPAY_ACCOUNT_ID;
     this.mode = process.env.PAYMENT_MODE || 'test';
-    this.currency = process.env.PAYMENT_CURRENCY || 'INR';
+    this.currency = 'INR';
+    this.apiBaseUrl = 'api.razorpay.com';
+    this.apiVersion = 'v1';
     
     if (!this.keyId || !this.keySecret) {
       console.warn('⚠️  Razorpay credentials not configured in .env');
+    } else {
+      console.log('✅ Razorpay credentials loaded successfully');
     }
+  }
+
+  /**
+   * Make HTTP request to Razorpay API
+   */
+  async makeApiRequest(method, path, data = null) {
+    return new Promise((resolve, reject) => {
+      const auth = Buffer.from(`${this.keyId}:${this.keySecret}`).toString('base64');
+      
+      const options = {
+        hostname: this.apiBaseUrl,
+        port: 443,
+        path: `/api/${this.apiVersion}${path}`,
+        method: method,
+        headers: {
+          'Authorization': `Basic ${auth}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      };
+
+      const req = https.request(options, (res) => {
+        let responseData = '';
+
+        res.on('data', (chunk) => {
+          responseData += chunk;
+        });
+
+        res.on('end', () => {
+          try {
+            const jsonResponse = JSON.parse(responseData);
+            resolve({
+              statusCode: res.statusCode,
+              data: jsonResponse
+            });
+          } catch (e) {
+            resolve({
+              statusCode: res.statusCode,
+              data: responseData
+            });
+          }
+        });
+      });
+
+      req.on('error', (error) => {
+        reject(error);
+      });
+
+      if (data) {
+        const params = new URLSearchParams(data).toString();
+        req.write(params);
+      }
+
+      req.end();
+    });
   }
 
   /**
@@ -31,10 +91,11 @@ class PaymentGateway {
    * 
    * @param {number} amount - Amount in rupees
    * @param {string} customerId - Customer/User ID
-   * @param {object} metadata - Additional metadata
+   * @param {string} email - Customer email
+   * @param {object} metadata - Additional metadata (programId, studentId, etc)
    * @returns {Promise} Order details with order_id, amount, currency
    */
-  async createOrder(amount, customerId, metadata = {}) {
+  async createOrder(amount, customerId, email, metadata = {}) {
     try {
       // Validate input
       if (!amount || amount <= 0) {
@@ -45,49 +106,50 @@ class PaymentGateway {
         throw new Error('Customer ID is required');
       }
 
-      // TODO: Replace with actual Razorpay API call
-      // For now, this is a stub that needs actual implementation
-      
+      // Amount in paise (1 rupee = 100 paise)
+      const amountInPaise = Math.round(amount * 100);
+
       const orderData = {
-        amount: Math.round(amount * 100), // Convert to paise
+        amount: amountInPaise,
         currency: this.currency,
-        customer_id: customerId,
+        receipt: `RCP-${customerId}-${Date.now()}`,
         notes: {
-          ...metadata,
-          created_at: new Date().toISOString(),
-          mode: this.mode
-        },
-        receipt: `RCP-${Date.now()}`
-      };
-
-      console.log('📋 Creating Razorpay order with data:', {
-        amount: amount,
-        amountInPaise: orderData.amount,
-        currency: this.currency,
-        customerId: customerId,
-        mode: this.mode
-      });
-
-      // IMPLEMENTATION NOTE:
-      // Use razorpay-node SDK:
-      // const Razorpay = require('razorpay');
-      // const razorpay = new Razorpay({
-      //   key_id: this.keyId,
-      //   key_secret: this.keySecret
-      // });
-      // const order = await razorpay.orders.create(orderData);
-
-      return {
-        success: true,
-        data: {
-          order_id: 'order_placeholder', // Will be actual Razorpay order ID
-          amount: amount,
-          amountInPaise: orderData.amount,
-          currency: this.currency,
-          customerId: customerId,
-          notes: orderData.notes
+          customer_id: customerId,
+          email: email,
+          program_id: metadata.programId || null,
+          student_id: metadata.studentId || customerId,
+          enrollment_date: new Date().toISOString(),
+          ...metadata
         }
       };
+
+      console.log('📋 Creating Razorpay order:', {
+        amount: amount + ' INR',
+        amountInPaise: amountInPaise,
+        customerId: customerId,
+        email: email
+      });
+
+      const response = await this.makeApiRequest('POST', '/orders', orderData);
+
+      if (response.statusCode === 200) {
+        console.log('✅ Order created successfully:', response.data.id);
+        return {
+          success: true,
+          data: {
+            order_id: response.data.id,
+            amount: amount,
+            amountInPaise: amountInPaise,
+            currency: this.currency,
+            customer_id: customerId,
+            email: email,
+            status: response.data.status,
+            created_at: response.data.created_at
+          }
+        };
+      } else {
+        throw new Error(`Razorpay API error: ${response.statusCode}`);
+      }
     } catch (error) {
       console.error('❌ Order creation failed:', error.message);
       return {
@@ -155,17 +217,17 @@ class PaymentGateway {
 
       console.log('🔍 Fetching payment details for:', paymentId);
 
-      // TODO: Implement actual Razorpay API call
-      // const razorpay = new Razorpay({...});
-      // const payment = await razorpay.payments.fetch(paymentId);
+      const response = await this.makeApiRequest('GET', `/payments/${paymentId}`);
 
-      return {
-        success: true,
-        data: {
-          payment_id: paymentId,
-          // payment details will be returned by Razorpay
-        }
-      };
+      if (response.statusCode === 200) {
+        console.log('✅ Payment details fetched:', response.data.id);
+        return {
+          success: true,
+          data: response.data
+        };
+      } else {
+        throw new Error(`Razorpay API error: ${response.statusCode}`);
+      }
     } catch (error) {
       console.error('❌ Payment fetch failed:', error.message);
       return {
@@ -179,7 +241,7 @@ class PaymentGateway {
    * Initiate refund for a payment
    * 
    * @param {string} paymentId - Razorpay payment ID
-   * @param {number} amount - Amount to refund (optional, full refund if not specified)
+   * @param {number} amount - Amount to refund in rupees (optional, full refund if not specified)
    * @returns {Promise} Refund details
    */
   async refundPayment(paymentId, amount = null) {
@@ -188,28 +250,30 @@ class PaymentGateway {
         throw new Error('Payment ID is required');
       }
 
-      const refundData = {
-        payment_id: paymentId
-      };
+      const refundData = {};
 
       if (amount) {
         refundData.amount = Math.round(amount * 100); // Convert to paise
       }
 
-      console.log('💰 Processing refund for payment:', paymentId, 'Amount:', amount);
+      console.log('💰 Processing refund for payment:', paymentId, amount ? `Amount: ${amount} INR` : 'Full refund');
 
-      // TODO: Implement actual Razorpay API call
-      // const razorpay = new Razorpay({...});
-      // const refund = await razorpay.payments.refund(paymentId, refundData);
+      const response = await this.makeApiRequest('POST', `/payments/${paymentId}/refund`, refundData);
 
-      return {
-        success: true,
-        data: {
-          refund_id: 'rfnd_placeholder',
-          payment_id: paymentId,
-          amount: amount
-        }
-      };
+      if (response.statusCode === 200) {
+        console.log('✅ Refund processed successfully:', response.data.id);
+        return {
+          success: true,
+          data: {
+            refund_id: response.data.id,
+            payment_id: paymentId,
+            amount: amount,
+            status: response.data.status
+          }
+        };
+      } else {
+        throw new Error(`Razorpay API error: ${response.statusCode}`);
+      }
     } catch (error) {
       console.error('❌ Refund failed:', error.message);
       return {

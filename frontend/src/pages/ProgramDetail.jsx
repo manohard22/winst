@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import api from "../services/api";
+import PaymentModal from "../components/PaymentModal";
 import {
   Clock,
   Users,
@@ -21,8 +22,8 @@ const ProgramDetail = () => {
   const { user } = useAuth();
   const [program, setProgram] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [enrolling, setEnrolling] = useState(false);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [courses, setCourses] = useState([]);
   const BASE_PRICE = 2000;
   const [referralDiscount, setReferralDiscount] = useState(0);
@@ -95,17 +96,18 @@ const ProgramDetail = () => {
       return;
     }
 
-    setEnrolling(true);
+    // Open payment modal instead of direct enrollment
+    setShowPaymentModal(true);
+  };
 
+  const handlePaymentSuccess = async (paymentData) => {
     try {
-      await api.post("/enrollments", { programId: id });
+      // Payment and enrollment already done by backend
+      // Just update local state
       setIsEnrolled(true);
-      toast.success("Successfully enrolled! Welcome to the program!");
-      navigate("/my-enrollments");
+      toast.success("Successfully enrolled!");
     } catch (error) {
-      toast.error("Failed to enroll in the program.");
-    } finally {
-      setEnrolling(false);
+      console.error("Error in payment success handler:", error);
     }
   };
 
@@ -380,10 +382,10 @@ const ProgramDetail = () => {
                   {user ? (
                     <button
                       onClick={handleEnroll}
-                      disabled={enrolling}
+                      disabled={isEnrolled}
                       className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {enrolling ? "Processing..." : "Enroll Now"}
+                      {isEnrolled ? "Already Enrolled" : "Enroll Now"}
                     </button>
                   ) : (
                     <Link
@@ -521,6 +523,24 @@ const ProgramDetail = () => {
             </div>
           </div>
         </div>
+
+        {/* Payment Modal */}
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          program={{
+            id: program?.id,
+            title: program?.title,
+            price: program?.price || 1
+          }}
+          student={{
+            id: user?.id,
+            email: user?.email,
+            fullName: user?.name || user?.firstName + ' ' + user?.lastName,
+            phone: user?.phone
+          }}
+          onPaymentSuccess={handlePaymentSuccess}
+        />
       </div>
     </div>
   );
