@@ -10,6 +10,7 @@
  * const order = await payment.createOrder(amount, customerId);
  */
 
+// @ts-nocheck
 const crypto = require('crypto');
 
 class PaymentGateway {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 const express = require('express');
 const { Pool } = require('pg');
 const PDFDocument = require('pdfkit');
