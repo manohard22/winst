@@ -60,29 +60,43 @@ exports.initiatePayment = async (req, res) => {
     const orderData = orderResult.data;
     
     try {
-      await db.query(
+      // Generate unique order number
+      const orderNumber = `ORD-${Date.now()}-${studentId.substring(0, 8)}`;
+      
+      const insertResult = await db.query(
         `INSERT INTO orders (
-          order_id, 
           student_id, 
           program_id, 
-          amount, 
+          order_number,
+          amount,
+          final_amount,
           status, 
           payment_method,
-          razorpay_order_id,
-          created_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())`,
+          payment_gateway,
+          gateway_order_id,
+          currency,
+          created_at,
+          updated_at
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW())
+        RETURNING id`,
         [
-          orderData.order_id,
           studentId,
           programId,
+          orderNumber,
+          amount,
           amount,
           'pending',
           'razorpay',
-          orderData.order_id
+          'razorpay',
+          orderData.order_id,
+          'INR'
         ]
       );
+      
+      console.log(`✅ Order stored in database with ID: ${insertResult.rows[0].id}`);
     } catch (dbError) {
       console.log('⚠️  Could not store order in DB, but order created in Razorpay:', dbError.message);
+      console.log('Database error:', dbError);
     }
 
     // Return order details to frontend
@@ -184,17 +198,13 @@ exports.verifyPayment = async (req, res) => {
       await db.query(
         `UPDATE orders SET 
           status = $1, 
-          payment_id = $2, 
-          razorpay_payment_id = $3,
-          razorpay_signature = $4,
-          final_amount = $5,
+          transaction_id = $2, 
+          final_amount = $3,
           updated_at = NOW()
-        WHERE razorpay_order_id = $6`,
+        WHERE gateway_order_id = $4`,
         [
           'paid',
           razorpay_payment_id,
-          razorpay_payment_id,
-          razorpay_signature,
           paymentDetails.data.amount / 100, // Convert from paise
           razorpay_order_id
         ]
@@ -263,7 +273,7 @@ exports.getPaymentStatus = async (req, res) => {
 
     // Get order details from database
     const orderResult = await db.query(
-      `SELECT * FROM orders WHERE razorpay_order_id = $1`,
+      `SELECT * FROM orders WHERE gateway_order_id = $1`,
       [orderId]
     );
 
@@ -279,7 +289,7 @@ exports.getPaymentStatus = async (req, res) => {
     res.status(200).json({
       success: true,
       data: {
-        orderId: order.razorpay_order_id,
+        orderId: order.gateway_order_id,
         status: order.status,
         amount: order.amount,
         studentId: order.student_id,
@@ -313,10 +323,9 @@ exports.handlePaymentFailure = async (req, res) => {
       await db.query(
         `UPDATE orders SET 
           status = $1, 
-          failure_reason = $2,
           updated_at = NOW()
-        WHERE razorpay_order_id = $3`,
-        ['failed', reason, orderId]
+        WHERE gateway_order_id = $2`,
+        ['failed', orderId]
       );
     } catch (dbError) {
       console.log('⚠️  Could not update order status:', dbError.message);

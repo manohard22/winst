@@ -39,6 +39,27 @@ class PaymentGateway {
     return new Promise((resolve, reject) => {
       const auth = Buffer.from(`${this.keyId}:${this.keySecret}`).toString('base64');
       
+      // Convert data object to URL encoded format properly
+      let requestBody = '';
+      if (data) {
+        const params = new URLSearchParams();
+        
+        // Handle nested objects (like notes)
+        for (const [key, value] of Object.entries(data)) {
+          if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+            // For nested objects like notes, use notes[key]=value format
+            for (const [nestedKey, nestedValue] of Object.entries(value)) {
+              if (nestedValue !== null && nestedValue !== undefined) {
+                params.append(`${key}[${nestedKey}]`, nestedValue);
+              }
+            }
+          } else if (value !== null && value !== undefined) {
+            params.append(key, value);
+          }
+        }
+        requestBody = params.toString();
+      }
+      
       const options = {
         hostname: this.apiBaseUrl,
         port: 443,
@@ -46,9 +67,12 @@ class PaymentGateway {
         method: method,
         headers: {
           'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/x-www-form-urlencoded'
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Length': Buffer.byteLength(requestBody)
         }
       };
+
+      console.log(`📡 Razorpay API Request: ${method} ${options.path}`);
 
       const req = https.request(options, (res) => {
         let responseData = '';
@@ -60,11 +84,13 @@ class PaymentGateway {
         res.on('end', () => {
           try {
             const jsonResponse = JSON.parse(responseData);
+            console.log(`📥 Razorpay API Response: ${res.statusCode}`, jsonResponse.id || jsonResponse.error?.code || 'OK');
             resolve({
               statusCode: res.statusCode,
               data: jsonResponse
             });
           } catch (e) {
+            console.log(`📥 Razorpay API Response: ${res.statusCode}`, responseData.substring(0, 100));
             resolve({
               statusCode: res.statusCode,
               data: responseData
@@ -74,12 +100,13 @@ class PaymentGateway {
       });
 
       req.on('error', (error) => {
+        console.error('❌ Razorpay API Connection Error:', error.message);
         reject(error);
       });
 
-      if (data) {
-        const params = new URLSearchParams(data).toString();
-        req.write(params);
+      if (requestBody) {
+        console.log(`📤 Request Body:`, requestBody.substring(0, 100) + '...');
+        req.write(requestBody);
       }
 
       req.end();
