@@ -924,13 +924,13 @@ router.post("/tasks", async (req, res) => {
         difficultyLevel,
         maxPoints || 100,
         passingPoints || 70,
-        dueDate,
-        estimatedHours,
-        instructions,
-        resources,
+        dueDate || null,
+        estimatedHours || null,
+        instructions || null,
+        resources || null,
         submissionFormat || "github_link",
-        requirements,
-        evaluationCriteria,
+        requirements || null,
+        evaluationCriteria || null,
         isMandatory !== false,
         allowLateSubmission !== false,
         orderIndex || 0,
@@ -955,7 +955,7 @@ router.post("/tasks", async (req, res) => {
 router.put("/tasks/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const {
+    let {
       title,
       description,
       taskType,
@@ -973,6 +973,14 @@ router.put("/tasks/:id", async (req, res) => {
       allowLateSubmission,
       orderIndex,
     } = req.body;
+
+    // Convert empty strings to null for nullable fields
+    dueDate = dueDate || null;
+    estimatedHours = estimatedHours || null;
+    instructions = instructions || null;
+    resources = resources || null;
+    requirements = requirements || null;
+    evaluationCriteria = evaluationCriteria || null;
 
     const result = await pool.query(
       `
@@ -1062,6 +1070,171 @@ router.delete("/tasks/:id", async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to delete task",
+    });
+  }
+});
+
+// AI-powered assignment suggestions
+router.post("/ai-suggestions", async (req, res) => {
+  try {
+    const { prompt, programId, difficultyLevel = "easy" } = req.body;
+
+    if (!programId) {
+      return res.status(400).json({
+        success: false,
+        message: "Program ID is required",
+      });
+    }
+
+    // Get the program to understand context
+    const programResult = await pool.query(
+      "SELECT id, title, description FROM internship_programs WHERE id = $1",
+      [programId]
+    );
+
+    if (programResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Program not found",
+      });
+    }
+
+    const { title: programTitle, description: programDescription } = programResult.rows[0];
+
+    // Generic suggestions based on difficulty level
+    const generateSuggestions = (programTitle, difficulty) => {
+      const templates = {
+        easy: [
+          {
+            title: "Foundation Concepts Assignment",
+            description: `Understand and practice the fundamental concepts of ${programTitle}`,
+            estimatedHours: 5,
+            keyFocus: "Core concepts, basic practice, hands-on learning",
+            taskType: "assignment",
+          },
+          {
+            title: "Practical Application Exercise",
+            description: `Apply what you've learned in ${programTitle} to a real-world scenario`,
+            estimatedHours: 6,
+            keyFocus: "Practical application, real-world relevance, problem solving",
+            taskType: "assignment",
+          },
+          {
+            title: "Code Review and Analysis",
+            description: `Review and analyze existing code to understand best practices in ${programTitle}`,
+            estimatedHours: 4,
+            keyFocus: "Code quality, best practices, analysis skills",
+            taskType: "assignment",
+          },
+          {
+            title: "Documentation and Notes",
+            description: `Create comprehensive documentation for key topics in ${programTitle}`,
+            estimatedHours: 5,
+            keyFocus: "Documentation, knowledge consolidation, writing skills",
+            taskType: "assignment",
+          },
+          {
+            title: "Simple Project",
+            description: `Build a simple project demonstrating basic skills in ${programTitle}`,
+            estimatedHours: 7,
+            keyFocus: "Project building, skill integration, completion",
+            taskType: "project",
+          },
+        ],
+        medium: [
+          {
+            title: "Intermediate Project Development",
+            description: `Build an intermediate-level project applying multiple concepts from ${programTitle}`,
+            estimatedHours: 12,
+            keyFocus: "Project scope, multiple concepts, integration",
+            taskType: "project",
+          },
+          {
+            title: "Advanced Problem Solving",
+            description: `Solve advanced problems and edge cases in ${programTitle}`,
+            estimatedHours: 10,
+            keyFocus: "Problem solving, complexity, optimization",
+            taskType: "assignment",
+          },
+          {
+            title: "Code Refactoring Task",
+            description: `Refactor and improve existing code with focus on ${programTitle}`,
+            estimatedHours: 8,
+            keyFocus: "Code quality, refactoring, improvement",
+            taskType: "assignment",
+          },
+          {
+            title: "Integration Task",
+            description: `Integrate multiple systems or components in ${programTitle}`,
+            estimatedHours: 11,
+            keyFocus: "Integration, system design, connectivity",
+            taskType: "project",
+          },
+          {
+            title: "Performance Optimization",
+            description: `Identify and optimize performance bottlenecks in ${programTitle}`,
+            estimatedHours: 9,
+            keyFocus: "Performance, optimization, efficiency",
+            taskType: "assignment",
+          },
+        ],
+        hard: [
+          {
+            title: "Complex System Design",
+            description: `Design and implement a complex system using advanced concepts from ${programTitle}`,
+            estimatedHours: 20,
+            keyFocus: "System design, architecture, complexity",
+            taskType: "project",
+          },
+          {
+            title: "Advanced Architecture Implementation",
+            description: `Implement advanced architectural patterns in ${programTitle}`,
+            estimatedHours: 18,
+            keyFocus: "Architecture, design patterns, scalability",
+            taskType: "project",
+          },
+          {
+            title: "Research and Innovation",
+            description: `Research cutting-edge techniques and implement innovations in ${programTitle}`,
+            estimatedHours: 16,
+            keyFocus: "Research, innovation, advanced techniques",
+            taskType: "assignment",
+          },
+          {
+            title: "Production-Grade Implementation",
+            description: `Build production-ready applications with all best practices in ${programTitle}`,
+            estimatedHours: 22,
+            keyFocus: "Production quality, reliability, maintainability",
+            taskType: "project",
+          },
+          {
+            title: "Capstone Project",
+            description: `Complete a comprehensive capstone project that showcases all skills in ${programTitle}`,
+            estimatedHours: 25,
+            keyFocus: "Comprehensive, portfolio-worthy, mastery demonstration",
+            taskType: "project",
+          },
+        ],
+      };
+
+      return (templates[difficulty] || templates.easy).map((template, index) => ({
+        ...template,
+        difficultyLevel: difficulty,
+        id: `${programId}-${difficulty}-${index}`,
+      }));
+    };
+
+    const suggestions = generateSuggestions(programTitle, difficultyLevel || "easy");
+
+    return res.json({
+      success: true,
+      data: { suggestions },
+    });
+  } catch (error) {
+    console.error("AI suggestions error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to generate suggestions",
     });
   }
 });
