@@ -63,7 +63,7 @@ class PaymentGateway {
       const options = {
         hostname: this.apiBaseUrl,
         port: 443,
-        path: `/api/${this.apiVersion}${path}`,
+        path: `/${this.apiVersion}${path}`,
         method: method,
         headers: {
           'Authorization': `Basic ${auth}`,
@@ -72,7 +72,15 @@ class PaymentGateway {
         }
       };
 
-      console.log(`📡 Razorpay API Request: ${method} ${options.path}`);
+      console.log(`\n📡 Razorpay API Request Details:`);
+      console.log(`   Method: ${method}`);
+      console.log(`   Path: ${options.path}`);
+      console.log(`   URL: https://${options.hostname}${options.path}`);
+      console.log(`   Auth: Basic ${auth.substring(0, 20)}...`);
+      if (requestBody) {
+        console.log(`   Body: ${requestBody}`);
+      }
+      console.log('');
 
       const req = https.request(options, (res) => {
         let responseData = '';
@@ -84,13 +92,22 @@ class PaymentGateway {
         res.on('end', () => {
           try {
             const jsonResponse = JSON.parse(responseData);
-            console.log(`📥 Razorpay API Response: ${res.statusCode}`, jsonResponse.id || jsonResponse.error?.code || 'OK');
+            console.log(`📥 Razorpay API Response: ${res.statusCode}`);
+            if (jsonResponse.id) {
+              console.log(`   Order ID: ${jsonResponse.id}`);
+            }
+            if (jsonResponse.error) {
+              console.log(`   Error: ${jsonResponse.error.code} - ${jsonResponse.error.description}`);
+            }
+            console.log('');
             resolve({
               statusCode: res.statusCode,
               data: jsonResponse
             });
           } catch (e) {
-            console.log(`📥 Razorpay API Response: ${res.statusCode}`, responseData.substring(0, 100));
+            console.log(`📥 Razorpay API Response: ${res.statusCode}`);
+            console.log(`   Body: ${responseData}`);
+            console.log('');
             resolve({
               statusCode: res.statusCode,
               data: responseData
@@ -105,7 +122,6 @@ class PaymentGateway {
       });
 
       if (requestBody) {
-        console.log(`📤 Request Body:`, requestBody.substring(0, 100) + '...');
         req.write(requestBody);
       }
 
