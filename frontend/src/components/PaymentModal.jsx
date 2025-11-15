@@ -24,14 +24,20 @@ const PaymentModal = ({ isOpen, onClose, program, student, onPaymentSuccess }) =
 
   // Load Razorpay script
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
+    if (!window.Razorpay) {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      script.onload = () => {
+        console.log('✅ Razorpay script loaded successfully');
+      };
+      script.onerror = () => {
+        console.error('❌ Failed to load Razorpay script');
+      };
+      document.body.appendChild(script);
+    } else {
+      console.log('✅ Razorpay already loaded');
+    }
   }, []);
 
   if (!isOpen) return null;
@@ -141,9 +147,12 @@ const PaymentModal = ({ isOpen, onClose, program, student, onPaymentSuccess }) =
       };
 
       // Open Razorpay checkout
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      if (!window.Razorpay) {
+        throw new Error('Razorpay script not loaded. Please refresh the page and try again.');
+      }
 
+      const rzp = new window.Razorpay(options);
+      
       // Handle errors during checkout open
       rzp.on('payment.failed', function (response) {
         console.error('❌ Payment failed:', response.error);
@@ -159,6 +168,9 @@ const PaymentModal = ({ isOpen, onClose, program, student, onPaymentSuccess }) =
 
         toast.error('Payment failed: ' + (response.error.reason || 'Unknown error'));
       });
+
+      console.log('🔓 Opening Razorpay checkout...');
+      rzp.open();
 
     } catch (error) {
       console.error('❌ Payment initiation failed:', error);
