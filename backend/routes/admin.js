@@ -1105,20 +1105,27 @@ router.post("/ai-suggestions", async (req, res) => {
     const generateProgramSpecificSuggestions = (programTitle, difficulty) => {
       const titleLower = programTitle.toLowerCase();
       const descLower = programDescription?.toLowerCase() || "";
+      const combined = `${titleLower} ${descLower}`;
       
-      // Detect program type by keywords
-      const isBackend = titleLower.includes('backend') || titleLower.includes('django') || 
-                        titleLower.includes('node') || titleLower.includes('express') || 
-                        titleLower.includes('python') || titleLower.includes('flask');
-      const isFrontend = titleLower.includes('frontend') || titleLower.includes('react') || 
-                         titleLower.includes('vue') || titleLower.includes('angular') ||
-                         titleLower.includes('javascript') || titleLower.includes('html');
-      const isFullStack = titleLower.includes('full') || titleLower.includes('mern') || 
-                          titleLower.includes('mean');
-      const isMobile = titleLower.includes('mobile') || titleLower.includes('react native') || 
-                       titleLower.includes('flutter');
-      const isDevOps = titleLower.includes('devops') || titleLower.includes('cloud') || 
-                       titleLower.includes('docker') || titleLower.includes('kubernetes');
+      // Detect program type by keywords - check both title and description
+      const isBackend = combined.includes('backend') || combined.includes('django') || 
+                        combined.includes('node') || combined.includes('express') || 
+                        combined.includes('python') || combined.includes('flask') ||
+                        combined.includes('api') || combined.includes('server') ||
+                        combined.includes('database') || combined.includes('rest') ||
+                        combined.includes('servicenow');
+      const isFrontend = combined.includes('frontend') || combined.includes('react') || 
+                         combined.includes('vue') || combined.includes('angular') ||
+                         combined.includes('javascript') || combined.includes('html') ||
+                         combined.includes('css') || combined.includes('ui');
+      const isFullStack = combined.includes('full') || combined.includes('mern') || 
+                          combined.includes('mean') || combined.includes('stack');
+      const isMobile = combined.includes('mobile') || combined.includes('react native') || 
+                       combined.includes('flutter') || combined.includes('ios') ||
+                       combined.includes('android');
+      const isDevOps = combined.includes('devops') || combined.includes('cloud') || 
+                       combined.includes('docker') || combined.includes('kubernetes') ||
+                       combined.includes('deployment');
 
       // Program-specific suggestion templates
       let suggestions = [];
@@ -1694,116 +1701,116 @@ router.post("/ai-suggestions", async (req, res) => {
           ],
         };
       } else {
-        // Default suggestions for unknown programs
+        // Default: treat unknown programs as backend since most are API/integration platforms (like Servicenow)
         suggestions = {
           easy: [
             {
-              title: "Foundation Concepts Assignment",
-              description: `Understand and practice the fundamental concepts of ${programTitle}`,
-              estimatedHours: 5,
-              keyFocus: "Core concepts, basic practice, hands-on learning",
-              taskType: "assignment",
-            },
-            {
-              title: "Practical Application Exercise",
-              description: `Apply what you've learned in ${programTitle} to a real-world scenario`,
+              title: "Build a RESTful API with Basic CRUD Operations",
+              description: "Create a REST API with endpoints for Create, Read, Update, Delete operations on a simple resource",
               estimatedHours: 6,
-              keyFocus: "Practical application, real-world relevance, problem solving",
+              keyFocus: "HTTP methods, routing, request/response handling, JSON data",
               taskType: "assignment",
             },
             {
-              title: "Code Review and Analysis",
-              description: `Review and analyze existing code to understand best practices in ${programTitle}`,
-              estimatedHours: 4,
-              keyFocus: "Code quality, best practices, analysis skills",
-              taskType: "assignment",
-            },
-            {
-              title: "Documentation and Notes",
-              description: `Create comprehensive documentation for key topics in ${programTitle}`,
+              title: "Database Connection and Data Retrieval",
+              description: "Connect to a PostgreSQL/MongoDB database and fetch user lists, filter by criteria",
               estimatedHours: 5,
-              keyFocus: "Documentation, knowledge consolidation, writing skills",
+              keyFocus: "Database connection, SQL queries, data fetching, filtering",
               taskType: "assignment",
             },
             {
-              title: "Simple Project",
-              description: `Build a simple project demonstrating basic skills in ${programTitle}`,
+              title: "Third-Party API Integration",
+              description: "Integrate with a third-party API (payment, weather, email service) and handle responses",
               estimatedHours: 7,
-              keyFocus: "Project building, skill integration, completion",
+              keyFocus: "API calls, authentication tokens, error handling, data mapping",
+              taskType: "project",
+            },
+            {
+              title: "User Authentication Setup",
+              description: "Implement basic user registration and login with password hashing and sessions",
+              estimatedHours: 8,
+              keyFocus: "Authentication, password hashing, sessions, security basics",
+              taskType: "assignment",
+            },
+            {
+              title: `Build a Simple ${programTitle} Integration Module`,
+              description: `Create a module that integrates with ${programTitle} APIs and handles data synchronization`,
+              estimatedHours: 6,
+              keyFocus: "API integration, data mapping, error handling",
               taskType: "project",
             },
           ],
           medium: [
             {
-              title: "Intermediate Project Development",
-              description: `Build an intermediate-level project applying multiple concepts from ${programTitle}`,
-              estimatedHours: 12,
-              keyFocus: "Project scope, multiple concepts, integration",
-              taskType: "project",
-            },
-            {
-              title: "Advanced Problem Solving",
-              description: `Solve advanced problems and edge cases in ${programTitle}`,
+              title: "Advanced Database Queries and Relationships",
+              description: "Implement complex database queries with joins, aggregations, and optimize query performance",
               estimatedHours: 10,
-              keyFocus: "Problem solving, complexity, optimization",
+              keyFocus: "SQL optimization, relationships, indexing, query performance",
               taskType: "assignment",
             },
             {
-              title: "Code Refactoring Task",
-              description: `Refactor and improve existing code with focus on ${programTitle}`,
-              estimatedHours: 8,
-              keyFocus: "Code quality, refactoring, improvement",
-              taskType: "assignment",
-            },
-            {
-              title: "Integration Task",
-              description: `Integrate multiple systems or components in ${programTitle}`,
-              estimatedHours: 11,
-              keyFocus: "Integration, system design, connectivity",
+              title: "Implement JWT Authentication with Refresh Tokens",
+              description: "Build secure authentication system with JWT tokens, refresh tokens, and role-based access",
+              estimatedHours: 12,
+              keyFocus: "JWT, security, authorization, token refresh logic",
               taskType: "project",
             },
             {
-              title: "Performance Optimization",
-              description: `Identify and optimize performance bottlenecks in ${programTitle}`,
+              title: `Advanced ${programTitle} Integration with Webhooks`,
+              description: `Build advanced integration with ${programTitle} including webhook handling and event processing`,
+              estimatedHours: 14,
+              keyFocus: "Webhooks, event-driven architecture, data synchronization",
+              taskType: "project",
+            },
+            {
+              title: "Real-time Data Synchronization",
+              description: "Implement real-time data sync between your system and external APIs using WebSockets",
+              estimatedHours: 11,
+              keyFocus: "WebSockets, real-time sync, event handling",
+              taskType: "project",
+            },
+            {
+              title: "Caching and Performance Optimization",
+              description: "Implement Redis caching and optimize database queries for better performance",
               estimatedHours: 9,
-              keyFocus: "Performance, optimization, efficiency",
+              keyFocus: "Redis, caching strategies, performance optimization",
               taskType: "assignment",
             },
           ],
           hard: [
             {
-              title: "Complex System Design",
-              description: `Design and implement a complex system using advanced concepts from ${programTitle}`,
-              estimatedHours: 20,
-              keyFocus: "System design, architecture, complexity",
+              title: "Enterprise Integration Platform",
+              description: `Build a comprehensive integration platform for ${programTitle} with multiple connectors`,
+              estimatedHours: 25,
+              keyFocus: "Enterprise integration, scalability, multi-connector support",
               taskType: "project",
             },
             {
-              title: "Advanced Architecture Implementation",
-              description: `Implement advanced architectural patterns in ${programTitle}`,
+              title: `Custom ${programTitle} Solution for Complex Workflows`,
+              description: `Design and implement a custom solution using ${programTitle} for complex business workflows`,
+              estimatedHours: 22,
+              keyFocus: "Workflow automation, business logic, customization",
+              taskType: "project",
+            },
+            {
+              title: "Advanced Error Handling and Resilience",
+              description: "Implement comprehensive error handling, retry logic, and circuit breakers for robust integration",
               estimatedHours: 18,
-              keyFocus: "Architecture, design patterns, scalability",
-              taskType: "project",
-            },
-            {
-              title: "Research and Innovation",
-              description: `Research cutting-edge techniques and implement innovations in ${programTitle}`,
-              estimatedHours: 16,
-              keyFocus: "Research, innovation, advanced techniques",
+              keyFocus: "Resilience, error handling, fault tolerance",
               taskType: "assignment",
             },
             {
-              title: "Production-Grade Implementation",
-              description: `Build production-ready applications with all best practices in ${programTitle}`,
-              estimatedHours: 22,
-              keyFocus: "Production quality, reliability, maintainability",
+              title: "Multi-System Integration Architecture",
+              description: "Design architecture for integrating multiple enterprise systems with data consistency",
+              estimatedHours: 20,
+              keyFocus: "System architecture, data consistency, scalability",
               taskType: "project",
             },
             {
-              title: "Capstone Project",
-              description: `Complete a comprehensive capstone project that showcases all skills in ${programTitle}`,
-              estimatedHours: 25,
-              keyFocus: "Comprehensive, portfolio-worthy, mastery demonstration",
+              title: "API-Driven Data Analytics Pipeline",
+              description: "Create a data pipeline that extracts, transforms, and loads data from multiple APIs",
+              estimatedHours: 24,
+              keyFocus: "Data pipeline, ETL, analytics, data warehousing",
               taskType: "project",
             },
           ],
