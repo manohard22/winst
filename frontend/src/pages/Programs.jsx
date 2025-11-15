@@ -340,12 +340,12 @@ const Programs = () => {
                 <div className="border-t border-gray-100 pt-4">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <span className="text-lg font-bold text-primary-600">₹2,000</span>
-                      <div className="text-xs text-gray-500">Fixed price for all internships</div>
+                      <span className="text-lg font-bold text-primary-600">₹{(program.price || 2000).toLocaleString('en-IN')}</span>
+                      <div className="text-xs text-gray-500">Program enrollment fee</div>
                     </div>
                     <div className="text-right">
                       <div className="text-xs text-gray-500">Starting from</div>
-                      <div className="text-sm font-medium text-gray-700">₹{Math.round(2000 / program.durationWeeks)}/week</div>
+                      <div className="text-sm font-medium text-gray-700">₹{Math.round((program.price || 2000) / (program.durationWeeks || 12))}/week</div>
                     </div>
                   </div>
 

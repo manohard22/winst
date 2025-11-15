@@ -25,10 +25,12 @@ const ProgramDetail = () => {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [courses, setCourses] = useState([]);
-  const BASE_PRICE = 2000;
   const [referralDiscount, setReferralDiscount] = useState(0);
   const [referrerName, setReferrerName] = useState(null);
   const [referralChecked, setReferralChecked] = useState(false);
+
+  // Get price from program or fallback to 1 (for testing)
+  const programPrice = program?.price || 1;
 
   useEffect(() => {
     fetchProgram();
@@ -334,10 +336,10 @@ const ProgramDetail = () => {
                   <>
                     <div className="mb-1">
                       <span className="text-3xl font-bold text-primary-600">
-                        ₹{Math.max(0, BASE_PRICE - referralDiscount)}
+                        ₹{Math.max(0, programPrice - referralDiscount)}
                       </span>
                     </div>
-                    <div className="text-sm text-gray-500 line-through">₹{BASE_PRICE.toLocaleString('en-IN')}</div>
+                    <div className="text-sm text-gray-500 line-through">₹{programPrice.toLocaleString('en-IN')}</div>
                     <div className="text-sm text-green-700 font-semibold mt-1">
                       Referral discount applied: -₹{referralDiscount}
                       {referrerName ? (
@@ -351,10 +353,10 @@ const ProgramDetail = () => {
                 ) : (
                   <>
                     <div className="mb-2">
-                      <span className="text-3xl font-bold text-primary-600">₹{BASE_PRICE.toLocaleString('en-IN')}</span>
+                      <span className="text-3xl font-bold text-primary-600">₹{programPrice.toLocaleString('en-IN')}</span>
                     </div>
                     <div className="text-sm text-gray-600">One-time payment • Lifetime access</div>
-                    <div className="text-xs text-green-600 font-medium mt-1">🎯 Fixed price for all internships</div>
+                    <div className="text-xs text-green-600 font-medium mt-1">🎯 Program enrollment fee</div>
                   </>
                 )}
               </div>
